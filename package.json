@@ -1,0 +1,23 @@
+{
+  "name": "bouallegui-me",
+  "version": "1.0.0",
+  "description": "Bouallegui.me - Cybersecurity and systems done right. Portfolio + blog static site.",
+  "private": true,
+  "scripts": {
+    "dev": "tailwindcss -i src/input.css -o css/output.css --watch",
+    "build": "tailwindcss -i src/input.css -o css/output.css --minify",
+    "serve": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "portfolio",
+    "cybersecurity",
+    "tailwindcss",
+    "personal website"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0"
+  }
+}

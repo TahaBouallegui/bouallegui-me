@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Bouallegui</title>
+  <meta name="description" content="Field notes, writeups, and postmortems from Bouallegui on cybersecurity and systems engineering.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Blog — Bouallegui">
+  <meta property="og:description" content="Field notes, writeups, and postmortems on cybersecurity and systems.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="py-28 bg-gradient-to-b from-ocean-deep to-surface">
+      <div class="container px-5 text-center md:px-8">
+        <p class="eyebrow text-ocean-light">Field notes</p>
+        <h1 class="section-title mb-4 text-white">Blog</h1>
+        <p class="mx-auto max-w-2xl text-slate-200">Writeups from the lab. Everything here is a lesson I learned the hard way so you don't have to.</p>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="container px-5 md:px-8">
+        <div class="grid gap-8 md:grid-cols-2">
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-4 flex h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/post01/640/360" alt="Rebuilding DNS" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Writeup</span><span>Mar 4, 2026</span><span>12 min read</span></div>
+            <h3 class="mb-2 font-display text-xl font-semibold">Rebuilding DNS from scratch</h3>
+            <p class="mb-4 text-slate-600">A month of breaking my home network taught me more about the protocol than any textbook. Here's what stuck.</p>
+            <a href="blog-post-template.html" class="font-semibold text-ocean hover:text-ocean-dark">Read it &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-4 flex h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/post02/640/360" alt="A checklist for the boring stuff" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Guide</span><span>Feb 11, 2026</span><span>8 min read</span></div>
+            <h3 class="mb-2 font-display text-xl font-semibold">A checklist for the boring stuff</h3>
+            <p class="mb-4 text-slate-600">Fifteen configuration changes that quietly stop most of the incidents I've been called on to clean up.</p>
+            <a href="blog-post-template.html" class="font-semibold text-ocean hover:text-ocean-dark">Read it &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-4 flex h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/post03/640/360" alt="Reading the panic" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Postmortem</span><span>Jan 27, 2026</span><span>15 min read</span></div>
+            <h3 class="mb-2 font-display text-xl font-semibold">Reading the panic: a kernel bug story</h3>
+            <p class="mb-4 text-slate-600">How a one-line change in a driver took down a production box, and how I traced it before the restart.</p>
+            <a href="blog-post-template.html" class="font-semibold text-ocean hover:text-ocean-dark">Read it &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-4 flex h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/post04/640/360" alt="Least privilege on a budget" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Tutorial</span><span>Dec 19, 2025</span><span>10 min read</span></div>
+            <h3 class="mb-2 font-display text-xl font-semibold">Least privilege on a budget</h3>
+            <p class="mb-4 text-slate-600">You don't need an identity platform to stop accidental damage. A weekend project in capabilities.</p>
+            <a href="blog-post-template.html" class="font-semibold text-ocean hover:text-ocean-dark">Read it &rarr;</a>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="js/partials.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

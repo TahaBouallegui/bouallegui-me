@@ -1,0 +1,69 @@
+/* Tailwind directives: must be first, in order, contiguous. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    @apply bg-ocean text-white;
+  }
+  a { @apply text-ocean-dark transition-colors duration-200; }
+  a:hover { @apply text-ocean; }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    @apply outline-2 outline-ocean outline-offset-2;
+  }
+}
+
+/* Components layer */
+@layer components {
+  .container { @apply mx-auto w-full max-w-6xl px-5 md:px-8; }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-sm font-semibold tracking-wide transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean focus-visible:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-ocean text-white shadow-glow hover:bg-ocean-dark hover:-translate-y-0.5;
+  }
+  .btn-outline {
+    @apply btn border-2 border-ocean text-ocean-dark bg-transparent hover:bg-ocean hover:text-white hover:-translate-y-0.5;
+  }
+  .card {
+    @apply rounded-card border border-slate-200 bg-white p-6 shadow-soft transition-all duration-300;
+  }
+  .card-link:hover { @apply translate-y-[-6px] shadow-glow; }
+  .chip {
+    @apply inline-block rounded-full border border-ocean/20 bg-ocean/5 px-3 py-1 font-mono text-xs text-ocean-dark;
+  }
+  .section-title {
+    @apply mb-10 text-3xl font-display font-bold tracking-tight text-ocean-dark sm:text-4xl;
+  }
+  .eyebrow {
+    @apply mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-ocean;
+  }
+}
+
+/* Utilities layer */
+@layer utilities {
+  .parallax { will-change: transform; }
+  #hero-canvas { background: radial-gradient(circle at 50% 40%, rgba(0, 119, 182, 0.45), rgba(2, 62, 138, 0.65) 70%, rgba(10, 26, 47, 0.95)); }
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.in { opacity: 1; transform: translateY(0); }
+  .glow-text { text-shadow: 0 0 24px rgba(0, 119, 182, 0.35); }
+
+  .nav-solid { @apply bg-white/95 backdrop-blur-md shadow-soft; }
+  .skip-link { @apply fixed left-4 top-3 z-[100] hidden rounded bg-ocean px-4 py-2 font-display font-semibold text-white md:block; }
+
+  .lightbox { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; background: rgba(3, 27, 53, 0.92); padding: 1.5rem; }
+  .lightbox.open { display: flex; }
+  .lightbox-img { max-width: 92vw; max-height: 88vh; border-radius: 0.75rem; box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6); }
+  .lightbox-close { position: absolute; top: 1.5rem; right: 2rem; font-size: 2.5rem; line-height: 1; color: #fff; background: none; border: none; cursor: pointer; }
+}

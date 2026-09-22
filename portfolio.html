@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Bouallegui</title>
+  <meta name="description" content="Selected projects by Bouallegui: security tooling, infrastructure hardening, and systems work.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Portfolio — Bouallegui">
+  <meta property="og:description" content="Selected projects by Bouallegui.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="py-28 bg-gradient-to-b from-ocean-deep to-surface">
+      <div class="container px-5 text-center md:px-8">
+        <p class="eyebrow text-ocean-light">What I build</p>
+        <h1 class="section-title mb-4 text-white">Portfolio</h1>
+        <p class="mx-auto max-w-2xl text-slate-200">A selection of tools and systems I've designed, broken, and rebuilt. Each one starts from a problem I actually ran into.</p>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="container px-5 md:px-8">
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="card card-link fade-in overflow-hidden" data-animate>
+            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/vulnmapper/640/360" alt="VulnMapper" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold">VulnMapper</h3>
+              <p class="mb-3 text-sm text-slate-600">Reconnaissance that turns raw scan data into a prioritized attack surface.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Python</span><span class="chip">Nmap</span><span class="chip">Shodan</span></div>
+              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+            </div>
+          </article>
+          <article class="card card-link fade-in overflow-hidden" data-animate>
+            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/hardenlab/640/360" alt="HardenLab" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold">HardenLab</h3>
+              <p class="mb-3 text-sm text-slate-600">Infrastructure as code that fails the build if a resource violates a benchmark.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Go</span><span class="chip">Terraform</span><span class="chip">CIS</span></div>
+              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+            </div>
+          </article>
+          <article class="card card-link fade-in overflow-hidden" data-animate>
+            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/sentinel/640/360" alt="Sentinel" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold">Sentinel</h3>
+              <p class="mb-3 text-sm text-slate-600">A dependency-free anomaly detector over structured logs.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Rust</span><span class="chip">eBPF</span><span class="chip">Loki</span></div>
+              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+            </div>
+          </article>
+          <article class="card card-link fade-in overflow-hidden" data-animate>
+            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/netaudit/640/360" alt="NetAudit" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold">NetAudit</h3>
+              <p class="mb-3 text-sm text-slate-600">Configuration auditing for firewalls and routers across hybrid clouds.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Python</span><span class="chip">Ansible</span><span class="chip">YAML</span></div>
+              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+            </div>
+          </article>
+          <article class="card card-link fade-in overflow-hidden" data-animate>
+            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/cryptoware/640/360" alt="CryptoWare" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold">CryptoWare</h3>
+              <p class="mb-3 text-sm text-slate-600">A small, auditable crypto library written to be boring by design.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">C++</span><span class="chip">Crypto</span><span class="chip">Tests</span></div>
+              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+            </div>
+          </article>
+          <article class="card card-link fade-in overflow-hidden" data-animate>
+            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/darktrail/640/360" alt="DarkTrail" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold">DarkTrail</h3>
+              <p class="mb-3 text-sm text-slate-600">Local-first telemetry with end-to-end encryption by default.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Rust</span><span class="chip">gRPC</span><span class="chip">SQLite</span></div>
+              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="js/partials.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rebuilding DNS from scratch — Bouallegui</title>
+  <meta name="description" content="A month of breaking my home network taught me more about DNS than any textbook. Here's what stuck.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Rebuilding DNS from scratch — Bouallegui">
+  <meta property="og:description" content="What breaking my home network taught me about DNS.">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/output.css">
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <article class="pt-28 pb-24">
+      <header class="container px-5 md:px-8">
+        <a href="blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean hover:text-ocean-dark mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow">Writeup</p>
+        <h1 class="section-title mb-6 text-3xl font-display font-bold leading-tight sm:text-4xl">Rebuilding DNS from scratch</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-ocean/10 font-display font-bold text-ocean">B</span> Bouallegui</span>
+          <span>·</span><span>Mar 4, 2026</span>
+          <span>·</span><span>12 min read</span>
+        </div>
+      </header>
+
+      <figure class="container mt-10 px-5 md:px-8">
+        <img src="https://picsum.photos/seed/dnspost/1200/500" alt="DNS diagram placeholder" loading="lazy" class="w-full rounded-xl shadow-soft" datalightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">The zone files I kept rewriting until they finally made sense.</figcaption>
+      </figure>
+
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">Every engineer forgets how much they rely on DNS. It just works, or it just doesn't, and in the second case you're usually cursing while reading logs. This month I decided to stop cursing and rebuild a minimal resolver from scratch, one piece at a time, until I could explain exactly what happened to a single query.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Why start with the boring part</h2>
+        <p class="leading-relaxed">I began with the packet. A DNS query is barely more than a name, a type, and a class wrapped in a header. Reading the wire format by hand — hex dumping my own packets — was the first moment things clicked. Everything above it, the caching, the recursion, the retries, only makes sense once you can picture the bytes moving back and forth.</p>
+
+        <blockquote class="border-l-4 border-ocean pl-6 py-2 font-display text-lg text-ocean-dark">
+          "The best way to understand a system you don't trust is to build a smaller one you do, then watch them argue over the same packets."
+        </blockquote>
+
+        <p class="leading-relaxed">Then I built the caching layer. Recursive resolvers live and die by what they remember, and watching a local cache turn a dozen round-trips into one was a great lesson in why the boring optimizations are the boring optimizations.</p>
+
+        <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
+          <p class="font-semibold text-ocean-dark mb-1">Lessons so far</p>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Timeouts and retries are where real networks live.</li>
+            <li>• Caching isn't an optimization here; it's the feature.</li>
+            <li>• Breaking things at home is the fastest path to actually knowing.</li>
+          </ul>
+        </div>
+
+        <p class="leading-relaxed">This is a living writeup — I'll keep it updated as I rebuild each layer. If any of this is wrong, it's intentional: the point is to learn out loud, mistakes and all.</p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="js/partials.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
