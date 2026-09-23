@@ -60,6 +60,13 @@
   .glow-text { text-shadow: 0 0 24px rgba(0, 119, 182, 0.35); }
 
   .nav-solid { @apply bg-white/95 backdrop-blur-md shadow-soft; }
+
+  /* Fixed header: light text over the dark hero at top, dark text once it solidifies on scroll.
+     Hand-written (not a Tailwind utility) so it's never purged. */
+  #site-header a { color: #fff; }
+  #site-header .menu-toggle span { background-color: #fff; }
+  #site-header.nav-solid a { color: #0f172a; }
+  #site-header.nav-solid .menu-toggle span { background-color: #0f172a; }
   .skip-link {
     @apply fixed left-4 top-3 z-[100] hidden rounded bg-ocean px-4 py-2 font-display font-semibold text-white;
     transform: translateY(-150%);

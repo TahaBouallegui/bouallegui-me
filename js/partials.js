@@ -4,16 +4,16 @@ window.PARTIALS = window.PARTIALS || {};
 window.PARTIALS.nav = `
 <header id="site-header" class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
   <div class="container flex h-16 items-center justify-between px-5 md:px-8">
-    <a href="index.html" class="flex items-center gap-2.5 font-display text-lg font-bold text-ocean-dark">
+    <a href="index.html" class="flex items-center gap-2.5 font-display text-lg font-bold text-white">
       <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-ocean font-mono text-sm font-bold text-white">BL</span>
       <span class="nav-brand">Bouallegui</span>
     </a>
     <button class="menu-toggle flex flex-col justify-center gap-1.5 md:hidden" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
-      <span class="block h-0.5 w-6 bg-ink transition-all duration-300"></span>
-      <span class="block h-0.5 w-6 bg-ink transition-all duration-300"></span>
-      <span class="block h-0.5 w-6 bg-ink transition-all duration-300"></span>
+      <span class="block h-0.5 w-6 bg-white transition-all duration-300"></span>
+      <span class="block h-0.5 w-6 bg-white transition-all duration-300"></span>
+      <span class="block h-0.5 w-6 bg-white transition-all duration-300"></span>
     </button>
-    <ul id="main-menu" class="hidden md:flex items-center gap-7 font-display font-medium text-slate-700">
+    <ul id="main-menu" class="hidden md:flex items-center gap-7 font-display font-medium text-white">
       <li><a href="index.html" class="hover:text-ocean">Home</a></li>
       <li><a href="portfolio.html" class="hover:text-ocean">Portfolio</a></li>
       <li><a href="blog.html" class="hover:text-ocean">Blog</a></li>
