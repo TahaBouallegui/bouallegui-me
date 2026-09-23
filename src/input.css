@@ -60,7 +60,20 @@
   .glow-text { text-shadow: 0 0 24px rgba(0, 119, 182, 0.35); }
 
   .nav-solid { @apply bg-white/95 backdrop-blur-md shadow-soft; }
-  .skip-link { @apply fixed left-4 top-3 z-[100] hidden rounded bg-ocean px-4 py-2 font-display font-semibold text-white md:block; }
+  .skip-link {
+    @apply fixed left-4 top-3 z-[100] hidden rounded bg-ocean px-4 py-2 font-display font-semibold text-white;
+    transform: translateY(-150%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    @apply inline-block;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
 
   .lightbox { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; background: rgba(3, 27, 53, 0.92); padding: 1.5rem; }
   .lightbox.open { display: flex; }
