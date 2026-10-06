@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A private cloud, sized for the people who actually use it - Ahmed Bouallegui</title>
+  <meta name="description" content="Immich, Jellyfin, Grocy and SearXNG on a home server, with nothing reachable from the internet. How the tailnet-only setup is put together.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="A private cloud, sized for the people who actually use it">
+  <meta property="og:description" content="Self-hosting with a guest list: tailnet-only services and no WAN exposure.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">NixOS, in pieces</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">A private cloud, sized for the people who actually use it</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-05-10">May 10, 2026</time></span>
+          <span>·</span><a href="../blog.html" class="hover:text-white">Part 4 of 8</a>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">There is a middle option between using a big cloud provider for everything and self-hosting nothing: run the services yourself, but only make them reachable by the handful of devices and people you would hand a key to. That is what the home server, which I will call aleph, is for.</p>
+        <p class="leading-relaxed"><a href="https://immich.app/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">Immich</a> backs up photos the way Google Photos would, except the photos stay on a disk I own. <a href="https://jellyfin.org/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">Jellyfin</a> is the media server, <a href="https://grocy.info/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">Grocy</a> tracks household inventory, and <a href="https://docs.searxng.org/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">SearXNG</a> is a meta-search engine that keeps no logs.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Nothing is exposed to the internet, on purpose</h2>
+        <p class="leading-relaxed">None of these services open a port to the outside world. They sit behind <a href="https://tailscale.com/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">Tailscale</a> and are reachable only from devices that have been added to the tailnet:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">networking.firewall.trustedInterfaces = [ "tailscale0" ];</code></pre>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">services.jellyfin = {
+  enable = true;
+  openFirewall = false;  # no WAN exposure, reachable via tailnet only
+};</code></pre>
+        <p class="leading-relaxed">If you are choosing between this and a reverse proxy with TLS and a domain, they are different jobs. A public service has to defend against the entire internet, permanently. A tailnet-only service only has to be correct for a known, small, authenticated set of devices, and the unauthenticated part of the attack surface never exists. No port scanner finds anything, there is no certificate to renew, and there is no login page to brute-force because there is no login page reachable from outside the tailnet at all.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What it costs</h2>
+        <p class="leading-relaxed">Nobody outside the tailnet can use any of it without being added first. For this setup that is the point. These are not products. They are infrastructure for a small group of people who already trust each other, running on hardware one of us owns and maintains. The way a new person gets in is to ask to be added, which is about the right amount of friction for something shared more like a house than like a service.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The order I would do it in</h2>
+        <p class="leading-relaxed">If you are starting from a fresh NixOS install, three steps in this order save some time.</p>
+        <p class="leading-relaxed">1. Bring up Tailscale first and prove the tailnet works before configuring    any service. <code class="font-mono text-sm text-ocean-dark">networking.firewall.trustedInterfaces = [ "tailscale0" ];</code>    is what makes services listening on that interface reachable. Without it    every service looks broken and the firewall is the reason. 2. Leave <code class="font-mono text-sm text-ocean-dark">openFirewall = false</code> on everything. If a service is unreachable    from inside the tailnet too, then the service is the problem, and that is    a much shorter debug than ruling out the firewall. 3. Only add a domain and ACME when you genuinely need a public hostname. One    of my services runs with <code class="font-mono text-sm text-ocean-dark">enableSSL = false</code> because its configured    hostname does not resolve publicly, and the certificate request fails in    a way that is confusing until you read the error properly.</p>
+        <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
+          <a href="secrets-with-keys-i-already-had.html" class="card card-link p-5" aria-label="Previous part">
+            <span class="eyebrow block">Part 3</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">Secrets, kept with keys I already had</span>
+          </a>
+          <a href="an-editor-built-up-from-nothing.html" class="card card-link p-5 text-right" aria-label="Next part">
+            <span class="eyebrow block">Part 5</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">An editor built up from nothing, on purpose</span>
+          </a>
+        </nav>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">Part 4 of 8 of <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this lives: <a href="../portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

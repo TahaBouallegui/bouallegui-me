@@ -5,6 +5,87 @@
 
 @layer base {
   :root { scroll-behavior: smooth; }
+
+  /* Colour tokens. The light values are Tailwind's own slate scale, so the light theme
+     renders exactly as it did before tokens existed. Dark mode re-declares them; the
+     markup never changes. Values are "r g b" triplets so /opacity utilities keep working. */
+  :root {
+    --surface: 255 255 255;
+    --ink: 10 26 47;
+    --ink-solid: #0f172a;
+    --ocean-ink: 2 62 138;
+    --slate-50: 248 250 252;
+    --slate-100: 241 245 249;
+    --slate-200: 226 232 240;
+    --slate-300: 203 213 225;
+    --slate-400: 148 163 184;
+    --slate-500: 100 116 139;
+    --slate-600: 71 85 105;
+    --slate-700: 51 65 85;
+    --slate-800: 30 41 59;
+    --slate-900: 15 23 42;
+  }
+
+  /* Dark without JavaScript: follow the OS unless the visitor has chosen explicitly. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --surface: 9 16 28;
+      --ink: 226 232 240;
+      --ink-solid: #e2e8f0;
+      --ocean-ink: 76 201 232;
+      --slate-50: 17 26 41;
+      --slate-100: 22 32 49;
+      --slate-200: 35 47 68;
+      --slate-300: 51 65 85;
+      --slate-400: 71 85 105;
+      --slate-500: 148 163 184;
+      --slate-600: 203 213 225;
+      --slate-700: 226 232 240;
+      --slate-800: 241 245 249;
+      --slate-900: 248 250 252;
+    }
+  }
+
+  /* Dark from the toggle. Keep identical to the block above. */
+  :root[data-theme="dark"] {
+    --surface: 9 16 28;
+    --ink: 226 232 240;
+    --ink-solid: #e2e8f0;
+    --ocean-ink: 76 201 232;
+    --slate-50: 17 26 41;
+    --slate-100: 22 32 49;
+    --slate-200: 35 47 68;
+    --slate-300: 51 65 85;
+    --slate-400: 71 85 105;
+    --slate-500: 148 163 184;
+    --slate-600: 203 213 225;
+    --slate-700: 226 232 240;
+    --slate-800: 241 245 249;
+    --slate-900: 248 250 252;
+  }
+
+  /* The dark hero bands are dark in both themes, so the light-on-dark greys used inside
+     them must not follow the inversion. Custom properties inherit, so re-declaring them
+     here puts those shades back to their light-theme values for everything inside.
+     #hero is listed separately: it uses a gradient, not bg-ocean-deep. */
+  .bg-ocean-deep, #hero {
+    --slate-200: 226 232 240;
+    --slate-300: 203 213 225;
+    --slate-400: 148 163 184;
+  }
+
+  /* A theme flip used to stagger: cards and buttons carry transition-all duration-300,
+     links carry transition-colors duration-200, and everything else changes at once, so
+     parts of the page lagged a fifth of a second behind the rest. The toggle puts this
+     class on <html> for the frame in which the theme attribute changes, which makes the
+     whole page swap together. Hover and scroll animations keep their own timings. */
+  html.theme-swap,
+  html.theme-swap *,
+  html.theme-swap *::before,
+  html.theme-swap *::after {
+    transition: none !important;
+  }
+
   html { scroll-behavior: smooth; }
   body {
     @apply bg-surface text-ink font-sans antialiased;
@@ -14,7 +95,7 @@
     @apply bg-ocean text-white;
   }
   a { @apply text-ocean-dark transition-colors duration-200; }
-  a:hover { @apply text-ocean; }
+  a:hover { @apply text-link; }
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
@@ -31,13 +112,19 @@
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-sm font-semibold tracking-wide transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean focus-visible:ring-offset-2;
   }
   .btn-primary {
-    @apply btn bg-ocean text-white shadow-glow hover:bg-ocean-dark hover:-translate-y-0.5;
+    /* Two things here are load-bearing. Not hover:bg-ocean-dark: ocean.dark is the
+       --ocean-ink token, which becomes ocean.glow (#4CC9E8) in the dark theme. And the
+       label has to be re-declared on hover, because the base rule a:hover { text-link }
+       has the same specificity as .btn-primary and lands later in the cascade, which
+       would paint the label in the link colour on top of a background made from that
+       same colour. navy (#023E8A) is a constant: white label, 11.3:1, both themes. */
+    @apply btn bg-ocean text-white shadow-glow hover:bg-navy hover:text-white hover:-translate-y-0.5;
   }
   .btn-outline {
-    @apply btn border-2 border-ocean text-ocean-dark bg-transparent hover:bg-ocean hover:text-white hover:-translate-y-0.5;
+    @apply btn border-2 border-ocean text-ocean-dark bg-transparent hover:bg-navy hover:text-white hover:-translate-y-0.5;
   }
   .card {
-    @apply rounded-card border border-slate-200 bg-white p-6 shadow-soft transition-all duration-300;
+    @apply rounded-card border border-slate-200 bg-surface p-6 shadow-soft transition-all duration-300;
   }
   .card-link:hover { @apply translate-y-[-6px] shadow-glow; }
   .chip {
@@ -47,26 +134,58 @@
     @apply mb-10 text-3xl font-display font-bold tracking-tight text-ocean-dark sm:text-4xl;
   }
   .eyebrow {
-    @apply mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-ocean;
+    @apply mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-link;
   }
 }
 
 /* Utilities layer */
 @layer utilities {
   .parallax { will-change: transform; }
+  /* In-page anchors (portfolio.html#nix-monorepo) must land below the fixed header
+     instead of underneath it. */
+  html { scroll-padding-top: 6.5rem; }
+  /* 100vh overflows mobile browsers with a dynamic URL bar; svh is the safe value where
+     supported, with vh kept as the fallback. */
+  #hero { min-height: 100vh; min-height: 100svh; }
   #hero-canvas { background: radial-gradient(circle at 50% 40%, rgba(0, 119, 182, 0.45), rgba(2, 62, 138, 0.65) 70%, rgba(10, 26, 47, 0.95)); }
-  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .fade-in.in { opacity: 1; transform: translateY(0); }
+  /* Fade-ins are opt-in: the inline script in each <head> puts .js on <html>. Without JS (or
+     if main.js throws before the observer runs) content stays visible instead of opacity:0. */
+  .js .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .js .fade-in.in { opacity: 1; transform: translateY(0); }
   .glow-text { text-shadow: 0 0 24px rgba(0, 119, 182, 0.35); }
 
-  .nav-solid { @apply bg-white/95 backdrop-blur-md shadow-soft; }
+  /* Applied to #site-header itself (see navSolid in js/main.js) so the backdrop lands on the
+     fixed bar rather than on the zero-height <nav data-part="nav"> wrapper around it. */
+  .nav-solid { @apply bg-surface/95 backdrop-blur-md shadow-soft; }
 
   /* Fixed header: light text over the dark hero at top, dark text once it solidifies on scroll.
-     Hand-written (not a Tailwind utility) so it's never purged. */
-  #site-header a { color: #fff; }
-  #site-header .menu-toggle span { background-color: #fff; }
-  #site-header.nav-solid a { color: #0f172a; }
-  #site-header.nav-solid .menu-toggle span { background-color: #0f172a; }
+     Hand-written (not a Tailwind utility) so it's never purged.
+     Scoped to the bar's own <div>: #mobile-menu sits below it and is always bg-white, so its
+     links must not inherit the white rule - an ID selector outranks the panel's text-slate-800
+     class, which left the open menu white-on-white until nav-solid kicked in past 80px of scroll. */
+  #site-header > div a { color: #fff; }
+  #site-header > div .menu-toggle span { background-color: #fff; }
+  #site-header.nav-solid > div a { color: var(--ink-solid); }
+  #site-header.nav-solid > div .menu-toggle span { background-color: var(--ink-solid); }
+  #mobile-menu a { color: var(--ink-solid); }
+  #mobile-menu a:hover, #mobile-menu a:focus-visible { color: #0077B6; }
+
+  /* Theme toggle. The sun offers "go back to light", the moon offers "go dark", and the
+     header keeps the button legible whether it is floating over the hero or solid. */
+  .theme-icon-sun { display: none; }
+  .theme-icon-moon { display: block; }
+  [data-theme="dark"] .theme-icon-sun { display: block; }
+  [data-theme="dark"] .theme-icon-moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-icon-sun { display: block; }
+    :root:not([data-theme="light"]) .theme-icon-moon { display: none; }
+  }
+  /* No box: the icon inherits the nav's own colour and hovers to the same accent the
+     menu links use, so it reads as one more nav item rather than a widget glued on. */
+  #site-header > div .theme-toggle { color: #fff; }
+  #site-header > div .theme-toggle:hover { color: #4CC9E8; }
+  #site-header.nav-solid > div .theme-toggle { color: var(--ink-solid); }
+  #site-header.nav-solid > div .theme-toggle:hover { color: rgb(var(--ocean-ink)); }
   .skip-link {
     @apply fixed left-4 top-3 z-[100] hidden rounded bg-ocean px-4 py-2 font-display font-semibold text-white;
     transform: translateY(-150%);
@@ -86,4 +205,36 @@
   .lightbox.open { display: flex; }
   .lightbox-img { max-width: 92vw; max-height: 88vh; border-radius: 0.75rem; box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6); }
   .lightbox-close { position: absolute; top: 1.5rem; right: 2rem; font-size: 2.5rem; line-height: 1; color: #fff; background: none; border: none; cursor: pointer; }
+
+  /* Lightbox triggers: made keyboard-operable by js/main.js (role="button", tabindex="0"). */
+  [data-lightbox] { cursor: pointer; }
+  [data-lightbox]:focus-visible { outline: 2px solid #0077B6; outline-offset: 3px; }
+}
+
+/* Honour the motion preference: no smooth scroll, no parallax travel, no fade travel,
+   no looping animation. Content is never left hidden as a side effect. */
+@media (prefers-reduced-motion: reduce) {
+  :root, html { scroll-behavior: auto; }
+  .js .fade-in { opacity: 1; transform: none; transition: none; }
+  [data-parallax] { transform: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The résumé page gets printed and "saved as PDF" by recruiters: strip the chrome,
+   drop the gradients, keep entries from splitting across pages, and print the URLs
+   that only exist as link text. */
+@media print {
+  #site-header, #back-to-top, .skip-link, #lightbox-root, #hero-canvas, .btn-primary, .btn-outline, .eyebrow { display: none !important; }
+  body { background: #fff !important; color: #000; font-size: 11pt; }
+  main, section, aside, .card { background: #fff !important; }
+  h1, h2, h3, h4, p, li, code { color: #111 !important; }
+  .card { box-shadow: none !important; border: 1px solid #cbd5e1; break-inside: avoid; }
+  li, h2, h3 { break-inside: avoid; }
+  a { color: #111 !important; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #555; }
 }

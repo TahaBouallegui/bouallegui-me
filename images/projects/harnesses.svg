@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Diagram: three harnesses, pi, opencode and dsh, all pointing at three OpenAI-compatible endpoints inside a dashed boundary marked my own hardware only: amal on port 8901 with ik_llama.cpp, gimel on port 8080 with llama.cpp, and gimel2 on port 8080 with Strata; the first two are configured for 256k context and gimel for 1M. Below the boundary, an arrow to someone else's inference endpoint with a slash through it">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#01324F"/>
+      <stop offset="1" stop-color="#0A1A2F"/>
+    </linearGradient>
+    <pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#0077B6" stroke-opacity="0.14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#g)"/>
+  <g transform="translate(0 16)">
+
+    <!-- harnesses -->
+    <text x="40" y="30" font-family="'JetBrains Mono',monospace" font-size="11" fill="#fff" fill-opacity="0.45">the harness</text>
+
+    <g stroke="#0096C7" stroke-width="1.6" fill="#0077B6" fill-opacity="0.18">
+      <rect x="40" y="40" width="110" height="30" rx="5"/>
+      <rect x="40" y="86" width="110" height="30" rx="5"/>
+      <rect x="40" y="132" width="110" height="30" rx="5"/>
+    </g>
+    <text x="95" y="60" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.9">pi</text>
+    <text x="95" y="106" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.9">opencode</text>
+    <text x="95" y="152" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.9">dsh</text>
+
+    <g fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1.3">
+      <path d="M150 55 H 222"/><path d="M218 51 L 226 55 L 218 59"/>
+      <path d="M150 101 H 222"/><path d="M218 97 L 226 101 L 218 105"/>
+      <path d="M150 147 H 222"/><path d="M218 143 L 226 147 L 218 151"/>
+    </g>
+    <text x="105" y="176" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.5">openai-completions</text>
+
+    <!-- tailnet boundary -->
+    <rect x="232" y="34" width="368" height="176" rx="14" fill="none" stroke="#4CC9E8" stroke-width="1.4" stroke-opacity="0.55" stroke-dasharray="6 5"/>
+    <text x="248" y="54" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4CC9E8" fill-opacity="0.75">my own hardware only</text>
+
+    <g stroke="#4CC9E8" stroke-width="1.4" fill="#4CC9E8" fill-opacity="0.10">
+      <rect x="262" y="62" width="310" height="40" rx="5"/>
+      <rect x="262" y="110" width="310" height="40" rx="5"/>
+      <rect x="262" y="158" width="310" height="40" rx="5"/>
+    </g>
+    <text x="274" y="80" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">amal :8901</text>
+    <text x="274" y="95" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">ik_llama.cpp, Ornith 1.5 35B Q4_K_M</text>
+    <text x="274" y="128" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">gimel :8080</text>
+    <text x="274" y="143" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">llama.cpp, Cyber-Tiel-Coder 35B A3B</text>
+    <text x="274" y="176" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">gimel2 :8080</text>
+    <text x="274" y="191" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">Strata, Qwen3.8-Flash-Next IQ3_S</text>
+
+    <!-- what is not there -->
+    <g fill="none" stroke="#fff" stroke-opacity="0.45" stroke-width="1.3">
+      <path d="M40 254 H 128"/>
+      <path d="M124 250 L 132 254 L 124 258"/>
+    </g>
+    <circle cx="152" cy="254" r="13" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1.4"/>
+    <path d="M143 245 L 161 263" stroke="#fff" stroke-opacity="0.5" stroke-width="1.4"/>
+    <text x="176" y="258" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.5">someone else's inference endpoint</text>
+
+    <g stroke="#0096C7" stroke-opacity="0.35" stroke-width="1">
+      <path d="M40 282 H 600"/>
+    </g>
+    <text x="40" y="304" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4CC9E8" fill-opacity="0.75">the api key is the letter x, the authentication is the wireguard interface</text>
+    <text x="40" y="322" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0096C7" fill-opacity="0.6">weights, quants, prompts and configs all on hardware I own</text>
+  </g>
+</svg>

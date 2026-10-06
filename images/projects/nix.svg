@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="A Nix flake drawn as six lambdas, feeding three machines: a ThinkPad, a retired laptop and a headless server called aleph. The command line reads nixos-rebuild switch --flake .#aleph">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#01324F"/>
+      <stop offset="1" stop-color="#0A1A2F"/>
+    </linearGradient>
+    <pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#0077B6" stroke-opacity="0.14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#g)"/>
+  <!-- The six-lambda logomark follows the parametric definition published by the NixOS
+       project (logo/parametric-flake.scad in NixOS/nixos-artwork). NixOS design assets
+       are CC BY 4.0, (c) NixOS Project and contributors, https://github.com/NixOS/branding.
+       Colours, sizes and everything around the mark are this site's own. -->
+  <g transform="translate(0 12)">
+
+    <text x="150" y="34" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#fff" fill-opacity="0.45">one flake</text>
+    <polygon points="90.27,197.87 102.71,176.31 156.22,268.99 131.33,268.99 118.89,247.44 106.44,268.99 94.00,268.99 87.78,258.22 106.44,225.89" fill="#0096C7" fill-opacity="0.92"/>
+    <polygon points="142.53,236.66 130.09,215.11 237.11,215.11 224.67,236.66 199.78,236.66 212.22,258.22 206.00,268.99 193.56,268.99 174.89,236.66" fill="#4CC9E8" fill-opacity="0.92"/>
+    <polygon points="202.27,210.80 177.38,210.80 230.89,118.11 243.33,139.67 230.89,161.22 255.78,161.22 262.00,172.00 255.78,182.78 218.44,182.78" fill="#0096C7" fill-opacity="0.92"/>
+    <polygon points="209.73,146.13 197.29,167.69 143.78,75.01 168.67,75.01 181.11,96.56 193.56,75.01 206.00,75.01 212.22,85.78 193.56,118.11" fill="#4CC9E8" fill-opacity="0.92"/>
+    <polygon points="157.47,107.34 169.91,128.89 62.89,128.89 75.33,107.34 100.22,107.34 87.78,85.78 94.00,75.01 106.44,75.01 125.11,107.34" fill="#0096C7" fill-opacity="0.92"/>
+    <polygon points="97.73,133.20 122.62,133.20 69.11,225.89 56.67,204.33 69.11,182.78 44.22,182.78 38.00,172.00 44.22,161.22 81.56,161.22" fill="#4CC9E8" fill-opacity="0.92"/>
+    <text x="150" y="316" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#4CC9E8" fill-opacity="0.85">flake.nix</text>
+
+    <g fill="none" stroke="#fff" stroke-opacity="0.45" stroke-width="1.3">
+    <path d="M272 172 H 332 V 95 H 344"/>
+    <path d="M340 91 L348 95 L340 99"/>
+    <path d="M272 172 H 332 V 171 H 344"/>
+    <path d="M340 167 L348 171 L340 175"/>
+    <path d="M272 172 H 332 V 247 H 344"/>
+    <path d="M340 243 L348 247 L340 251"/>
+    </g>
+
+    <rect x="352" y="74" width="230" height="42" rx="6" fill="#0077B6" fill-opacity="0.18" stroke="#0096C7" stroke-width="1.6"/>
+    <text x="370" y="92" font-family="'JetBrains Mono',monospace" font-size="13" fill="#fff" fill-opacity="0.92">ThinkPad</text>
+    <text x="370" y="107" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.5">the one I use</text>
+    <rect x="352" y="150" width="230" height="42" rx="6" fill="#0077B6" fill-opacity="0.18" stroke="#0096C7" stroke-width="1.6"/>
+    <text x="370" y="168" font-family="'JetBrains Mono',monospace" font-size="13" fill="#fff" fill-opacity="0.92">retired laptop</text>
+    <text x="370" y="183" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.5">kept for conservation</text>
+    <rect x="352" y="226" width="230" height="42" rx="6" fill="#0077B6" fill-opacity="0.18" stroke="#0096C7" stroke-width="1.6"/>
+    <text x="370" y="244" font-family="'JetBrains Mono',monospace" font-size="13" fill="#fff" fill-opacity="0.92">aleph</text>
+    <text x="370" y="259" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.5">headless, no display</text>
+
+    <text x="352" y="300" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.7">nixos-rebuild switch --flake .#<tspan fill="#4CC9E8" fill-opacity="1">aleph</tspan></text>
+  </g>
+</svg>

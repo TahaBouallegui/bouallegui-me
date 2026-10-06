@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Running the Fabricarium FabLab">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#01324F"/>
+      <stop offset="1" stop-color="#0A1A2F"/>
+    </linearGradient>
+    <pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#0077B6" stroke-opacity="0.14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#g)"/>
+  <g transform="translate(0 -4)">
+  
+  <g fill="none" stroke="#0096C7" stroke-width="2">
+    <rect x="212" y="176" width="216" height="42" stroke-opacity="0.7"/>
+    <path d="M212 176l108-56 108 56" stroke-opacity="0.45"/>
+    <path d="M244 176v-34h152v34" stroke-opacity="0.3"/>
+  </g>
+  <g stroke="#fff" stroke-width="1.5" stroke-opacity="0.55">
+    <line x1="236" y1="186" x2="404" y2="186"/><line x1="236" y1="195" x2="404" y2="195"/><line x1="236" y1="204" x2="404" y2="204"/><line x1="236" y1="213" x2="404" y2="213"/>
+  </g>
+  <circle cx="320" cy="120" r="6" fill="#0077B6"/>
+  <text x="212" y="248" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0096C7" fill-opacity="0.7">bed levelling</text>
+  </g>
+</svg>

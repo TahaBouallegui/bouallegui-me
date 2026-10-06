@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The wifi module stopped shelling out to iw - Ahmed Bouallegui</title>
+  <meta name="description" content="Two commits in the lili wifi module: interface discovery over an nl80211 dump, then replacing every fork and exec of iw and ip with genl and rtnetlink calls.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="The wifi module stopped shelling out to iw">
+  <meta property="og:description" content="Interface discovery over an nl80211 dump, then replacing every fork and exec of iw and ip with genl and rtnetlink calls.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/nl80211-wireless-detection.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/nl80211-wireless-detection.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">Field notes</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">The wifi module stopped shelling out to iw</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-08-21">Aug 21, 2026</time></span>
+          <span>·</span><span>from internship work on the lili wifi module</span>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+
+      <figure class="container mt-10 px-5 md:px-8">
+        <img src="../images/projects/wireless.svg" alt="Diagram: on the left the wifi module forks and execs iw and ip before reaching the kernel; on the right it sends nl80211 and rtnetlink messages over one socket" width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">Before: the module asks two other programs to change the radio. After: it sends the messages itself.</figcaption>
+      </figure>
+
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">lili is the device detection project I worked on during the research internship: several probes (wifi, bluetooth, lora, gps) listen for objects nearby and publish what they hear to an MQTT bus. I worked on the wifi module, and the change I got the most out of is a deletion. The module used to reconfigure a wireless interface by starting another program. Two commits in July 2026 removed that habit. The code sits in the university GitLab and is not public, so everything quoted below is quoted from it.</p>
+        <p class="leading-relaxed">The history in that repository goes back to 2021, so the module I joined had a few years of decisions in it, and calling <code class="font-mono text-sm text-ocean-dark">iw</code> was a reasonable one. It is quick to write and easy to read. It is also a subprocess, a PATH lookup, a dependency on a program being installed on the probe, and an exit status as the only way to find out what went wrong.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What the module does</h2>
+        <p class="leading-relaxed">It creates a monitor interface (<code class="font-mono text-sm text-ocean-dark">mon0</code> on <code class="font-mono text-sm text-ocean-dark">phy0</code> by default), captures on it with pcap, and checks that the datalink is <code class="font-mono text-sm text-ocean-dark">DLT_IEEE802_11_RADIO</code> before trusting anything. Each frame goes through a radiotap iterator and then an 802.11 management frame parser, which keeps two linked lists: devices and access points, each holding a MAC and the last signal level seen. Three MQTT topics carry the result. <code class="font-mono text-sm text-ocean-dark">wifi/raw</code> gets the frame itself, <code class="font-mono text-sm text-ocean-dark">wifi/dev/new</code>, <code class="font-mono text-sm text-ocean-dark">upd</code> and <code class="font-mono text-sm text-ocean-dark">del</code> get the objects, and <code class="font-mono text-sm text-ocean-dark">wifi/net/link</code> gets a pair of ids that were seen talking.</p>
+        <p class="leading-relaxed">The radio does not stay put. A detached thread walks a FIFO of 31 channels across 2.4 and 5 GHz, sleeping 4 seconds between switches, so a full sweep takes just over two minutes.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The hot path was a subprocess</h2>
+        <p class="leading-relaxed">That thread called <code class="font-mono text-sm text-ocean-dark">set_channel</code> every four seconds. This is what <code class="font-mono text-sm text-ocean-dark">set_channel</code> was:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">int set_channel(const char *iface, unsigned char chan)
+{
+    pid_t child;
+    int status = 0;
+    char str_chan[8] = {0};
+    if (chan &lt; 1 || chan &gt; 140) {
+        fprintf(stderr,
+            "Tentative d'utiliser le channel WiFi %hhu, "
+            "non-existant.\n",
+            chan);
+        return -1;
+    }
+    snprintf(str_chan, sizeof str_chan, "%hhu", chan);
+
+    if (veryverbose) {
+        printf("Execution de `iw dev %s set channel %s`\n", iface,
+               str_chan);
+    }
+    if ((child = fork()) == 0) {
+        execlp("iw", "iw", "dev", iface, "set", "channel", str_chan,
+               NULL);
+    }
+    waitpid(child, &amp;status, 0);
+    return WEXITSTATUS(status);
+}</code></pre>
+
+        <p class="leading-relaxed">A fork, an exec of whatever <code class="font-mono text-sm text-ocean-dark">iw</code> is first on PATH, a waitpid, and a <code class="font-mono text-sm text-ocean-dark">WEXITSTATUS</code>. Fifteen times a minute, about 900 times an hour, to hand the kernel something it exposes as a single netlink message.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Setup did it three more times</h2>
+        <p class="leading-relaxed">Bringing the capture interface up was the same pattern, repeated:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">if ((child = fork()) == 0) {
+        PERR_CALL_L0(execlp("iw", "iw", "phy", physical_iface,
+                    "interface", "add", monitor_iface, "type",
+                    "monitor", NULL));
+    }
+    waitpid(child, NULL, 0); // TODO: verifier echec
+
+    for (char **iface = wifi_ifaces; *iface != NULL; iface++) {
+        if (verbose) {
+            printf("Desactivation de l'interface %s\n", *iface);
+            printf("`ip link set %s down`\n", *iface);
+        }
+        if ((child = fork()) == 0) {
+            PERR_CALL_L0(execlp("ip", "ip", "link", "set", *iface,
+                        "down", NULL));
+        }
+        waitpid(child, NULL, 0);
+    }
+
+    if (verbose) {
+        printf("Activation de l'interface %s\n", monitor_iface);
+        printf("`ip link set %s up`\n", monitor_iface);
+    }
+    if ((child = fork()) == 0) {
+        PERR_CALL_L0(execlp("ip", "ip", "link", "set", monitor_iface,
+                    "up", NULL));
+    }
+    waitpid(child, NULL, 0);</code></pre>
+
+        <p class="leading-relaxed">Five <code class="font-mono text-sm text-ocean-dark">execlp</code> sites in the file. The error handling was a comment: <code class="font-mono text-sm text-ocean-dark">waitpid(child, NULL, 0); // TODO: verifier echec</code>. The list of interfaces to bring down was also hardcoded as <code class="font-mono text-sm text-ocean-dark">{"wlan0", NULL}</code>, which stops being funny the first time someone runs a probe with a USB adapter, because those come up named after their MAC. The config in the repository points at one such <code class="font-mono text-sm text-ocean-dark">wlx...</code> interface.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">First commit: ask the kernel which interfaces exist</h2>
+        <p class="leading-relaxed"><code class="font-mono text-sm text-ocean-dark">NL80211_CMD_GET_INTERFACE</code> sent with <code class="font-mono text-sm text-ocean-dark">NLM_F_DUMP | NLM_F_REQUEST</code> gives one netlink message back per wireless interface. libnl hands each one to a callback, and the callback reads <code class="font-mono text-sm text-ocean-dark">NL80211_ATTR_IFNAME</code> and strdups it into a NULL-terminated array capped at 5 entries. That is the whole trick, and it replaced a hardcoded name.</p>
+        <p class="leading-relaxed">The commit is 160 lines, and a suspicious number of them are socket boilerplate: allocate, <code class="font-mono text-sm text-ocean-dark">genl_connect</code>, <code class="font-mono text-sm text-ocean-dark">genl_ctrl_resolve</code>, allocate a message, install the callback, send, receive, free. The second commit pulled all of that into one place.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Second commit: the state changes go through netlink as well</h2>
+        <p class="leading-relaxed">437 insertions and 262 deletions across four files. It starts with a session object, opened once in <code class="font-mono text-sm text-ocean-dark">main_init</code> and closed in <code class="font-mono text-sm text-ocean-dark">main_cleanup</code>:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">struct nl80211_session {
+    struct nl_sock *sock;
+    int id;    // id de la famille nl80211
+};
+
+static int nl80211_session_init(struct nl80211_session *s)
+{
+    int ret;
+
+    s-&gt;sock = nl_socket_alloc();
+    if (!s-&gt;sock) {
+        fprintf(stderr, "Impossible d'allouer un socket netlink\n");
+        return -1;
+    }
+
+    ret = genl_connect(s-&gt;sock);
+    if (ret &lt; 0) {
+        fprintf(stderr, "Impossible de connecter le socket netlink (code %d)\n", ret);
+        nl_socket_free(s-&gt;sock);
+        return ret;
+    }
+
+    ret = genl_ctrl_resolve(s-&gt;sock, "nl80211");
+    if (ret &lt; 0) {
+        fprintf(stderr, "Famille nl80211 non trouvee (code %d)\n", ret);
+        nl_socket_free(s-&gt;sock);
+        return ret;
+    }
+    s-&gt;id = ret;
+
+    return 0;
+}</code></pre>
+
+        <p class="leading-relaxed">Five nl80211 commands cover everything the module needs:</p>
+        <ul class="space-y-2 list-disc list-inside">
+          <li><code class="font-mono text-sm text-ocean-dark">GET_INTERFACE</code>, dumped, to list what is on the machine.</li>
+          <li><code class="font-mono text-sm text-ocean-dark">GET_WIPHY</code>, dumped, to turn a name like <code class="font-mono text-sm text-ocean-dark">phy0</code> into the u32 index nl80211 wants.</li>
+          <li><code class="font-mono text-sm text-ocean-dark">NEW_INTERFACE</code> with <code class="font-mono text-sm text-ocean-dark">WIPHY</code>, <code class="font-mono text-sm text-ocean-dark">IFNAME</code> and <code class="font-mono text-sm text-ocean-dark">IFTYPE</code> set to <code class="font-mono text-sm text-ocean-dark">NL80211_IFTYPE_MONITOR</code>.</li>
+          <li><code class="font-mono text-sm text-ocean-dark">DEL_INTERFACE</code> with an ifindex, called at startup in case <code class="font-mono text-sm text-ocean-dark">mon0</code> already exists and again in <code class="font-mono text-sm text-ocean-dark">main_cleanup</code>.</li>
+          <li><code class="font-mono text-sm text-ocean-dark">SET_WIPHY</code> with <code class="font-mono text-sm text-ocean-dark">WIPHY_FREQ</code> and <code class="font-mono text-sm text-ocean-dark">CHANNEL_WIDTH</code>, which is the one the hopping thread runs every four seconds.</li>
+        </ul>
+
+        <p class="leading-relaxed">They all have the same shape:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">static int nl80211_create_interface(struct nl80211_session *s, int wiphy_idx,
+                                    const char *ifname, enum nl80211_iftype type)
+{
+    struct nl_msg *msg;
+    int ret;
+
+    msg = nlmsg_alloc();
+    if (!msg) return -1;
+
+    genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, s-&gt;id, 0, 0,
+                NL80211_CMD_NEW_INTERFACE, 0);
+
+    NLA_PUT_U32(msg, NL80211_ATTR_WIPHY, wiphy_idx);
+    NLA_PUT_STRING(msg, NL80211_ATTR_IFNAME, ifname);
+    NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, type);
+
+    ret = nl_send_auto(s-&gt;sock, msg);
+    if (ret &lt; 0) {
+        fprintf(stderr, "nl80211_create_interface: send error %d\n", ret);
+        nlmsg_free(msg);
+        return ret;
+    }
+
+    ret = nl_recvmsgs_default(s-&gt;sock);
+    if (ret &lt; 0)
+        fprintf(stderr, "nl80211_create_interface: recv error %d\n", ret);
+
+    nlmsg_free(msg);
+    return ret;
+
+nla_put_failure:
+    nlmsg_free(msg);
+    return -NLE_NOMEM;
+}</code></pre>
+
+        <p class="leading-relaxed">Two things in there are worth knowing before you write your own. <code class="font-mono text-sm text-ocean-dark">NLA_PUT_U32</code> is a macro that jumps to a label called <code class="font-mono text-sm text-ocean-dark">nla_put_failure</code> when an attribute does not fit, which is why every helper ends with that label returning <code class="font-mono text-sm text-ocean-dark">-NLE_NOMEM</code>. And nl80211 addresses interfaces by index, so <code class="font-mono text-sm text-ocean-dark">if_nametoindex</code> sits at the top of the ones that take a name.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Bringing an interface up is a different family</h2>
+        <p class="leading-relaxed">nl80211 creates the interface. It does not set <code class="font-mono text-sm text-ocean-dark">IFF_UP</code>, because that belongs to rtnetlink, so the two <code class="font-mono text-sm text-ocean-dark">ip link set</code> calls became one helper over libnl-route:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">// Recuperation du lien actuel
+    struct rtnl_link *link;
+    ret = rtnl_link_get_kernel(sk, 0, ifname, &amp;link);
+    if (ret &lt; 0) {
+        fprintf(stderr, "rtnl_link_set_up: cannot get link %s (err %d)\n", ifname, ret);
+        nl_socket_free(sk);
+        return ret;
+    }
+
+    // Creation d'une copie pour appliquer les modifications
+    struct rtnl_link *new_link = rtnl_link_alloc();
+    if (!new_link) {
+        rtnl_link_put(link);
+        nl_socket_free(sk);
+        return -NLE_NOMEM;
+    }
+
+    // Copie des proprietes existantes
+    rtnl_link_set_ifindex(new_link, rtnl_link_get_ifindex(link));
+    unsigned int flags = rtnl_link_get_flags(link);
+    if (up)
+        flags |= IFF_UP;
+    else
+        flags &amp;= ~IFF_UP;
+    rtnl_link_set_flags(new_link, flags);
+
+    // Passage du lien original (non modifie) et du nouveau lien modifie
+    ret = rtnl_link_change(sk, link, new_link, 0);</code></pre>
+
+        <p class="leading-relaxed">libnl wants the original object and the modified one so it can work out the difference itself, which is why the code copies the ifindex and the flags into a fresh <code class="font-mono text-sm text-ocean-dark">rtnl_link</code> before flipping the bit.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Channels became frequencies</h2>
+        <p class="leading-relaxed">The set path in nl80211 has no notion of a channel number. It takes <code class="font-mono text-sm text-ocean-dark">NL80211_ATTR_WIPHY_FREQ</code> in MHz, so the FIFO of channels became a FIFO of frequencies and one small function appeared:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">static uint32_t channel_to_freq(unsigned int channel)
+{
+    if (channel &gt;= 1 &amp;&amp; channel &lt;= 14)
+        return 2407 + channel * 5;   // bande 2.4 GHz
+    else if (channel &gt;= 36 &amp;&amp; channel &lt;= 165)
+        return 5000 + channel * 5;   // bande 5 GHz
+    else
+        return 0; // invalide
+}</code></pre>
+
+        <p class="leading-relaxed">The 5 GHz line looks wrong for a second. It is not: channel 36 is 5180 MHz, and 5000 plus 36 times 5 is exactly that.</p>
+
+        <p class="leading-relaxed">The hopping thread kept its shape and lost the fork:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">void *channel_handler_run(__attribute__((unused)) void *v)
+{
+    uint32_t current_freq = START_FREQ;
+    while (!quit) {
+        current_freq = get_next_freq(&amp;fifo);
+        usleep(channel_switch_delay);
+        if (nl_session_ptr)
+            nl80211_set_freq(nl_session_ptr, monitor_iface, current_freq,
+                             NL80211_CHAN_WIDTH_20_NOHT);
+    }
+    return NULL;
+}</code></pre>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What the rewrite is worth</h2>
+        <p class="leading-relaxed">I did not benchmark it, so there is no before and after number here. What changed is structural. The steady state no longer creates a process every four seconds. The module no longer needs <code class="font-mono text-sm text-ocean-dark">iw</code> and <code class="font-mono text-sm text-ocean-dark">ip</code> installed to run. A failure comes back as a libnl error code printed next to the call that produced it, instead of an exit status from a child process.</p>
+        <p class="leading-relaxed">The <code class="font-mono text-sm text-ocean-dark">geteuid() != 0</code> check that used to sit in <code class="font-mono text-sm text-ocean-dark">monitor_setup</code> went away with the exec calls. The netlink send fails on its own now and prints its own error. I think that is the better trade, but it is harder to read when it happens over SSH on a machine you have not configured.</p>
+        <p class="leading-relaxed">Two things are still open in that file. <code class="font-mono text-sm text-ocean-dark">main_cleanup</code> ends with <code class="font-mono text-sm text-ocean-dark">//TODO (OPTIONNEL) liberer les interfaces wifi aussi</code>, and the doc comment on the interface listing still carries <code class="font-mono text-sm text-ocean-dark">\todo Séparer la sortie par interface physique</code>, which starts to matter as soon as a probe has more than one radio. The header is also still declaring <code class="font-mono text-sm text-ocean-dark">set_freq</code> and <code class="font-mono text-sm text-ocean-dark">next_channel</code>, and neither has a definition anywhere in the tree any more.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Building just this module</h2>
+        <p class="leading-relaxed">The radiotap library the parser links against is packaged in Kali and, as far as I could find, nowhere convenient, so the README tells you to clone it and run cmake yourself. <code class="font-mono text-sm text-ocean-dark">wifi/flake.nix</code> builds this module on its own: it fetches radiotap-library into a derivation, writes a <code class="font-mono text-sm text-ocean-dark">lili.h</code> holding the handful of macros the module expects, and compiles three translation units against libnl, mosquitto, libpcap and cjson. It is still untracked in the repository, so treat it as scratch work rather than something the project has adopted.</p>
+
+        <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
+          <p class="font-semibold text-ocean-dark mb-1">If you are making the same replacement</p>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Do the read-only commands first. A <code class="font-mono text-xs">GET_INTERFACE</code> dump gives you a socket, a family id and a callback in one commit, and nothing is damaged if you get it wrong.</li>
+            <li>• Keep one socket for the life of the process. The first version resolved the family inside the listing function, which is fine once and wasteful in a loop.</li>
+            <li>• Work out which netlink family owns the operation before searching for a command. Interface creation is nl80211, <code class="font-mono text-xs">IFF_UP</code> is rtnetlink, and looking for an nl80211 command for the second one costs an afternoon.</li>
+            <li>• Read <code class="font-mono text-xs">include/uapi/linux/nl80211.h</code>. The attribute names live there and it is the only place they are authoritative.</li>
+          </ul>
+        </div>
+
+        <h2 class="mt-2 text-2xl font-display font-semibold text-ocean-dark">Further reading</h2>
+        <ul class="space-y-2">
+          <li><a href="https://docs.kernel.org/80211/nl80211.html" class="font-semibold text-link hover:text-ocean-dark">The kernel's nl80211 documentation</a>: what each command expects and which attributes are required.</li>
+          <li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/nl80211.h" class="font-semibold text-link hover:text-ocean-dark"><code class="font-mono text-sm">include/uapi/linux/nl80211.h</code></a>: the enums and attribute names.</li>
+          <li><a href="https://www.infradead.org/~tgr/libnl/doc/core.html" class="font-semibold text-link hover:text-ocean-dark">libnl core documentation</a>: sockets, callbacks and the error codes.</li>
+          <li><a href="https://www.infradead.org/~tgr/libnl/doc/route.html" class="font-semibold text-link hover:text-ocean-dark">libnl-route documentation</a>: the rtnetlink objects used to change link flags.</li>
+        </ul>
+
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">A keyboard that took out its own MCU</a></li>
+            <li><a href="a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">The config those machines run is written up in <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a> (eight parts).</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this fits: <a href="../portfolio.html#wireless" class="font-semibold text-link hover:text-ocean-dark">Wireless detection over nl80211</a> in the portfolio.</p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

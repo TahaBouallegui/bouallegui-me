@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SPDX-FileCopyrightText: 2026 Ahmed Taha Bouallegui -->
+  <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What an AWS account looks like from the inside - Ahmed Bouallegui</title>
+  <meta name="description" content="Everything I run lives on hardware I own, so I spent time in an AWS account to see how the same jobs look when someone else owns the machine: security groups, key pairs, instance roles, and what keeps billing after you stop the instance.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="What an AWS account looks like from the inside">
+  <meta property="og:description" content="Security groups, key pairs, instance roles, and what keeps billing after you stop the instance. Notes from the part of the stack I had never touched.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/an-aws-account-from-the-inside.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/an-aws-account-from-the-inside.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">Field notes</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">What an AWS account looks like from the inside</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2025-11-16">Nov 16, 2025</time></span>
+          <span>·</span><span>from an AWS account I opened in September 2025</span>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+
+      <figure class="container mt-10 px-5 md:px-8">
+        <img src="../images/projects/aws.svg" alt="Diagram: on top, a path from a laptop through a security group to an EC2 instance running nginx on port 80 in eu-west-3, the Paris region. Below, three tiles for what keeps existing after the instance is stopped: the EBS volume, the public IPv4 address, and the instance itself, which is the only one of the three that stops being billed." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">The part of the setup that stuck in my head, and the part that keeps costing after you stop the machine.</figcaption>
+      </figure>
+
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">Everything I run runs on hardware I can point at: my laptop, the retired laptop I keep for conservation, and a headless machine I call aleph. I had never operated inside a cloud account, and that gap bothered me, because most of what I read about security and infrastructure assumes the reader knows what an account looks like from the inside. So in September 2025 I opened one, put a single EC2 instance on the free tier, and spent time moving through it.</p>
+        <p class="leading-relaxed">This is written about a year later, so it is a description of how the platform behaves rather than a log of what I typed. The parts worth keeping are the ones that changed how I think about the machines I already run, and those are what this note is about.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The free study guide as a map</h2>
+        <p class="leading-relaxed">I began with the <a href="https://docs.aws.amazon.com/pdfs/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.pdf" class="font-semibold text-link hover:text-ocean-dark">CLF-C02 exam guide</a>, which is a free PDF and the closest thing AWS publishes to a table of contents for the platform. It divides the content into four domains: Cloud Concepts at 24 percent, then Security and Compliance, Cloud Technology, and Cloud Financial Management. As a map it is excellent. As teaching it is weak, because almost every line is a noun phrase. Region, availability zone, edge location, security group, key pair, AMI, instance profile, launch template.</p>
+        <p class="leading-relaxed">Reading those words was easy and almost none of them stayed, because they named operations I already performed under other names. So I launched an instance, to have one thing the nouns could point at.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The account, and the free tier</h2>
+        <p class="leading-relaxed">The free tier moved just before I got there. The <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-free-tier-usage.html" class="font-semibold text-link hover:text-ocean-dark">EC2 free tier usage page</a> draws the line at 15 July 2025. An account opened before that date gets 750 hours a month of <code class="font-mono text-sm text-ocean-dark">t2.micro</code> or <code class="font-mono text-sm text-ocean-dark">t3.micro</code> for the first twelve months. An account opened after it gets credits instead, $100 at signup with up to $100 more for working through the foundational services, and a six month Free Plan, with no EC2 hour allowance in it. I opened mine in September 2025, so it is on the second model, and the difference is one you feel once you are inside: a quota tells you what is free, credits tell you how much of the normal price you have left.</p>
+        <p class="leading-relaxed">One instance in <code class="font-mono text-sm text-ocean-dark">eu-west-3</code>, the Paris region, on an Ubuntu image, at a free tier size. I did most of the moving around from the command line, because <code class="font-mono text-sm text-ocean-dark">aws ec2 describe-instances</code> was faster than finding the right page in the console.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The security group sits outside the machine</h2>
+        <p class="leading-relaxed">This is where the platform and my habits diverged most, and it is the part I found most interesting. On my own machines the firewall runs on the box. I can list the rules, change them over ssh, and if I get it wrong there is still a local console to fix it from. A security group is attached to the network interface instead of to the operating system, and a packet that matches no inbound rule is dropped before the instance ever sees it. It is stateful, so one inbound rule is enough for the reply traffic to come back; there is no outbound rule to write for a response.</p>
+        <p class="leading-relaxed">The consequence is a debugging distinction I did not have before:</p>
+        <ul class="space-y-2 pl-5 list-disc marker:text-link">
+          <li class="leading-relaxed"><span class="font-semibold text-ocean-dark">Connection refused</span> means the packet reached the machine and no process was listening on that port. The security group did its job and the machine answered.</li>
+          <li class="leading-relaxed"><span class="font-semibold text-ocean-dark">A hang that ends in a timeout</span> means the group dropped the packet. Nothing on the instance is involved, so nothing in its logs will tell you why.</li>
+        </ul>
+        <p class="leading-relaxed">The other difference is what happens when you lock yourself out of SSH. There is no console behind an EC2 instance. That gap is what AWS Systems Manager Session Manager is for: it opens a shell through the EC2 API using an instance role, so the recovery path is a second API rather than a keyboard plugged into the machine. I would rather have a console I can reach with a cable, and I would still put the instance behind a tailnet the way I put aleph behind one, but the API recovery path is a reasonable answer to a problem my own machines do not have.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The key pair, and what the image decides</h2>
+        <p class="leading-relaxed">The console generates the private key and hands it to you once. There is no way to read it back later, only to swap the key pair on a stopped instance and reboot. The username you log in as is decided by the image rather than by you: <code class="font-mono text-sm text-ocean-dark">ec2-user</code> on Amazon Linux, <code class="font-mono text-sm text-ocean-dark">ubuntu</code> on the Ubuntu images, and something else again on the rest. Mine was an Ubuntu image, so the user was <code class="font-mono text-sm text-ocean-dark">ubuntu</code>, and that was the one point in the whole exercise where the cloud and my own machines looked like the same job.</p>
+        <p class="leading-relaxed">When the instance went away I deleted the key with it. A private key for a machine that no longer exists is just a file waiting to be found, and the platform has no way to hand one back, which is the right design even though it makes the whole setup impossible to resurrect.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">A web server, and then IAM</h2>
+        <p class="leading-relaxed">I put nginx on it, listening on port 80 with the security group open to the whole internet, and served a site of mine from it rather than the default page. That was the part I kept turning over: an address in Paris that a browser anywhere could reach, on a machine whose entire existence was a handful of API calls. It also moved the audit question somewhere I was not used to looking. The part that decides what reaches the listener is not on the machine, so <code class="font-mono text-sm text-ocean-dark">ss -tlnp</code> and a ruleset dump are only half the answer.</p>
+        <p class="leading-relaxed">IAM is the part of the account the guide weights most and the part that has no clean equivalent in anything I run at home. The idea worth taking away is the difference between a user with a long lived access key and a role attached to an instance. A role hands the instance temporary credentials through the metadata service, so there is no secret to write into a file on a machine that is not yours, and nothing to rotate when the machine is replaced.</p>
+        <p class="leading-relaxed">The failure mode the Security and Compliance domain keeps circling is an identity with more room than the job needs, attached to something nobody is thinking about any more. On a platform where one policy reaches across every resource in the account, that is easy to arrive at by accident. My own habit is least privilege on a single box, and I would write the policy before the instance next time.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Stop, then terminate</h2>
+        <p class="leading-relaxed">A stopped instance is not billed for instance hours, but the EBS volume attached to it is billed for as long as it exists, and so is a public IPv4 address. Since 1 February 2024 AWS charges <a href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/" class="font-semibold text-link hover:text-ocean-dark">$0.005 per hour for every public IPv4 address</a>, attached to something or not, with 750 hours a month of it included in the older free tier. The <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html" class="font-semibold text-link hover:text-ocean-dark">instance lifecycle page</a> says it in one sentence: some resources, EBS volumes and Elastic IP addresses among them, incur charges regardless of the instance state.</p>
+        <p class="leading-relaxed">So <code class="font-mono text-sm text-ocean-dark">stop-instances</code> is the command that looks like turning a machine off and is not, and <code class="font-mono text-sm text-ocean-dark">terminate-instances</code> is the one that releases the address and by default deletes the root volume. I stopped it, then terminated it, which is the order that actually leaves nothing behind. On the model my account is on, those charges come out of the credits rather than out of a quota, so they are easy to miss: nothing arrives as money, and the volume and the address are still there.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">CloudTrail, which I do not have at home</h2>
+        <p class="leading-relaxed">One thing in the account is genuinely ahead of what I run at home, and it is the thing I went back and thought about most: every action in an AWS account is an API call, and CloudTrail records API calls. So the account has a history of decisions by default, not a history of file contents.</p>
+        <p class="leading-relaxed">On aleph and on my laptop, a change committed to the flake leaves the file and its git history, which is good provenance for configuration. A change made by hand in a shell leaves nothing behind but shell history, and a change made by a compromised process leaves less than that. An audit log of who called what, with an identity attached to each call, is a thing my machines do not have and should.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">My machines and the cloud, side by side</h2>
+        <p class="leading-relaxed">The instance did most of the teaching, because it turned each noun in the guide into something I had touched. The mapping onto what I run at home is not exact, but it is close enough to be useful.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-slate-200"><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">AWS</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">On my own machines</th></tr>
+            </thead>
+            <tbody class="text-slate-600">
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">security group</td><td class="py-2 pr-4">the firewall on aleph, with the trust placed in front of the machine instead of on it</td></tr>
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">AMI</td><td class="py-2 pr-4">a disk image built from a config, which is what a NixOS image is</td></tr>
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">key pair</td><td class="py-2 pr-4">the ssh keys I already keep, except AWS holds the public half and gives you the private one once</td></tr>
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">instance role</td><td class="py-2 pr-4">a capability handed to a process instead of a secret handed to a human</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">CloudTrail</td><td class="py-2 pr-4">an audit log of who called what, which is the thing my own machines do not have</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
+          <p class="font-semibold text-ocean-dark mb-1">If you are going to do the same exercise</p>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Give the instance a job before you launch it. Serving something of your own over port 80 is enough, and it turns the security group from a form field into a decision.</li>
+            <li>• Write the notes while the thing is running. The reasoning is the first part to go, and it is the part worth keeping.</li>
+            <li>• Read the free tier page for the month you sign up rather than the month you read about it. AWS changed the model in July 2025 and the two versions are not comparable.</li>
+            <li>• When you are finished, terminate and then check the volumes and the addresses. Stopping leaves both behind.</li>
+            <li>• Start with the exam guide even if you have no interest in the certificate. It is the only free document that lists the whole platform in one place.</li>
+          </ul>
+        </div>
+
+        <h2 class="mt-2 text-2xl font-display font-semibold text-ocean-dark">Further reading</h2>
+        <ul class="space-y-2">
+          <li><a href="https://docs.aws.amazon.com/pdfs/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.pdf" class="font-semibold text-link hover:text-ocean-dark">AWS Certified Cloud Practitioner exam guide (CLF-C02)</a>: the four domains and what each one expects you to know.</li>
+          <li><a href="https://aws.amazon.com/free/free-tier-faqs/" class="font-semibold text-link hover:text-ocean-dark">AWS Free Tier FAQs</a>: the July 2025 change from the twelve month model to credits.</li>
+          <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html" class="font-semibold text-link hover:text-ocean-dark">Amazon EC2 instance state changes</a>: which states are billed, and which resources are billed anyway.</li>
+          <li><a href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/" class="font-semibold text-link hover:text-ocean-dark">The public IPv4 address charge</a>: the announcement, the rate, and the free tier exception.</li>
+        </ul>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a></li>
+            <li><a href="one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">No repository behind this one. The instance was a learning exercise, and it is terminated.</p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

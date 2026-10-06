@@ -2,89 +2,151 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio — Bouallegui</title>
-  <meta name="description" content="Selected projects by Bouallegui: security tooling, infrastructure hardening, and systems work.">
+  <title>Portfolio - Ahmed Bouallegui</title>
+  <meta name="description" content="Selected systems and security work by Ahmed Bouallegui: reproducible Nix infrastructure, a self-hosted server stack, wireless station detection over nl80211, CTF reverse engineering, and production-line audio QC.">
   <meta name="theme-color" content="#023E8A">
-  <meta property="og:title" content="Portfolio — Bouallegui">
-  <meta property="og:description" content="Selected projects by Bouallegui.">
+  <meta property="og:title" content="Portfolio - Ahmed Bouallegui">
+  <meta property="og:description" content="Selected systems and security work: Nix infrastructure, self-hosted servers, nl80211 detection, CTF RE, audio QC automation.">
   <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/portfolio.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="feed.xml">
+  <link rel="alternate" hreflang="en" href="https://bouallegui.me/portfolio.html">
+  <link rel="alternate" hreflang="fr" href="https://bouallegui.me/fr/portfolio.html">
+  <link rel="alternate" hreflang="x-default" href="https://bouallegui.me/portfolio.html">
+  <meta property="og:url" content="https://bouallegui.me/portfolio.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
 </head>
 <body class="bg-surface text-ink">
   <nav data-part="nav" aria-label="Primary"></nav>
 
   <main id="main">
-    <section class="py-28 bg-gradient-to-b from-ocean-deep to-surface">
-      <div class="container px-5 text-center md:px-8">
-        <p class="eyebrow text-ocean-light">What I build</p>
+    <section class="relative pt-32 pb-44 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <div class="container relative px-5 text-center md:px-8">
+        <p class="eyebrow text-ocean-glow">What I build</p>
         <h1 class="section-title mb-4 text-white">Portfolio</h1>
-        <p class="mx-auto max-w-2xl text-slate-200">A selection of tools and systems I've designed, broken, and rebuilt. Each one starts from a problem I actually ran into.</p>
+        <p class="mx-auto max-w-2xl text-slate-200">Things I have actually run, broken, or maintained. Each started from a problem I hit myself. Where the code is private (internship work, or infrastructure holding real credentials), I say so rather than implying a repository exists.</p>
       </div>
     </section>
 
     <section class="py-20">
       <div class="container px-5 md:px-8">
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <article class="card card-link fade-in overflow-hidden" data-animate>
-            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/vulnmapper/640/360" alt="VulnMapper" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+
+          <article id="nix-monorepo" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/nix.svg" alt="Diagram: a Nix flake drawn as six lambdas feeding three machines: a ThinkPad, a retired laptop and a headless server called aleph" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
             <div class="p-5">
-              <h3 class="mb-1 font-display font-semibold">VulnMapper</h3>
-              <p class="mb-3 text-sm text-slate-600">Reconnaissance that turns raw scan data into a prioritized attack surface.</p>
-              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Python</span><span class="chip">Nmap</span><span class="chip">Shodan</span></div>
-              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+              <h2 class="mb-1 font-display font-semibold">One flake for every machine I run</h2>
+              <p class="mb-3 text-sm text-slate-600">A NixOS monorepo: flake-parts with auto-imported modules, a laptop, a retired laptop kept for conservation, and a headless server built from the same tree. Secrets live in the repo encrypted; services are reachable only through a VPS.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">NixOS</span><span class="chip">flake-parts</span><span class="chip">sops-nix</span><span class="chip">Tailscale</span></div>
+              <p class="mb-3 text-xs text-slate-500">Since Feb 2026 · config not published, an eight-part writeup is</p>
+              <a href="posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">Start the series &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes: <a href="posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a> · <a href="posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a> · <a href="posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></p>
             </div>
           </article>
-          <article class="card card-link fade-in overflow-hidden" data-animate>
-            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/hardenlab/640/360" alt="HardenLab" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+
+          <article id="self-hosted" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/vps.svg" alt="Diagram: three devices on a tailnet reaching a headless server called aleph that runs immich, jellyfin, grocy, searxng, samba and a local llm; the arrow from the internet is crossed out because no port is open" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
             <div class="p-5">
-              <h3 class="mb-1 font-display font-semibold">HardenLab</h3>
-              <p class="mb-3 text-sm text-slate-600">Infrastructure as code that fails the build if a resource violates a benchmark.</p>
-              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Go</span><span class="chip">Terraform</span><span class="chip">CIS</span></div>
-              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+              <h2 class="mb-1 font-display font-semibold">Self-hosted server infrastructure</h2>
+              <p class="mb-3 text-sm text-slate-600">A headless server running Immich, Jellyfin, Grocy, SearXNG, Samba and a local LLM behind an OpenAI-compatible API. It started on Debian in January 2026 and was rebuilt on NixOS in February. Nothing listens on the public internet: every service is reachable only through a VPS.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">NixOS</span><span class="chip">Tailscale</span><span class="chip">Immich</span><span class="chip">Jellyfin</span></div>
+              <p class="mb-3 text-xs text-slate-500">Since Jan 2026 · production, not published</p>
+              <a href="posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">Read the writeup &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes: <a href="posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a> · <a href="posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></p>
             </div>
           </article>
-          <article class="card card-link fade-in overflow-hidden" data-animate>
-            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/sentinel/640/360" alt="Sentinel" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+
+          <article id="local-llm" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/moe-split.svg" alt="Diagram: a grid of experts on the left with a handful highlighted as the ones a single token routes through. On the right, three boxes for where they live: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them, and an NVMe SSD holding a 29 GB lookup table." width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
             <div class="p-5">
-              <h3 class="mb-1 font-display font-semibold">Sentinel</h3>
-              <p class="mb-3 text-sm text-slate-600">A dependency-free anomaly detector over structured logs.</p>
-              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Rust</span><span class="chip">eBPF</span><span class="chip">Loki</span></div>
-              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+              <h2 class="mb-1 font-display font-semibold">A local model stack I can measure</h2>
+              <p class="mb-3 text-sm text-slate-600">Three machines, three inference engines, and the quantization and context choices that put a 125 billion parameter mixture of experts on a 12 GB card. Every endpoint speaks an OpenAI-compatible API and is reachable only through a VPS; the harness configuration lives in the same flake as the rest of the system.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">llama.cpp</span><span class="chip">Strata</span><span class="chip">GGUF</span><span class="chip">Tailscale</span></div>
+              <p class="mb-3 text-xs text-slate-500">Since Aug 2026 · config not published</p>
+              <a href="posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Read the measurements &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes: <a href="posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a> · <a href="posts/what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">What a harness is, learned the slow way</a></p>
             </div>
           </article>
-          <article class="card card-link fade-in overflow-hidden" data-animate>
-            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/netaudit/640/360" alt="NetAudit" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+
+          <article id="wireless" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/wireless.svg" alt="Diagram: on the left the wifi module forks and execs iw and ip before reaching the kernel; on the right it sends nl80211 and rtnetlink messages over one socket" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
             <div class="p-5">
-              <h3 class="mb-1 font-display font-semibold">NetAudit</h3>
-              <p class="mb-3 text-sm text-slate-600">Configuration auditing for firewalls and routers across hybrid clouds.</p>
-              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Python</span><span class="chip">Ansible</span><span class="chip">YAML</span></div>
-              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+              <h2 class="mb-1 font-display font-semibold">Wireless detection over nl80211</h2>
+              <p class="mb-3 text-sm text-slate-600">A research internship with the 2XS team at CRIStAL, on the wifi module of lili: a monitor-mode probe that hops 31 channels, parses 802.11 management frames and publishes devices, access points and links to an MQTT bus. My part was the interface handling, first an nl80211 dump to discover interfaces, then genl and rtnetlink calls in place of every fork and exec of iw and ip.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">C</span><span class="chip">netlink</span><span class="chip">802.11</span><span class="chip">libnl</span></div>
+              <p class="mb-3 text-xs text-slate-500">Jun to Jul 2026 · IRCICA, Université de Lille · code not published</p>
+              <a href="posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">Read the writeup &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes: <a href="posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">The wifi module stopped shelling out to iw</a></p>
             </div>
           </article>
-          <article class="card card-link fade-in overflow-hidden" data-animate>
-            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/cryptoware/640/360" alt="CryptoWare" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+
+          <article id="keyboard" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/keyboard.svg" alt="Diagram: a 5 by 6 key matrix and 16 RGB LEDs feeding an ATmega32U4 through eleven pins, with 576 bits going out to two cascaded TLC5947 drivers" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
             <div class="p-5">
-              <h3 class="mb-1 font-display font-semibold">CryptoWare</h3>
-              <p class="mb-3 text-sm text-slate-600">A small, auditable crypto library written to be boring by design.</p>
-              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">C++</span><span class="chip">Crypto</span><span class="chip">Tests</span></div>
-              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+              <h2 class="mb-1 font-display font-semibold">A split mechanical keyboard, schematic to solder</h2>
+              <p class="mb-3 text-sm text-slate-600">One half of a 30-key split keyboard: schematic and two-layer PCB in KiCad, ATmega32U4 running LUFA HID, 16 RGB LEDs on two cascaded TLC5947 drivers, Li-ion charging and a boost converter on the same board. 112 footprints, and the backlight current killed the first microcontroller.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">KiCad</span><span class="chip">AVR</span><span class="chip">C</span><span class="chip">LUFA</span><span class="chip">PCB design</span></div>
+              <p class="mb-3 text-xs text-slate-500">Jan to Jun 2026 · coursework with Thimotée Reugo · code not published</p>
+              <a href="posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">Read the writeup &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes: <a href="posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">A split keyboard that took out its own microcontroller</a></p>
             </div>
           </article>
-          <article class="card card-link fade-in overflow-hidden" data-animate>
-            <div class="h-44 overflow-hidden bg-slate-100"><img src="https://picsum.photos/seed/darktrail/640/360" alt="DarkTrail" loading="lazy" class="h-full w-full object-cover" datalightbox="img"></div>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/re.svg" alt="Diagram: a hex byte dump with one byte outlined, annotated 0x000000f0 ret" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
             <div class="p-5">
-              <h3 class="mb-1 font-display font-semibold">DarkTrail</h3>
-              <p class="mb-3 text-sm text-slate-600">Local-first telemetry with end-to-end encryption by default.</p>
-              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Rust</span><span class="chip">gRPC</span><span class="chip">SQLite</span></div>
-              <a href="#" class="font-semibold text-ocean hover:text-ocean-dark">View project &rarr;</a>
+              <h2 class="mb-1 font-display font-semibold">Binary RE and CTF practice</h2>
+              <p class="mb-3 text-sm text-slate-600">Jeanne d'Hack: a team event covering binary reverse engineering, web application vulnerabilities, and memory-corruption exploits. What I take away goes into notes here rather than leaderboards.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Ghidra</span><span class="chip">GDB</span><span class="chip">pwntools</span></div>
+              <p class="mb-3 text-xs text-slate-500">Jan to Feb 2026 · competition, not a product</p>
+              <a href="blog.html" class="font-semibold text-link hover:text-ocean-dark">See the notes &rarr;</a>
             </div>
           </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/audio.svg" alt="Diagram: a production audio waveform with a dashed pass band drawn above and below it" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Audio QC automation on a production line</h2>
+              <p class="mb-3 text-sm text-slate-600">An automation internship at Valeo: automating a sound-recognition filtering step on an automotive steering-wheel line, with Python and Librosa for analysis and Manim plus Ableton Live for visual review.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Python</span><span class="chip">Librosa</span><span class="chip">Manim</span></div>
+              <p class="mb-3 text-xs text-slate-500">Jul to Aug 2023 · proprietary</p>
+              <a href="contact.html" class="font-semibold text-link hover:text-ocean-dark">Ask about the approach &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="images/projects/fablab.svg" alt="Diagram: a printer bed with layered tool paths and a gantry outline, labelled bed levelling" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Running the Fabricarium FabLab</h2>
+              <p class="mb-3 text-sm text-slate-600">Fabmanager at Polytech Lille: keeping 3D printers, laser cutters, CNC, and electronics benches usable; owning safety, bookings, and open sessions, and sharing the electronics zone with the Robotech club.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">3D print</span><span class="chip">laser</span><span class="chip">CNC</span><span class="chip">KiCad</span></div>
+              <p class="mb-3 text-xs text-slate-500">Apr 2025 to present · operations, not code</p>
+              <a href="about.html" class="font-semibold text-link hover:text-ocean-dark">More about this &rarr;</a>
+            </div>
+          </article>
+
         </div>
+      </div>
+    </section>
+
+    <section class="py-20 bg-slate-50/70">
+      <div class="container px-5 md:px-8 text-center" data-animate>
+        <h2 class="section-title mb-6">Want the detail?</h2>
+        <p class="mx-auto mb-8 max-w-xl text-slate-600">Most of this runs on machines I administer, so the honest artefacts are writeups and configuration patterns rather than public repositories. If something here is relevant to what you are working on, ask and I will walk you through it.</p>
+        <a href="contact.html" class="btn-primary">Get in touch</a>
       </div>
     </section>
   </main>

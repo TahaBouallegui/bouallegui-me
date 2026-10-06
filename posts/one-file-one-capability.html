@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One file, one capability: how I stopped maintaining an import list - Ahmed Bouallegui</title>
+  <meta name="description" content="How the config is laid out. import-tree reads every file in modules/, so there is no import list to keep current, and one convention holds the rest together.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="One file, one capability: how I stopped maintaining an import list">
+  <meta property="og:description" content="The filesystem is the import list: flake-parts plus import-tree, and one convention to keep it readable.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/one-file-one-capability.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/one-file-one-capability.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">NixOS, in pieces</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">One file, one capability: how I stopped maintaining an import list</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-03-08">March 8, 2026</time></span>
+          <span>·</span><a href="../blog.html" class="hover:text-white">Part 1 of 8</a>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">A NixOS config usually grows the same artifact: a long <code class="font-mono text-sm text-ocean-dark">imports = [ ... ]</code> list near the top of the flake, kept current by hand, usually a little behind the directory it points at. Add a module, forget the list, and you spend twenty minutes wondering why the option you just wrote does nothing.</p>
+        <p class="leading-relaxed">I got tired of that. My flake has no import list, and the whole output is one line:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);</code></pre>
+        <p class="leading-relaxed"><a href="https://github.com/vic/import-tree" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark"><code class="font-mono text-sm text-ocean-dark">import-tree</code></a> reads <code class="font-mono text-sm text-ocean-dark">modules/</code> recursively and imports every <code class="font-mono text-sm text-ocean-dark">*.nix</code> file it finds as a <a href="https://flake.parts/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">flake-parts</a> module. Put a file in the directory and it is used. Take it out and it is not. The directory is the list.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">One convention, no framework</h2>
+        <p class="leading-relaxed">Auto-discovery only stays readable if the files it finds look alike. The rule I keep is small: one file, one <code class="font-mono text-sm text-ocean-dark">flake.nixosModules.&lt;name&gt;</code>.</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed"># modules/features/tailscale.nix
+{ self, inputs, ... }:
+{
+  flake.nixosModules.tailscale = { config, ... }: {
+    services.tailscale.enable = true;
+    networking.firewall.trustedInterfaces = [ "tailscale0" ];
+  };
+}</code></pre>
+        <p class="leading-relaxed">A host does not need to know what is inside <code class="font-mono text-sm text-ocean-dark">tailscale.nix</code>. It asks for the capability by name:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">imports = [
+  self.nixosModules.tailscale
+  self.nixosModules.nvidia
+  self.nixosModules.desktop
+];</code></pre>
+        <p class="leading-relaxed">That rule pays for itself in two ordinary ways. "What is on this machine" is answered by reading the imports block of one host file, instead of chasing conditionals through the tree. And adding a capability to one host does not touch the others, because the only thing they share is the module name.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Three directories, three jobs</h2>
+        <ul class="space-y-2 pl-5 list-disc marker:text-link">
+          <li class="leading-relaxed"><strong><code class="font-mono text-sm text-ocean-dark">base/</code></strong>: settings every machine needs anyway. Nix options, garbage collection, secrets wiring. Not optional, and not something a host chooses.</li>
+          <li class="leading-relaxed"><strong><code class="font-mono text-sm text-ocean-dark">features/</code></strong>: capabilities that do not care which machine they run on. A search engine, a game launcher, a text editor config, a Minecraft server.</li>
+          <li class="leading-relaxed"><strong><code class="font-mono text-sm text-ocean-dark">hosts/&lt;Name&gt;/</code></strong>: one directory per machine. It picks the features that machine wants and adds the hardware detail (<code class="font-mono text-sm text-ocean-dark">hardware.nix</code>) that cannot be shared, since no two machines have the same disks.</li>
+        </ul>
+        <p class="leading-relaxed">Three machines share almost all of <code class="font-mono text-sm text-ocean-dark">features/</code>: a laptop, an older laptop I keep for conservation, and a headless server. They differ where the hardware or the role forces it, and nowhere else.</p>
+        <p class="leading-relaxed">If you are setting something like this up, the split I would fix early is <code class="font-mono text-sm text-ocean-dark">base</code> / <code class="font-mono text-sm text-ocean-dark">features</code> / <code class="font-mono text-sm text-ocean-dark">hosts</code>. The rest of the tree gets reorganised a few times anyway, and this part is annoying to change once six files depend on how it is named.</p>
+        <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
+          <a href="../blog.html" class="card card-link p-5 text-right">
+            <span class="eyebrow block">The series</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">All eight parts</span>
+          </a>
+          <a href="a-desktop-that-scrolls.html" class="card card-link p-5 text-right" aria-label="Next part">
+            <span class="eyebrow block">Part 2</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">A desktop that scrolls instead of stacking</span>
+          </a>
+        </nav>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+            <li><a href="secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">Part 1 of 8 of <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this lives: <a href="../portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

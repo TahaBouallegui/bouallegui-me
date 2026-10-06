@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SPDX-FileCopyrightText: 2026 Ahmed Taha Bouallegui -->
+  <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting a 125B model onto a 12 GB card - Ahmed Bouallegui</title>
+  <meta name="description" content="Which engine, which quantization and which context on three specific machines, with the tokens per second each one gives. Plus the Robotech formation I wrote from the same material.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Getting a 125B model onto a 12 GB card">
+  <meta property="og:description" content="Weights, KV cache, quantization and engine choice on an RTX 3060 and a ThinkPad, with measured decode and prefill rates.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">Field notes</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">Getting a 125B model onto a 12 GB card</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-09-27">Sep 27, 2026</time></span>
+          <span>·</span><span>from my own runs on three machines</span>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+
+      <figure class="container mt-10 px-5 md:px-8">
+        <img src="../images/projects/moe-split.svg" alt="Diagram: a grid of experts on the left, with a few highlighted as the ones a single token uses. On the right, three stacked boxes: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them, and an NVMe SSD holding a 29 GB lookup table. A note says the processor works on the rest at the same time, and a draft model guesses the next words while the big model checks them in one pass." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">The model is bigger than the card. The question is where the rest of it lives.</figcaption>
+      </figure>
+
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed"><a href="running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Part 6 of the NixOS series</a> covers how the model is wired into my system: the build, the service, the OpenAI-compatible API. It does not cover the part I actually spend time on, which is choosing the engine, the quantization and the context length for a specific piece of hardware. That choice is where the speed comes from, and it is the part I can now show you numbers for.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Weights plus KV cache</h2>
+        <p class="leading-relaxed">One line decides whether a model runs at all:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">weights (parameters x bits per weight) + KV cache (context) &lt;= RAM / VRAM</code></pre>
+        <p class="leading-relaxed">Quantization buys you the first term. A model ships as 16 bit numbers; storing them at 4 or 5 bits divides the memory by three or four with little visible loss. The scheme I recommend to anyone, and the one both 35B models run, is <code class="font-mono text-sm text-ocean-dark">Q4_K_M</code>, around 4.8 bits per weight: most of what <code class="font-mono text-sm text-ocean-dark">Q8_0</code> gives at half the size. The one exception is Qwen3.8-Flash-Next at <code class="font-mono text-sm text-ocean-dark">IQ3_S</code>, which is a much larger model whose experts can afford a tighter quantization. Below <code class="font-mono text-sm text-ocean-dark">Q3_K_M</code> quality falls off fast enough that the saved gigabytes usually cost more than they save.</p>
+        <p class="leading-relaxed">The KV cache is the second term and the one people forget. When the model reads a token it keeps that token's keys and values in memory, because recomputing them at every step would mean re-reading the whole conversation each time. That store is the cache, and it grows with the context, which is why the context window is a physical limit rather than a setting: attention lets each token interact with every other one, so doubling the context roughly quadruples that work. Mine is stored at <code class="font-mono text-sm text-ocean-dark">q8_0</code>, eight bits per value instead of the sixteen a full-precision cache uses, which halves the memory the same window costs. Quantizing the cache is a separate decision from quantizing the weights and worth making on purpose: the weights decide what the model knows, the cache decides how much of the conversation it can hold.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Prefill and decode</h2>
+        <p class="leading-relaxed">Prefilling processes the whole prompt in parallel, which is what a graphics card is good at. Decoding emits one token at a time and is limited by memory bandwidth. On my machines the ratio between the two is around ten to one, so a harness that sends long prompts is paying a different cost than a chat that shows a short answer. This is the reason an agent loop feels nothing like a chat window pointed at the same model.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What each box runs</h2>
+        <p class="leading-relaxed">Both boxes are an i9-13900 with an RTX 3060 holding 12 GB of VRAM and 64 GB of RAM. The laptop is a ThinkPad T480 with an i7-8650U and 32 GB. These are readings taken while working, not a benchmark run:</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-slate-200"><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">Box</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">Engine</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">Model</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">Decode</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">Prefill</th></tr>
+            </thead>
+            <tbody class="text-slate-600">
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">amal</td><td class="py-2 pr-4">ik_llama.cpp, CPU only</td><td class="py-2 pr-4">Ornith 1.5 35B Q4_K_M, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">10 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">not measured</td></tr>
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel</td><td class="py-2 pr-4">llama.cpp</td><td class="py-2 pr-4">Cyber-Tiel-Coder 35B A3B with MTP, Q4_K_M, 1M context</td><td class="py-2 pr-4 whitespace-nowrap">20 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">154 tok/s</td></tr>
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel2, before</td><td class="py-2 pr-4">llama.cpp</td><td class="py-2 pr-4">Qwen3.8-Flash-Next, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">12 down to 6 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">55 tok/s</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel2, now</td><td class="py-2 pr-4">Strata</td><td class="py-2 pr-4">Qwen3.8-Flash-Next IQ3_S, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">35 down to 28 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">253 tok/s</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="leading-relaxed">Every row runs its cache at q8_0. The last two rows are the same machine, the same card and the same model at the same 256k context, with only the engine changed. Decode went from 12 tokens per second to 35, and from 6 with that context nearly full to 28. Prefill went from 55 to 253. That is the whole argument for the rest of this post. gimel is next on the list.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">How a 125B model fits on a 3060</h2>
+        <p class="leading-relaxed">Qwen3.8-Flash-Next is a mixture of experts: 24,576 of them, and a single token only routes through about 10. That is what makes the model cheap per token and expensive to store. <a href="https://github.com/Niko1221/Strata" class="font-semibold text-link hover:text-ocean-dark">Strata</a> is an MIT licensed inference engine built around that shape, and the way it makes the model fit is a placement decision rather than a smaller model:</p>
+        <ul class="space-y-2 pl-5 list-disc marker:text-link">
+          <li class="leading-relaxed">The few thousand experts used most often sit on the graphics card, which is the only part that has to be fast.</li>
+          <li class="leading-relaxed">All of them sit in the 64 GB of system RAM, and the processor works on the ones the card is not holding at the same time.</li>
+          <li class="leading-relaxed">A 29 GB lookup table stays on the SSD and is only read when an expert is needed that RAM is not holding.</li>
+          <li class="leading-relaxed">A small draft model guesses the next few words and the big model checks them in one pass, which the project measures at 1.6 to 1.8 times faster for the same answer.</li>
+        </ul>
+        <p class="leading-relaxed">The published figures are for an RTX 5070: 53 tokens per second of decode and 1,620 per second reading a prompt at <code class="font-mono text-sm text-ocean-dark">IQ3_S</code>. My card is a 3060 with 12 GB, and the table above is what that actually gives. The CPU matters more than it looks in that number, because the processor is not just orchestrating, it is holding part of the model.</p>
+        <p class="leading-relaxed">The same reasoning explains the row above it. A 35B model at Q4_K_M is around 21 GB with a 32k context, which does not fit in 12 GB of VRAM either, so llama.cpp splits it between the card and RAM and runs it there. The difference is that a dense model has no experts to place selectively, so the split costs more.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The laptop throttles</h2>
+        <p class="leading-relaxed">10 tokens per second out of a CPU-only 35B is what an i7-8650U gives, and the ceiling there is heat rather than compute. The AVX2 load throttles the chip, so the rate you see is a sustained thermal number, not the one a short benchmark prints. That is why the laptop runs the small model and answers quickly about small things, and anything that needs a large context goes to a box with a card in it.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Context length has to match on both sides</h2>
+        <p class="leading-relaxed">The expensive part of running an agent locally is not the model, it is that a harness resends its instructions, its tool catalogue and its history on every step. In measurements I took for a session I ran in August 2026, a trivial task cost 14,700 input tokens because about 25 tool schemas go back with every step. In the same set of runs, a small model at 2.2 tokens per second on CPU never finished an agent turn at all.</p>
+        <p class="leading-relaxed">Two rules came out of that, and both are configuration rather than modelling:</p>
+        <ul class="space-y-2 pl-5 list-disc marker:text-link">
+          <li class="leading-relaxed">The context a harness declares must match the context the server was started with. If the harness thinks it has more room than the server allocated, the middle of the prompt is dropped silently.</li>
+          <li class="leading-relaxed">Prefill is what an agent pays for, so a fast prefill changes what is pleasant to use before it changes what the model can reason about. That is the number that moved most when I changed engine: 55 to 253 tokens per second.</li>
+        </ul>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">A Robotech formation from the same material</h2>
+        <p class="leading-relaxed">Writing this down for other people is what made it stick. I gave a Robotech formation, <em>Des LLM aux agents locaux</em>, built from the same material in three parts: what happens inside a model (tokens, embeddings, attention as queries, keys and values, why the KV cache makes context expensive), how to run one yourself (llama.cpp and GGUF, the quantization table, sizing weights plus KV cache against a machine, then a live <code class="font-mono text-sm text-ocean-dark">llama-server</code>), and what an agent harness adds on top (the loop, function calling, MCP, skills, <code class="font-mono text-sm text-ocean-dark">AGENTS.md</code>, and pointing DeepSeek Harness at a local endpoint).</p>
+        <p class="leading-relaxed">The exercise is the part I am happiest with: three machines, one with no GPU, one with an RTX 3060 and 12 GB, one with 8 GB of unified memory, and the task is to pick model, quantization and context for each and justify it in one line against the budget. The deck, the demo scripts and the model landscape slide are in the <a href="https://github.com/Robotech-Lillois/Formation/blob/main/formationLLM/formation_llm.tex" class="font-semibold text-link hover:text-ocean-dark">Robotech Formation repository</a>, CC BY-NC-SA 4.0, with the transformer figures from 3Blue1Brown.</p>
+
+        <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
+          <p class="font-semibold text-ocean-dark mb-1">If you are sizing your own box</p>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Take the largest model family your machine holds at Q4_K_M, then decide the context before you decide anything else. The KV cache is not free and an agent needs a generous one.</li>
+            <li>• Measure prefill and decode separately. If you only look at tokens per second of generation you will pick the wrong engine for agent work.</li>
+            <li>• On a mixture of experts, the engine's placement strategy matters more than the raw card. A 12 GB card with 64 GB of RAM and a fast CPU beat what I expected from that card.</li>
+            <li>• Make the harness context and the server context the same number, and check it after every change to either.</li>
+            <li>• On a laptop CPU, plan around heat. A sustained rate is lower than a benchmark rate, and the difference is what you will actually feel.</li>
+          </ul>
+        </div>
+
+        <h2 class="mt-2 text-2xl font-display font-semibold text-ocean-dark">Further reading</h2>
+        <ul class="space-y-2">
+          <li><a href="https://github.com/Niko1221/Strata" class="font-semibold text-link hover:text-ocean-dark">Strata</a>: the engine, and its <a href="https://github.com/Niko1221/Strata/blob/main/docs/MODELS.md" class="font-semibold text-link hover:text-ocean-dark">model and size page</a> for what fits in how much RAM.</li>
+          <li><a href="https://github.com/ikawrakow/ik_llama.cpp" class="font-semibold text-link hover:text-ocean-dark">ik_llama.cpp</a>: the fork I build on the laptop, with the CPU variant kernels part 6 explains.</li>
+          <li><a href="https://github.com/Robotech-Lillois/Formation/blob/main/formationLLM/formation_llm.tex" class="font-semibold text-link hover:text-ocean-dark">Formation Robotech: Des LLM aux agents locaux</a>: the deck this post is a written version of.</li>
+          <li><a href="https://www.3blue1brown.com/lessons/attention" class="font-semibold text-link hover:text-ocean-dark">3Blue1Brown on attention</a>: the explanation the first part of the formation is built on.</li>
+        </ul>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">What a harness is, learned the slow way</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">The throughput figures are my own readings from daily use on the machines named in the table. The 1.6 to 1.8x draft figure and the RTX 5070 numbers are Strata's published measurements.</p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

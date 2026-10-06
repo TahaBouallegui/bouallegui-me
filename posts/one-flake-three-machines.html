@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One flake, three machines that barely resemble each other - Ahmed Bouallegui</title>
+  <meta name="description" content="Three machines that share almost nothing except the flake. What stays common, what stays per-host, and how to stop them drifting apart.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="One flake, three machines that barely resemble each other">
+  <meta property="og:description" content="One flake, three very different machines, and the habits that keep them in step.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/one-flake-three-machines.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/one-flake-three-machines.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">NixOS, in pieces</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">One flake, three machines that barely resemble each other</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-06-21">June 21, 2026</time></span>
+          <span>·</span><a href="../blog.html" class="hover:text-white">Part 7 of 8</a>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">I have three NixOS machines: a ThinkPad laptop, an older laptop I no longer use and keep for conservation, and a headless server I will call aleph, which has no display and is never touched directly. They share almost no hardware. All three are built from the same flake, and pointing a command at a different one is a matter of changing a single name.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What is shared</h2>
+        <p class="leading-relaxed">Everything except hardware. The desktop, the editor, the terminal, the shell, the secrets plumbing and the Nix settings live in <code class="font-mono text-sm text-ocean-dark">modules/base/</code> and <code class="font-mono text-sm text-ocean-dark">modules/features/</code>, written once and imported by whichever hosts want them:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed"># Amal/configuration.nix (laptop)
+imports = [ self.nixosModules.desktop self.nixosModules.gaming ... ];
+
+# myMachine/configuration.nix (retired, kept for conservation)
+imports = [ self.nixosModules.desktop ... ];</code></pre>
+        <p class="leading-relaxed">Both laptops get the same niri setup, the same Neovim config and the same terminal. Not two copies that started out identical and will drift, but one module evaluated twice. Fix a bug in the desktop module and both machines have the fix on their next rebuild, with no second copy to remember.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What is not shared</h2>
+        <p class="leading-relaxed">Hardware first. Each host's <code class="font-mono text-sm text-ocean-dark">hardware.nix</code> is the untouched output of <code class="font-mono text-sm text-ocean-dark">nixos-generate-config</code>, specific to that machine's disks and boot setup, and I do not hand-edit it.</p>
+        <p class="leading-relaxed">Then anything that is a fact about one box rather than a preference: how many cores to use for parallel builds, which hostname a shared module should treat as "this machine" when asking the language server for completions, and where the flake happens to be checked out on disk.</p>
+        <p class="leading-relaxed">Those facts come in through a small number of environment variables set once per host (<code class="font-mono text-sm text-ocean-dark">$NIXD_HOST</code>, <code class="font-mono text-sm text-ocean-dark">$NH_FLAKE</code>) instead of being written into the shared modules. The shared code stays shared, and the facts that cannot be shared stay in the one file that knows them.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Two rules that stop it drifting</h2>
+        <p class="leading-relaxed">If you plan to run one config across several machines, these are the two rules I would hold to from the start.</p>
+        <p class="leading-relaxed">1. A feature module never refers to a host by name. It does not know which    hosts import it. 2. A host config never edits another host's file to get something done.</p>
+        <p class="leading-relaxed">With those two in place, adding a capability to the laptop means writing one module and importing it in one place. The server's config is not involved, so a change meant for one machine cannot quietly land on another.</p>
+        <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
+          <a href="running-the-model-myself.html" class="card card-link p-5" aria-label="Previous part">
+            <span class="eyebrow block">Part 6</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">Running the model myself</span>
+          </a>
+          <a href="my-shell-is-a-package.html" class="card card-link p-5 text-right" aria-label="Next part">
+            <span class="eyebrow block">Part 8</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">My shell is a package</span>
+          </a>
+        </nav>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a></li>
+            <li><a href="secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">Part 7 of 8 of <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this lives: <a href="../portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

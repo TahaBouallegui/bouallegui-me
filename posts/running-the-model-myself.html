@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Running the model myself - Ahmed Bouallegui</title>
+  <meta name="description" content="ik_llama.cpp built with CPU flags for the hardware I actually have, serving an OpenAI-compatible API to a chat interface.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Running the model myself">
+  <meta property="og:description" content="Local inference: ik_llama.cpp tuned by cmake flag, behind an OpenAI-compatible API.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/running-the-model-myself.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/running-the-model-myself.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">NixOS, in pieces</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">Running the model myself</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-09-13">September 13, 2026</time></span>
+          <span>·</span><a href="../blog.html" class="hover:text-white">Part 6 of 8</a>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">Using a hosted model means sending what you type to someone else's server, accepting their uptime, and accepting that the model can change without telling you. Running one yourself removes those three things, and costs you the hardware plus some patience. This is how mine is set up.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The engine, built for this hardware</h2>
+        <p class="leading-relaxed">Inference runs through <a href="https://github.com/ikawrakow/ik_llama.cpp" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">ik_llama.cpp</a>, a performance-focused fork of <code class="font-mono text-sm text-ocean-dark">llama.cpp</code>, built from source with the CPU variant kernels compiled in rather than using a generic prebuilt binary:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">services.llama-cpp.package =
+  inputs.ik-llama.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+    cmakeFlags = old.cmakeFlags ++ [
+      "-DGGML_CPU_ALL_VARIANTS=ON"
+      "-DGGML_BACKEND_DL=ON"
+    ];
+  });</code></pre>
+        <p class="leading-relaxed">On a machine where the CPU is the bottleneck, that is the difference between a model that runs and a model that runs as fast as this particular CPU allows.</p>
+        <p class="leading-relaxed">The reason it is cheap to experiment with is that the build is declarative. Change the flags, rebuild, compare tokens per second, keep the faster result. There is no manual compile step to remember and redo later.</p>
+        <p class="leading-relaxed">Which engine to run, which quantization, and what each of my machines delivers in tokens per second is a separate note: <a href="getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Getting a 125B model onto a 12 GB card</a>.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">An OpenAI-compatible API and a chat UI</h2>
+        <p class="leading-relaxed">The model serves an OpenAI-compatible API locally, so it plugs into a normal chat interface instead of living inside a curl command or a bare prompt: conversation history, more than one provider side by side, the same interface you would use with a hosted model, pointed at a local machine.</p>
+        <p class="leading-relaxed">If you set this up, keep the API OpenAI-compatible and let the chat UI be a separate program. Then changing the engine and changing the interface stay two different edits.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Why bother when hosted models are better</h2>
+        <p class="leading-relaxed">Mine is not as capable as a large hosted model, and I am not trying to replace that. What I get is something that works with no connection, that answers to nobody else's rate limits, and that does not change because an upstream decided to. It is the same reason as the rest of this config: I would rather understand and keep a piece of my own workflow than depend on a server I do not control, when a machine I already own can do the job.</p>
+        <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
+          <a href="an-editor-built-up-from-nothing.html" class="card card-link p-5" aria-label="Previous part">
+            <span class="eyebrow block">Part 5</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">An editor built up from nothing, on purpose</span>
+          </a>
+          <a href="one-flake-three-machines.html" class="card card-link p-5 text-right" aria-label="Next part">
+            <span class="eyebrow block">Part 7</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">One flake, three machines that barely resemble each other</span>
+          </a>
+        </nav>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
+            <li><a href="my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">Part 6 of 8 of <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this lives: <a href="../portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a> · <a href="../portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

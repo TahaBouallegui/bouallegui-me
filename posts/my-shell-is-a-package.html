@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My shell is a package - Ahmed Bouallegui</title>
+  <meta name="description" content="The shell as a derivation: one wrapped package that every entry point resolves to, with git identity set at build time.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="My shell is a package">
+  <meta property="og:description" content="A shell as a Nix package, referenced by every place a shell appears.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/my-shell-is-a-package.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/my-shell-is-a-package.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">NixOS, in pieces</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">My shell is a package</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-07-12">July 12, 2026</time></span>
+          <span>·</span><a href="../blog.html" class="hover:text-white">Part 8 of 8</a>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">Most shell setups are a <code class="font-mono text-sm text-ocean-dark">.bashrc</code> or a <code class="font-mono text-sm text-ocean-dark">config.fish</code> accumulated over years, sourced at login, half remembered. Mine is a Nix derivation. Not a shell with a Nix-managed config file: the shell itself, together with every tool I expect on <code class="font-mono text-sm text-ocean-dark">PATH</code> the moment I log in, is one package.</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">packages.environment = inputs.wrappers.lib.wrapPackage {
+  inherit pkgs;
+  package = self'.packages.fish;
+  runtimeInputs = [
+    # nix tooling
+    pkgs.nil pkgs.nixd pkgs.statix pkgs.alejandra pkgs.manix pkgs.nix-inspect pkgs.nh
+
+    # the rest of the toolbelt
+    pkgs.fzf pkgs.eza pkgs.fd pkgs.zoxide pkgs.ripgrep pkgs.lazygit
+    pkgs.btop pkgs.imagemagick pkgs.ffmpeg-full pkgs.yt-dlp pkgs.wl-clipboard
+
+    # wrapped packages, themed and configured in their own right
+    self'.packages.neovim self'.packages.qalc self'.packages.git self'.packages.yazi
+  ];
+};</code></pre>
+        <p class="leading-relaxed">That is not a list of things I installed at some point. It is a list of things that are present as soon as this package is built, on any machine, because <code class="font-mono text-sm text-ocean-dark">wrapPackage</code> produces a fish binary with all of it in its own <code class="font-mono text-sm text-ocean-dark">PATH</code> before any config file is read.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">One package, everywhere a shell appears</h2>
+        <p class="leading-relaxed">The benefit is not really tool availability, which plenty of setups handle with a list in <code class="font-mono text-sm text-ocean-dark">environment.systemPackages</code>. The benefit is that one derivation is used everywhere a shell is needed, instead of each entry point having its own slightly different idea of what my shell is:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed"># the terminal's default shell
+packages.terminal = (inputs.wrappers.wrapperModules.kitty.apply {
+  imports = [ self.wrappersModules.kitty ];
+  shell = lib.getExe self'.packages.environment;
+}).wrapper;</code></pre>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed"># the actual login shell for the user account
+users.users.&lt;user&gt;.shell = self.packages.${pkgs.system}.environment;</code></pre>
+        <p class="leading-relaxed">Open a terminal and you get this shell. Log in at a TTY and you get this shell. SSH into the server on the account that has it set and you get this shell. One definition, referenced from three places, so there is nothing to keep in step.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Git's identity is in here too</h2>
+        <p class="leading-relaxed">The same wrapping pattern applies to git. Authorship is set as environment variables on the wrapped binary rather than in <code class="font-mono text-sm text-ocean-dark">~/.gitconfig</code>:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">packages.git = inputs.wrappers.lib.wrapPackage {
+  package = pkgs.git;
+  env = {
+    GIT_AUTHOR_NAME = "&lt;name&gt;";
+    GIT_AUTHOR_EMAIL = "ahmedtbou@tutamail.com";
+  };
+};</code></pre>
+        <p class="leading-relaxed">The practical effect shows up when you set up a new machine. There is no dotfile to copy, and no window where commits go out with the wrong address because the config had not been written yet. The <code class="font-mono text-sm text-ocean-dark">git</code> on <code class="font-mono text-sm text-ocean-dark">PATH</code> already knows who is using it.</p>
+        <p class="leading-relaxed">One caveat. Environment variables baked into a wrapper do not appear in <code class="font-mono text-sm text-ocean-dark">git config --list</code>, so if you ever debug a wrong commit author, look at the wrapper before you look at your gitconfig.</p>
+        <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
+          <a href="one-flake-three-machines.html" class="card card-link p-5" aria-label="Previous part">
+            <span class="eyebrow block">Part 7</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">One flake, three machines that barely resemble each other</span>
+          </a>
+          <a href="../blog.html" class="card card-link p-5 text-right">
+            <span class="eyebrow block">The series</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">All eight parts</span>
+          </a>
+        </nav>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="an-editor-built-up-from-nothing.html" class="font-semibold text-link hover:text-ocean-dark">An editor built up from nothing, on purpose</a></li>
+            <li><a href="a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">A desktop that scrolls instead of stacking</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">Part 8 of 8 of <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this lives: <a href="../portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

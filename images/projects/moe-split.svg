@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Diagram: a grid of experts on the left with a handful highlighted as the ones a single token routes through. On the right, three stacked boxes: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them while the CPU works the ones off the card, and an NVMe SSD holding a 29 GB lookup table read on demand. Below, a note that a draft model guesses the next words and the big model checks them in one pass for 1.6 to 1.8 times the speed, and my measured figures of 12 to 35 tokens per second decode and 55 to 253 tokens per second prefill">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#01324F"/>
+      <stop offset="1" stop-color="#0A1A2F"/>
+    </linearGradient>
+    <pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#0077B6" stroke-opacity="0.14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#g)"/>
+  <g transform="translate(0 16)">
+
+    <text x="40" y="28" font-family="'JetBrains Mono',monospace" font-size="11" fill="#fff" fill-opacity="0.45">one 125B mixture of experts, one 12 GB card</text>
+
+    <!-- expert grid: 6 x 8, most in RAM, a few on the card, two used by this token -->
+    <g stroke="#0096C7" stroke-opacity="0.4" stroke-width="1" fill="none">
+      <rect x="44" y="44" width="16" height="16"/><rect x="64" y="44" width="16" height="16"/><rect x="84" y="44" width="16" height="16"/><rect x="104" y="44" width="16" height="16"/><rect x="124" y="44" width="16" height="16"/><rect x="144" y="44" width="16" height="16"/>
+      <rect x="44" y="64" width="16" height="16"/><rect x="64" y="64" width="16" height="16"/><rect x="84" y="64" width="16" height="16"/><rect x="104" y="64" width="16" height="16"/><rect x="124" y="64" width="16" height="16"/><rect x="144" y="64" width="16" height="16"/>
+      <rect x="44" y="84" width="16" height="16"/><rect x="64" y="84" width="16" height="16"/><rect x="84" y="84" width="16" height="16"/><rect x="104" y="84" width="16" height="16"/><rect x="124" y="84" width="16" height="16"/><rect x="144" y="84" width="16" height="16"/>
+      <rect x="44" y="104" width="16" height="16"/><rect x="64" y="104" width="16" height="16"/><rect x="84" y="104" width="16" height="16"/><rect x="104" y="104" width="16" height="16"/><rect x="124" y="104" width="16" height="16"/><rect x="144" y="104" width="16" height="16"/>
+      <rect x="44" y="124" width="16" height="16"/><rect x="64" y="124" width="16" height="16"/><rect x="84" y="124" width="16" height="16"/><rect x="104" y="124" width="16" height="16"/><rect x="124" y="124" width="16" height="16"/><rect x="144" y="124" width="16" height="16"/>
+      <rect x="44" y="144" width="16" height="16"/><rect x="64" y="144" width="16" height="16"/><rect x="84" y="144" width="16" height="16"/><rect x="104" y="144" width="16" height="16"/><rect x="124" y="144" width="16" height="16"/><rect x="144" y="144" width="16" height="16"/>
+      <rect x="44" y="164" width="16" height="16"/><rect x="64" y="164" width="16" height="16"/><rect x="84" y="164" width="16" height="16"/><rect x="104" y="164" width="16" height="16"/><rect x="124" y="164" width="16" height="16"/><rect x="144" y="164" width="16" height="16"/>
+      <rect x="44" y="184" width="16" height="16"/><rect x="64" y="184" width="16" height="16"/><rect x="84" y="184" width="16" height="16"/><rect x="104" y="184" width="16" height="16"/><rect x="124" y="184" width="16" height="16"/><rect x="144" y="184" width="16" height="16"/>
+    </g>
+    <g fill="#4CC9E8" fill-opacity="0.45" stroke="none">
+      <rect x="64" y="44" width="16" height="16"/><rect x="104" y="44" width="16" height="16"/>
+      <rect x="44" y="84" width="16" height="16"/><rect x="124" y="84" width="16" height="16"/>
+      <rect x="84" y="124" width="16" height="16"/><rect x="144" y="124" width="16" height="16"/>
+      <rect x="64" y="164" width="16" height="16"/><rect x="104" y="164" width="16" height="16"/>
+      <rect x="44" y="184" width="16" height="16"/><rect x="144" y="184" width="16" height="16"/>
+    </g>
+    <g fill="#4CC9E8" stroke="none">
+      <rect x="84" y="64" width="16" height="16"/><rect x="124" y="144" width="16" height="16"/>
+    </g>
+    <text x="44" y="220" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">24,576 experts, about 10 per token</text>
+
+    <g fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1.3">
+      <path d="M170 65 H 200"/><path d="M196 61 L 204 65 L 196 69"/>
+      <path d="M170 117 H 200"/><path d="M196 113 L 204 117 L 196 121"/>
+      <path d="M170 169 H 200"/><path d="M196 165 L 204 169 L 196 173"/>
+    </g>
+
+    <g stroke="#4CC9E8" stroke-width="1.4" fill="#4CC9E8" fill-opacity="0.10">
+      <rect x="212" y="46" width="388" height="40" rx="5"/>
+      <rect x="212" y="98" width="388" height="40" rx="5"/>
+      <rect x="212" y="150" width="388" height="40" rx="5"/>
+    </g>
+    <text x="224" y="64" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">RTX 3060, 12 GB</text>
+    <text x="224" y="79" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">the few thousand hottest experts</text>
+    <text x="224" y="116" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">64 GB of RAM</text>
+    <text x="224" y="131" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">all of them, and the CPU works the ones off the card</text>
+    <text x="224" y="168" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">NVMe SSD</text>
+    <text x="224" y="183" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">a 29 GB lookup table, read on demand</text>
+
+    <g stroke="#0096C7" stroke-opacity="0.35" stroke-width="1">
+      <path d="M40 244 H 600"/>
+    </g>
+    <text x="40" y="266" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4CC9E8" fill-opacity="0.75">a draft model guesses the next words, the big model checks them in one pass: 1.6 to 1.8x</text>
+    <text x="40" y="286" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0096C7" fill-opacity="0.65">same card, same model, engine only: 12 to 35 tok/s decode, 55 to 253 tok/s prefill</text>
+    <text x="40" y="306" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.4">the card is the fast part, not the whole budget</text>
+  </g>
+</svg>

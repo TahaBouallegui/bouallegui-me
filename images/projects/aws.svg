@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Two parts: on top the path into an EC2 instance, from a laptop through a security group to the instance; below, the three things that keep existing after the instance is stopped, the EBS volume, the public IPv4 address, and the instance itself which is not billed">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#01324F"/>
+      <stop offset="1" stop-color="#0A1A2F"/>
+    </linearGradient>
+    <pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#0077B6" stroke-opacity="0.14" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#g)"/>
+  <g transform="translate(0 16)">
+
+    <!-- the path in -->
+    <text x="40" y="30" font-family="'JetBrains Mono',monospace" font-size="11" fill="#fff" fill-opacity="0.45">the path in</text>
+
+    <rect x="40" y="42" width="120" height="34" rx="6" fill="#0077B6" fill-opacity="0.18" stroke="#0096C7" stroke-width="1.6"/>
+    <text x="100" y="64" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.9">my laptop</text>
+
+    <g fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1.3">
+      <path d="M160 59 H 232"/>
+      <path d="M228 55 L 236 59 L 228 63"/>
+    </g>
+    <text x="196" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.55">ssh :22</text>
+
+    <rect x="240" y="42" width="160" height="48" rx="6" fill="#0077B6" fill-opacity="0.18" stroke="#0096C7" stroke-width="1.6"/>
+    <text x="320" y="62" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.9">security group</text>
+    <text x="320" y="78" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.5">stateful, outside the machine</text>
+
+    <g fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1.3">
+      <path d="M400 59 H 462"/>
+      <path d="M458 55 L 466 59 L 458 63"/>
+    </g>
+    <text x="431" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.55">allowed</text>
+
+    <rect x="470" y="42" width="130" height="48" rx="6" fill="#0077B6" fill-opacity="0.18" stroke="#0096C7" stroke-width="1.6"/>
+    <text x="535" y="62" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#fff" fill-opacity="0.9">ec2 instance</text>
+    <text x="535" y="78" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.5">nginx on :80</text>
+    <text x="535" y="38" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.45">eu-west-3, Paris</text>
+
+    <text x="40" y="112" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.5">refused means the packet reached the machine and nothing was listening</text>
+    <text x="40" y="128" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.5">a timeout means the group dropped it before the instance saw it</text>
+
+    <!-- what survives a stop -->
+    <text x="40" y="166" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8" fill-opacity="0.6">what survives a stop</text>
+
+    <g stroke="#4CC9E8" stroke-width="1.4" fill="#4CC9E8" fill-opacity="0.10">
+      <rect x="40" y="178" width="180" height="52" rx="5"/>
+      <rect x="240" y="178" width="180" height="52" rx="5"/>
+      <rect x="440" y="178" width="160" height="52" rx="5"/>
+    </g>
+    <text x="52" y="198" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">ebs volume</text>
+    <text x="52" y="214" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">billed while it exists</text>
+    <text x="252" y="198" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">public ipv4</text>
+    <text x="252" y="214" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">$0.005 per hour</text>
+    <text x="452" y="198" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4CC9E8">the instance</text>
+    <text x="452" y="214" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fff" fill-opacity="0.55">not billed once stopped</text>
+
+    <g stroke="#0096C7" stroke-opacity="0.35" stroke-width="1">
+      <path d="M40 254 H 600"/>
+    </g>
+
+    <text x="40" y="278" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.55">aws ec2 stop-instances --instance-ids i-&lt;id&gt;</text>
+    <text x="40" y="296" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4CC9E8" fill-opacity="0.75">aws ec2 terminate-instances --instance-ids i-&lt;id&gt;</text>
+    <text x="40" y="318" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0096C7" fill-opacity="0.6">the second one releases the address and, by default, the root volume</text>
+  </g>
+</svg>

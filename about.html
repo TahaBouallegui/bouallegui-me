@@ -2,28 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About — Bouallegui</title>
-  <meta name="description" content="About Bouallegui: cybersecurity engineer, builder, and writer who documents the systems he hardens.">
+  <title>About - Ahmed Taha Bouallegui</title>
+  <meta name="description" content="About Ahmed Taha Bouallegui: M.Eng student in IoT &amp; Cybersecurity at Polytech Lille, Linux systems, declarative infrastructure, and security work.">
   <meta name="theme-color" content="#023E8A">
-  <meta property="og:title" content="About — Bouallegui">
+  <meta property="og:title" content="About - Ahmed Taha Bouallegui">
   <meta property="og:description" content="About Bouallegui: cybersecurity engineer and writer.">
   <meta property="og:type" content="website">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/about.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="feed.xml">
+  <link rel="alternate" hreflang="en" href="https://bouallegui.me/about.html">
+  <link rel="alternate" hreflang="fr" href="https://bouallegui.me/fr/about.html">
+  <link rel="alternate" hreflang="x-default" href="https://bouallegui.me/about.html">
+  <meta property="og:url" content="https://bouallegui.me/about.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
 </head>
 <body class="bg-surface text-ink">
   <nav data-part="nav" aria-label="Primary"></nav>
 
   <main id="main">
-    <section class="py-28 bg-gradient-to-b from-ocean-deep to-surface">
-      <div class="container px-5 md:px-8">
-        <p class="eyebrow text-ocean-light">About</p>
-        <h1 class="section-title mb-6 text-white">Bouallegui</h1>
-        <p class="max-w-2xl text-slate-200">Engineer, attacker, and writer. I write this site from a corner of a home lab that's slowly winning the war against clutter.</p>
+    <section class="relative pt-32 pb-44 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <div class="container relative px-5 md:px-8">
+        <p class="eyebrow text-ocean-glow">About</p>
+        <h1 class="section-title mb-6 text-white">Ahmed Taha Bouallegui</h1>
+        <p class="max-w-2xl text-slate-200">M.Eng. student in Internet of Things &amp; Cybersecurity at Polytech Lille, and the author of this site, written from a corner of a home lab that's slowly winning the war against clutter.</p>
       </div>
     </section>
 
@@ -32,16 +46,16 @@
         <div class="grid gap-12 lg:grid-cols-5">
           <div class="lg:col-span-3" data-animate>
             <div class="mb-6 flex items-center gap-4">
-              <img src="https://picsum.photos/seed/bouallegui-avatar/200/200" alt="Placeholder avatar" loading="lazy" class="h-16 w-16 rounded-full object-cover" datalightbox="img">
+              <img src="images/portrait.jpg" alt="Portrait of Ahmed Bouallegui against a white background" width="1215" height="1563" loading="lazy" decoding="async" class="h-20 w-20 rounded-full object-cover object-top ring-1 ring-slate-200">
               <div>
-                <p class="font-display text-lg font-semibold">Bouallegui</p>
-                <p class="text-sm text-slate-500">Cybersecurity &amp; systems engineer</p>
+                <p class="font-display text-lg font-semibold">Ahmed Taha Bouallegui</p>
+                <p class="text-sm text-slate-500">M.Eng. student, IoT &amp; Cybersecurity · Polytech Lille</p>
               </div>
             </div>
             <div class="space-y-4 text-slate-700 leading-relaxed">
-              <p>I started as the person everyone asked to fix the network, which quietly turned into the person everyone asks why the network was broken in the first place. Somewhere along the way I started caring less about the tooling and more about the reasons systems fail the way they do.</p>
-              <p>Most of what I know I learned by breaking something and then having to put it back together more carefully than before. This site is where I keep the notes — a portfolio of the things I've built, and a blog of the things I've tried to understand.</p>
-              <p>I'm most useful when I can look at a system no one else fully understands, find the part that only works by accident, and make it work on purpose.</p>
+              <p>I'm training as an engineer at the seam where systems and security meet, an M.Eng in Internet of Things &amp; Cybersecurity at Polytech Lille, but most of what I know I learned outside the classroom: on a self-hosted server, in a home lab, and inside a NixOS config that now builds every machine I run from the same tree.</p>
+              <p>I started as the person everyone asked to fix the network, which quietly turned into the person everyone asks why the network was broken in the first place. That path took me from automating quality control on a Valeo production line, to running the school's FabLab, to a research internship with the 2XS team at CRIStAL, where I took the subprocess calls out of a Linux tool that detects IoT devices from their 802.11 traffic.</p>
+              <p>I'm most useful when I can look at a system no one else fully understands, find the part that only works by accident, and make it work on purpose, then write it down, so the lesson doesn't cost you a day the way it cost me an hour.</p>
             </div>
           </div>
 
@@ -49,16 +63,20 @@
             <h3 class="mb-5 font-display text-lg font-semibold">What I work on</h3>
             <div class="space-y-4">
               <div class="card">
-                <h4 class="font-display font-semibold text-ocean-dark">Application Security</h4>
-                <p class="text-sm text-slate-600 mt-1">Web app reviews, exploit research, and turning findings into fixes engineers can actually ship.</p>
+                <h4 class="font-display font-semibold text-ocean-dark">Linux &amp; Declarative Infrastructure</h4>
+                <p class="text-sm text-slate-600 mt-1">NixOS, Debian, Docker, systemd, self-hosted services with configs that rebuild themselves identically anywhere.</p>
               </div>
               <div class="card">
-                <h4 class="font-display font-semibold text-ocean-dark">Infrastructure &amp; Hardening</h4>
-                <p class="text-sm text-slate-600 mt-1">Firewalls, baselines, and IaC that enforces its own security policy before merge.</p>
+                <h4 class="font-display font-semibold text-ocean-dark">Networking &amp; Isolation</h4>
+                <p class="text-sm text-slate-600 mt-1">Tailnet-only exposure, strict per-user isolation, and hardening the boring parts first.</p>
               </div>
               <div class="card">
-                <h4 class="font-display font-semibold text-ocean-dark">Reverse Engineering</h4>
-                <p class="text-sm text-slate-600 mt-1">Reading binaries to understand what they really do, and writing small tools to make it repeatable.</p>
+                <h4 class="font-display font-semibold text-ocean-dark">Embedded &amp; Wireless Security</h4>
+                <p class="text-sm text-slate-600 mt-1">IoT detection via nl80211, AVR/ARM assembly, and embedded software built for small footprints and fewer surprises.</p>
+              </div>
+              <div class="card">
+                <h4 class="font-display font-semibold text-ocean-dark">CTF &amp; Reverse Engineering</h4>
+                <p class="text-sm text-slate-600 mt-1">Binary RE, web vulnerabilities, and memory corruption. Jeanne d'Hack and whatever the next challenge is.</p>
               </div>
               <div class="card">
                 <h4 class="font-display font-semibold text-ocean-dark">Learning in public</h4>
@@ -73,18 +91,36 @@
     <section class="py-20 bg-slate-50/70">
       <div class="container px-5 md:px-8">
         <h2 class="section-title" data-animate>Where I've been</h2>
-        <ol class="relative border-l border-slate-200 ml-3">
+        <ol class="relative border-l border-slate-200 ml-3 max-w-3xl">
           <li class="mb-10 ml-6" data-animate>
             <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean"></span>
-            <h3 class="font-display font-semibold text-ocean-dark">Building systems that stay up</h3>
-            <p class="text-sm text-slate-500 mb-1">Present</p>
-            <p class="text-slate-600">Focusing on defensive engineering and making the boring parts of infrastructure actually boring.</p>
+            <h3 class="font-display font-semibold text-ocean-dark">Research internship, 2XS team, CRIStAL</h3>
+            <p class="text-sm text-slate-500 mb-1">IRCICA • Université de Lille · Jun to Jul 2026</p>
+            <p class="text-slate-600">Replaced every fork and exec of iw and ip in the wifi module of a device-detection probe with direct nl80211 and rtnetlink calls, and added automatic wireless interface discovery; contributed to embedded software work on memory footprint, energy efficiency, and security.</p>
+          </li>
+          <li class="mb-10 ml-6" data-animate>
+            <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean/70"></span>
+            <h3 class="font-display font-semibold text-ocean-dark">Declarative everything, with Nix</h3>
+            <p class="text-sm text-slate-500 mb-1">Since Feb 2026</p>
+            <p class="text-slate-600">One flake-parts tree builds a laptop, a retired laptop kept for conservation, and a headless server. Shared feature modules, per-machine hardware, encrypted secrets.</p>
+          </li>
+          <li class="mb-10 ml-6" data-animate>
+            <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean/70"></span>
+            <h3 class="font-display font-semibold text-ocean-dark">Self-hosted server infrastructure</h3>
+            <p class="text-sm text-slate-500 mb-1">Since Jan 2026</p>
+            <p class="text-slate-600">A headless server running Immich, Jellyfin, Grocy, SearXNG and Samba, with strict per-user isolation. It started on Debian in January 2026 and was rebuilt on NixOS in February. Nothing is exposed to the public internet: every service is reachable through a VPS only.</p>
+          </li>
+          <li class="mb-10 ml-6" data-animate>
+            <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean/60"></span>
+            <h3 class="font-display font-semibold text-ocean-dark">Fabmanager at the Fabricarium FabLab</h3>
+            <p class="text-sm text-slate-500 mb-1">Polytech Lille · Apr 2025 to Present</p>
+            <p class="text-slate-600">Running the school's maker space: 3D printers, laser cutters, CNC, and the electronics zone shared with the Robotech club.</p>
           </li>
           <li class="ml-6" data-animate>
-            <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean/50"></span>
-            <h3 class="font-display font-semibold text-ocean-dark">Learning by breaking things</h3>
-            <p class="text-sm text-slate-500">Years earlier</p>
-            <p class="text-slate-600">A lot of time in home labs, CTFs, and the occasional well-documented outage that taught more than the docs did.</p>
+            <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean/40"></span>
+            <h3 class="font-display font-semibold text-ocean-dark">Automation internship at Valeo</h3>
+            <p class="text-sm text-slate-500 mb-1">Tunis, Tunisia · Jul to Aug 2023</p>
+            <p class="text-slate-600">Automated a sound-recognition quality check on a steering-wheel production line with Python and Librosa.</p>
           </li>
         </ol>
       </div>

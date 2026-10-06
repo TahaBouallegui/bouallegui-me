@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A split keyboard that took out its own microcontroller - Ahmed Bouallegui</title>
+  <meta name="description" content="Coursework build log: one half of a 30-key split keyboard on two copper layers, ATmega32U4 with LUFA HID, 16 RGB LEDs on two cascaded TLC5947 drivers, and the backlight current that killed the MCU.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="A split keyboard that took out its own microcontroller">
+  <meta property="og:description" content="30 keys, 16 RGB LEDs, two cascaded TLC5947s, and about 0.9 A of backlight against a 300 mA power budget.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/a-keyboard-that-took-out-its-own-mcu.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/a-keyboard-that-took-out-its-own-mcu.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">Hardware notes</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">A split keyboard that took out its own microcontroller</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-07-05">Jul 5, 2026</time></span>
+          <span>·</span><span>coursework at Polytech Lille, Jan to Jun 2026, with Thimotée Reugo</span>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+
+      <figure class="container mt-10 px-5 md:px-8">
+        <img src="../images/projects/keyboard.jpg" alt="The built keyboard half on green solder mask, partially populated with mechanical switches in hot-swap sockets, with a USB plug soldered to the board edge" width="868" height="1156" loading="lazy" decoding="async" class="w-full max-w-md rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">One half, part-populated. The USB-A plug is on the board itself, so it goes straight into a port.</figcaption>
+      </figure>
+
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">Third year had an embedded systems project: design and build a device, PCB included. We built one half of a split ergonomic keyboard. Thirty keys, per-key RGB, a board we routed ourselves. Somewhere between the soldering sessions and the first working animation, the backlight took out the microcontroller.</p>
+        <p class="leading-relaxed">What follows is what I would keep in that design, what I would not, and the calculation that should have happened before we ordered the parts. The code is coursework and stays private; the wiki page linked at the end is the public record of it.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What is on the board</h2>
+        <p class="leading-relaxed">The KiCad project carries 112 footprints on two copper layers. Two layers was a constraint we set at the start, one for the switch matrix and one for the LEDs, and it turned out to be routable.</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="text-left font-display font-semibold text-ocean-dark"><th class="pr-4 py-2">Block</th><th class="pr-4 py-2">Part</th><th class="py-2">Notes</th></tr></thead>
+            <tbody class="align-top">
+              <tr class="border-t border-slate-200"><td class="pr-4 py-2">MCU</td><td class="pr-4 py-2">ATmega32U4, 16 MHz crystal</td><td class="py-2">Hardware USB, so HID needs no extra chip</td></tr>
+              <tr class="border-t border-slate-200"><td class="pr-4 py-2">Keys</td><td class="pr-4 py-2">30 Kailh MX hot-swap sockets</td><td class="py-2">Sockets are soldered, switches press into them, so a switch can be changed without an iron</td></tr>
+              <tr class="border-t border-slate-200"><td class="pr-4 py-2">Matrix</td><td class="pr-4 py-2">30 diodes, 0603</td><td class="py-2">One per switch, against ghosting when several keys are held</td></tr>
+              <tr class="border-t border-slate-200"><td class="pr-4 py-2">Backlight</td><td class="pr-4 py-2">16 APFA3010 RGB, 2 TLC5947</td><td class="py-2">48 channels of 12-bit PWM, the two drivers cascaded</td></tr>
+              <tr class="border-t border-slate-200"><td class="pr-4 py-2">Power</td><td class="pr-4 py-2">MAX1811 charger, MCP1640 boost</td><td class="py-2">Li-ion in, 5 V regulated out, USB as the other source</td></tr>
+              <tr class="border-t border-slate-200"><td class="pr-4 py-2">Link</td><td class="pr-4 py-2">3.5 mm jack, AVR-ISP-6 header</td><td class="py-2">UART to the other half, ISP as the programming fallback</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <figure>
+          <img src="../images/projects/keyboard.svg" alt="Diagram: a 5 by 6 key matrix and 16 RGB LEDs feeding an ATmega32U4 through eleven pins, with 576 bits going out to two cascaded TLC5947 drivers, USB to the host, and a dashed UART line to the other half" width="640" height="360" loading="lazy" decoding="async" class="w-full rounded-xl shadow-soft" data-lightbox="img">
+          <figcaption class="mt-2 text-center text-sm text-slate-500">The signal path. Eleven pins carry the matrix in, 576 bits carry the backlight out.</figcaption>
+        </figure>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Why the backlight is not on the MCU</h2>
+        <p class="leading-relaxed">Sixteen RGB LEDs is forty-eight PWM channels. Generating those in software on a 16 MHz AVR while also scanning a matrix and running a USB stack would have taken the whole semester. The TLC5947 does it on its own: 12-bit PWM generated internally at roughly 30 kHz, and the MCU only has to shift in a frame.</p>
+        <p class="leading-relaxed">Two drivers are cascaded so one frame covers both. The MCU sends forty-eight channels of twelve bits, most significant bit first, starting from the last channel of the far chip, then pulses the latch line. From <code class="font-mono text-sm text-ocean-dark">tlc5947.c</code>:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">for (int8_t c = NUM_CHANNELS - 1; c &gt;= 0; c--) {
+    uint16_t value = pwm_buffer[c];
+    for (int8_t b = 11; b &gt;= 0; b--) {
+        if (value &amp; (1 &lt;&lt; b)) PORTB |= (1 &lt;&lt; PB5);
+        else                  PORTB &amp;= ~(1 &lt;&lt; PB5);
+        PORTD |= (1 &lt;&lt; PD0);   // SCLK high
+        PORTD &amp;= ~(1 &lt;&lt; PD0);  // SCLK low
+    }
+}
+PORTD |= (1 &lt;&lt; PD6);   // XLAT
+PORTD &amp;= ~(1 &lt;&lt; PD6);</code></pre>
+
+        <p class="leading-relaxed">That is the whole driver: 576 bits and a latch pulse, with no timer and no interrupt involved. The frame is about 72 bytes, and at the rate the animation refreshed it cost nothing I could measure. This is the decision I would keep exactly as it is.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The backlight current, and the resistor that decided it</h2>
+        <p class="leading-relaxed">A TLC5947 is a constant-current sink. One external resistor per chip sets the current for all twenty-four of its channels, and the datasheet relation is this:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">IOUT = (VRIREF / REXT) * 31.25        VRIREF = 1.2 V typical
+
+REXT = 1.97 kOhm  ->  ~19 mA per channel  ->  48 channels  ~ 0.9 A
+REXT = 3.3  kOhm  ->  ~11 mA per channel  ->  48 channels  ~ 0.55 A
+
+what we designed the supply around: ~300 mA at 5 V for the whole board</code></pre>
+
+        <p class="leading-relaxed">We fitted 1.97 kΩ on both IREF lines. For a single LED, 19 mA is reasonable. For forty-eight channels at once it is about 0.9 A, against a supply sized for roughly 300 mA for everything. During testing, with the brightness turned up, the ATmega32U4 died. It took us a while to accept that the chip itself was gone, and the confirmation was desoldering it and fitting a new one.</p>
+        <p class="leading-relaxed">The fix was two resistors. 3.3 kΩ puts each channel near 11 mA, and nothing heats up any more. The firmware then deals with the colour imbalance, because the APFA3010 datasheet shows red being weaker than green and blue at the same current:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">// according to the datasheet, reds are much weaker than blues and greens
+tlc_set_led(i, r &gt;&gt; 1, g &gt;&gt; 4, b &gt;&gt; 4);</code></pre>
+
+        <p class="leading-relaxed">The margin is still thin, and it is worth writing down. At 11 mA per channel, sixteen LEDs at full white is around half an amp, which is still above the 300 mA we designed for. The board gets away with it because the animation never drives every channel to full. That is a workaround. A second version needs the resistor chosen from the power budget first, and for a 5 mA target that is about 7.5 kΩ.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The matrix, and the two microseconds</h2>
+        <p class="leading-relaxed">Five rows and six columns is eleven pins instead of thirty. They are spread across four ports, which looks untidy in the source but was a routing decision: columns on PORTF, rows on PORTC, PORTB and PORTD, chosen so the traces could actually leave the MCU on two layers. Four of those PORTF pins are JTAG pins, so the init disables the JTAG interface to get them back.</p>
+        <p class="leading-relaxed">Debounce is a shift register per key. Eight equal samples in a row change the state, and anything in between leaves it alone:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">debounce_state[r][c] = (debounce_state[r][c] &lt;&lt; 1) | (raw_state ? 1 : 0);
+
+if (debounce_state[r][c] == 0xFF &amp;&amp; !matrix_state[r][c]) matrix_state[r][c] = true;
+else if (debounce_state[r][c] == 0x00 &amp;&amp; matrix_state[r][c]) matrix_state[r][c] = false;</code></pre>
+
+        <p class="leading-relaxed">There is one line in the scan loop I have not fully explained, and I would rather write it down than tidy it away:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">select_row(r);
+
+// Keyboard doesn't doesn't work without this for some god forsaken reason
+// hypothesis: wait a tiny bit for the voltage to drop (capacitance on the lines)
+_delay_us(2);</code></pre>
+
+        <p class="leading-relaxed">Without that delay the scan reads keys nobody pressed. My explanation is the one in the comment: the row has to actually fall, and with thirty diodes and long traces on both sides there is enough capacitance for the column to be read too early. I have never measured it. The delay costs nothing, so it stays.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The rainbow knows where each key is</h2>
+        <p class="leading-relaxed">The animation sweeps hue. The usual way to do it numbers the LEDs left to right, which means the gradient follows the channel index. The channel order on the drivers has nothing to do with where the LEDs sit on the board, so that version looks scrambled once it is built.</p>
+        <p class="leading-relaxed">I took the x and y coordinates of all sixteen LEDs out of the KiCad placement and put them in <code class="font-mono text-sm text-ocean-dark">main.c</code>. Each LED's hue is the global hue plus a weighted offset from its position:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">float hue = global_hue
+            + alpha * (led_positions[i].x - x_ref)   // alpha = 0.5
+            + beta  * (led_positions[i].y - y_ref);  // beta  = 0.3</code></pre>
+
+        <p class="leading-relaxed">Adding an LED then means adding one coordinate pair instead of re-deriving an order. It is the part of the firmware I like most.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Soldered on the wrong face</h2>
+        <p class="leading-relaxed">The switches went onto the opposite side of the board from the one the layout assumed. Reworking thirty sockets was one option. Mirroring the keymap table in firmware was the other, and we took that one, with an apology left in the source:</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">// KEYBOARD DEFINITION HERE.
+// IT'S MIRRORRED BECAUSE WE MESSED UP THE FACE ON WHICH WE PUT THE BUTTONS
+// SORRY.</code></pre>
+
+        <p class="leading-relaxed">The table maps the matrix to the left half of an AZERTY layout, escape and the number row along the top, modifiers down the thumb column. One entry is not a key code but a sentinel that the report builder turns into the left-control modifier byte, so that key behaves as a modifier. The report itself is the standard HID boot keyboard report, which caps it at six simultaneous keys plus modifiers.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The link to the other half</h2>
+        <p class="leading-relaxed">The two halves talk over a 3.5 mm jack using the MCU's second UART at 115200 baud. A packet is a start byte, a command, a length, the payload, and a checksum that is a plain sum modulo 256. The thirty bits of key state pack into four bytes, so a full matrix update is nine bytes on the wire.</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">0xAA | cmd | len | data[len] | checksum        cmd 0x01 = matrix, len = 4</code></pre>
+
+        <p class="leading-relaxed">The transmit side runs every fifty loop iterations. The receive side is a byte-at-a-time parser with a length guard, and it checks the checksum before accepting anything. The step that never happened is the merge: the received matrix is not folded into what goes out over USB, and that place in the source is a literal <code class="font-mono text-sm text-ocean-dark">//TODO</code>. The other half was built by another group, and we never got the two boards working together on a desk. So this project is one working half with a link that is implemented on both ends and unused.</p>
+        <p class="leading-relaxed">We may build a tidier second version some day. Reading this repo already says what would change: choose the IREF resistor from the power budget, keep the drivers and the hot-swap sockets, and finish the merge before wiring up a second board.</p>
+
+        <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
+          <p class="font-semibold text-ocean-dark mb-1">If you are building something like this</p>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Work out what the driver draws before you order parts. On the TLC5947 one resistor decides it for twenty-four channels at once.</li>
+            <li>• Let a dedicated chip generate the PWM. It gave the MCU back entirely, and the frame cost nothing.</li>
+            <li>• Hot-swap sockets turn a soldering mistake into a short job, and the switches survive into the next project.</li>
+            <li>• A layout error can be cheaper to fix in firmware than at the bench, but it leaves a comment in the source permanently.</li>
+            <li>• Finish the merge between two boards before building a third thing on top of it.</li>
+          </ul>
+        </div>
+
+        <h2 class="mt-2 text-2xl font-display font-semibold text-ocean-dark">Further reading</h2>
+        <ul class="space-y-2">
+          <li><a href="https://projets-se.plil.fr/mediawiki/index.php/SE3Groupe2025-4" class="font-semibold text-link hover:text-ocean-dark">The project wiki page</a>: the full hardware write-up in French, including the power section and the dated build log.</li>
+          <li><a href="https://www.ti.com/product/TLC5947" class="font-semibold text-link hover:text-ocean-dark">TLC5947 datasheet</a>: the 24-channel driver, the IREF relation, and the frame format.</li>
+          <li><a href="https://www.fourwalledcubicle.com/LUFA.php" class="font-semibold text-link hover:text-ocean-dark">LUFA</a>: the AVR USB stack the HID layer sits on.</li>
+        </ul>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">The wifi module stopped shelling out to iw</a></li>
+            <li><a href="one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">The code for this board is coursework and stays private. The wiki page above is the public record of it.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this fits: <a href="../portfolio.html#keyboard" class="font-semibold text-link hover:text-ocean-dark">A split mechanical keyboard, designed and built</a> in the portfolio.</p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

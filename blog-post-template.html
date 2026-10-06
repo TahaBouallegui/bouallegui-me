@@ -1,63 +1,78 @@
 <!DOCTYPE html>
+<!--
+  AUTHORING TEMPLATE: not a published post.
+
+  To publish a new note:
+    1. Copy this file to posts/<slug>.html.
+    2. Replace every {{placeholder}} and the sample body.
+    3. Add a tile for it under images/projects/ (640x360) or reuse one.
+    4. Add a card in blog.html (and index.html if it belongs on the front page).
+    5. Add the absolute URL to sitemap.txt.
+    6. Delete this file's noindex from the copy. It must not ship on a real post.
+
+  This file is excluded from the sitemap and carries robots="noindex" so it can never
+  compete with a real article in search results.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rebuilding DNS from scratch — Bouallegui</title>
-  <meta name="description" content="A month of breaking my home network taught me more about DNS than any textbook. Here's what stuck.">
+  <meta name="robots" content="noindex,nofollow">
+  <title>{{Title}} - Ahmed Bouallegui</title>
+  <meta name="description" content="{{One sentence, what the reader learns}}">
   <meta name="theme-color" content="#023E8A">
-  <meta property="og:title" content="Rebuilding DNS from scratch — Bouallegui">
-  <meta property="og:description" content="What breaking my home network taught me about DNS.">
+  <meta property="og:title" content="{{Title}}">
+  <meta property="og:description" content="{{One sentence}}">
   <meta property="og:type" content="article">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="feed.xml">
 </head>
 <body class="bg-surface text-ink">
   <nav data-part="nav" aria-label="Primary"></nav>
 
   <main id="main">
-    <article class="pt-28 pb-24">
-      <header class="container px-5 md:px-8">
-        <a href="blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean hover:text-ocean-dark mb-6">&larr; Back to Blog</a>
-        <p class="eyebrow">Writeup</p>
-        <h1 class="section-title mb-6 text-3xl font-display font-bold leading-tight sm:text-4xl">Rebuilding DNS from scratch</h1>
-        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
-          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-ocean/10 font-display font-bold text-ocean">B</span> Bouallegui</span>
-          <span>·</span><span>Mar 4, 2026</span>
-          <span>·</span><span>12 min read</span>
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">{{Category: Field notes / Writeup / Postmortem}}</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">{{Title}}</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="{{YYYY-MM-DD}}">{{Month D, YYYY}}</time></span>
+          <span>·</span><span>{{status: working note / finished}}</span>
         </div>
       </header>
+    </section>
+
+    <article class="pb-24">
 
       <figure class="container mt-10 px-5 md:px-8">
-        <img src="https://picsum.photos/seed/dnspost/1200/500" alt="DNS diagram placeholder" loading="lazy" class="w-full rounded-xl shadow-soft" datalightbox="img">
-        <figcaption class="mt-2 text-center text-sm text-slate-500">The zone files I kept rewriting until they finally made sense.</figcaption>
+        <img src="images/projects/nix.svg" alt="{{Describe the diagram as if reading it aloud}}" width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">{{What the figure shows}}</figcaption>
       </figure>
 
       <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
-        <p class="leading-relaxed">Every engineer forgets how much they rely on DNS. It just works, or it just doesn't, and in the second case you're usually cursing while reading logs. This month I decided to stop cursing and rebuild a minimal resolver from scratch, one piece at a time, until I could explain exactly what happened to a single query.</p>
+        <p class="leading-relaxed">{{The problem, in one paragraph. What you were trying to do and why the obvious approach was not enough.}}</p>
 
-        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Why start with the boring part</h2>
-        <p class="leading-relaxed">I began with the packet. A DNS query is barely more than a name, a type, and a class wrapped in a header. Reading the wire format by hand — hex dumping my own packets — was the first moment things clicked. Everything above it, the caching, the recursion, the retries, only makes sense once you can picture the bytes moving back and forth.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">{{Section}}</h2>
+        <p class="leading-relaxed">{{Body. Prefer the specific over the general: the actual command, the actual error, the actual fix.}}</p>
+
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">{{commands, with the shell prompt stripped}}</code></pre>
 
         <blockquote class="border-l-4 border-ocean pl-6 py-2 font-display text-lg text-ocean-dark">
-          "The best way to understand a system you don't trust is to build a smaller one you do, then watch them argue over the same packets."
+          {{One sentence worth pulling out.}}
         </blockquote>
 
-        <p class="leading-relaxed">Then I built the caching layer. Recursive resolvers live and die by what they remember, and watching a local cache turn a dozen round-trips into one was a great lesson in why the boring optimizations are the boring optimizations.</p>
-
         <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
-          <p class="font-semibold text-ocean-dark mb-1">Lessons so far</p>
+          <p class="font-semibold text-ocean-dark mb-1">Takeaways</p>
           <ul class="space-y-1 text-slate-600">
-            <li>• Timeouts and retries are where real networks live.</li>
-            <li>• Caching isn't an optimization here; it's the feature.</li>
-            <li>• Breaking things at home is the fastest path to actually knowing.</li>
+            <li>• {{What you would tell someone who hit this next.}}</li>
           </ul>
         </div>
-
-        <p class="leading-relaxed">This is a living writeup — I'll keep it updated as I rebuild each layer. If any of this is wrong, it's intentional: the point is to learn out loud, mistakes and all.</p>
       </div>
     </article>
   </main>

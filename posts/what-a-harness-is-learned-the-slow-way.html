@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SPDX-FileCopyrightText: 2026 Ahmed Taha Bouallegui -->
+  <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What a harness is, learned the slow way - Ahmed Bouallegui</title>
+  <meta name="description" content="pi, OpenCode and DeepSeek Harness, all pointed at the same OpenAI-compatible endpoint on my own hardware. What each one taught me about the layer between me and the model.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="What a harness is, learned the slow way">
+  <meta property="og:description" content="Three coding harnesses, one OpenAI-compatible endpoint, and a private local AI workflow that fits in a Nix flake.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/what-a-harness-is-learned-the-slow-way.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/what-a-harness-is-learned-the-slow-way.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">Field notes</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">What a harness is, learned the slow way</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-10-04">Oct 4, 2026</time></span>
+          <span>·</span><span>from three config files and a pile of session logs</span>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+
+      <figure class="container mt-10 px-5 md:px-8">
+        <img src="../images/projects/harnesses.svg" alt="Diagram: three harnesses, pi, opencode and dsh, each with an arrow labelled openai-completions pointing into a dashed boundary marked my own hardware only. Inside are three endpoints: amal on port 8901 with ik_llama.cpp, gimel on port 8080 with llama.cpp, and gimel2 on port 8080 with Strata. Below the boundary an arrow to someone else's inference endpoint with a slash through it." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <figcaption class="mt-2 text-center text-sm text-slate-500">Three harnesses, one decision. The dashed line is the interesting part.</figcaption>
+      </figure>
+
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">I run my own model, and <a href="running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">part 6 of this series</a> covers that side for the laptop: llama.cpp, a quantized GGUF file, an OpenAI-compatible API on a port. The two boxes on my tailnet run a different engine for a much larger model. This post is about the layer above both of them, the program you actually type into. That layer is the one I understood last, and it is the one I ended up configuring hardest.</p>
+        <p class="leading-relaxed">Three harnesses went through the machine. Each left a config file and a directory of session logs, so everything below is something I can point at on disk rather than remember. The hostnames are my own names for my machines, and the config excerpts use them too.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What a harness decides</h2>
+        <p class="leading-relaxed">For a while I treated the harness as a product: you install it, it has a model behind it, you talk to it. Under that model of it, changing harnesses means changing what the AI can do, which is mostly false.</p>
+        <p class="leading-relaxed">A harness is the thing that decides what goes into the context window, which tools exist at all, what happens when a tool call fails, how much of your machine the model may touch, and whether the conversation is summarized before it hits the limit. The weights are the part you usually do not control. Everything in that list is the part you do.</p>
+        <p class="leading-relaxed">The first place that landed for me was a fourteen line file. Here is the entire model configuration I used with Pi:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">{
+  "providers": {
+    "llama-server": {
+      "baseUrl": "http://127.0.0.1:8900/v1",
+      "api": "openai-completions",
+      "apiKey": "local",
+      "models": [
+        {
+          "id": "Ornith",
+          "contextWindow": 131072,
+          "maxTokens": 4096
+        }
+      ]
+    }
+  }
+}</code></pre>
+        <p class="leading-relaxed">Two of those lines are hardware decisions wearing model clothes. <code class="font-mono text-sm text-ocean-dark">contextWindow</code> and <code class="font-mono text-sm text-ocean-dark">maxTokens</code> are a budget: how much prompt the model may hold, and how much room to leave for the answer. On a ThinkPad T480 serving a 35B model at Q4_K_M from CPU kernels, that budget is set by the machine, not by the model card, and a harness that never asks you for it is guessing on your behalf.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Three endpoints, three config files</h2>
+        <p class="leading-relaxed">Before I had picked a harness I had already put the model behind an HTTP URL. Three endpoints, all mine or on my tailnet, two engines behind them, all speaking the same OpenAI-compatible API:</p>
+        <ul class="space-y-2 pl-5 list-disc marker:text-link">
+          <li class="leading-relaxed"><code class="font-mono text-sm text-ocean-dark">amal</code>, the ThinkPad I use every day, serving <code class="font-mono text-sm text-ocean-dark">Ornith-1.5-35B-Uncensored-Q4_K_M.gguf</code> on port 8901 through the <a href="https://github.com/ikawrakow/ik_llama.cpp" class="font-semibold text-link hover:text-ocean-dark">ik_llama.cpp</a> fork, built with all CPU variant kernels. Port 8901 rather than 8900 because SearXNG owns 8900 on that machine.</li>
+          <li class="leading-relaxed"><code class="font-mono text-sm text-ocean-dark">gimel</code> on port 8080, serving <code class="font-mono text-sm text-ocean-dark">peculiar-ragdoll/Cyber-Tiel-Coder-35B-A3B-GGUF-MTP</code> over llama.cpp.</li>
+          <li class="leading-relaxed"><code class="font-mono text-sm text-ocean-dark">gimel2</code> on port 8080, running <a href="https://github.com/Niko1221/Strata" class="font-semibold text-link hover:text-ocean-dark">Strata</a>, an MIT licensed inference engine built around one model, Qwen3.8-Flash-Next. The quant my current configuration names is <code class="font-mono text-sm text-ocean-dark">IQ3_S</code> from the ISTA-DASLab GSQ-RCO files; an earlier one named Unsloth's <code class="font-mono text-sm text-ocean-dark">UD-IQ4_XS</code>.</li>
+        </ul>
+        <p class="leading-relaxed">Once the model is a URL, a harness is a client, and a client is a config file. Here is the same decision in OpenCode:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">"gimel2": {
+  "name": "gimel2",
+  "npm": "@ai-sdk/openai-compatible",
+  "options": {
+    "baseURL": "http://gimel2.tail5481a4.ts.net:8080/v1"
+  },
+  "models": {
+    "qwen3.8-flash-next": {
+      "name": "Qwen3.8-Flash-Next",
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      }
+    }
+  }
+}</code></pre>
+        <p class="leading-relaxed">And the same decision again in the flake, as a patch the harness reads on activation:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">{
+  id = "llm-pi-ai";
+  name = "@deepseek-ai/dsh-llm-pi-ai";
+  config = {
+    providers = {
+      gimel2 = {
+        displayName = "gimel2";
+        apiKeyEnv = "GIMEL2_API_KEY";
+        api = "openai-completions";
+        baseURL = "http://gimel2.tail5481a4.ts.net:8080/v1";</code></pre>
+        <p class="leading-relaxed">Three syntaxes, one decision. That is why changing harnesses cost me an afternoon each time instead of a rebuild of how I work.</p>
+
+        <p class="leading-relaxed">Strata uses parts of llama.cpp and ggml, so the engine on gimel2 and the engine on the laptop share ancestry, and both end at the same kind of URL. The hardware is uneven, and the API is what makes it one thing to configure against.</p>
+        <p class="leading-relaxed">Which engine sits behind each of those URLs, which quantization it is served at, and what that costs in tokens per second on the three machines involved is a post of its own: <a href="getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Getting a 125B model onto a 12 GB card</a>. From the harness side the endpoints differ in speed, not in protocol, and that is the only part that matters there.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Pi: one provider block and two packages</h2>
+        <p class="leading-relaxed"><a href="https://pi.dev/" class="font-semibold text-link hover:text-ocean-dark">Pi</a> (<a href="https://github.com/earendil-works/pi" class="font-semibold text-link hover:text-ocean-dark">source</a>, MIT) is deliberately minimal. No sub-agents, no plan mode, no permission popups, no background bash in the core; those are things you build or install as packages. What it gives you instead is control of the context: a small system prompt, <code class="font-mono text-sm text-ocean-dark">AGENTS.md</code> loaded from its own config directory and the directory tree, and sessions stored as a tree in one file so you can branch back to any earlier point.</p>
+        <p class="leading-relaxed">My setup was the provider block above plus two packages, <code class="font-mono text-sm text-ocean-dark">pi-web-access</code> and <code class="font-mono text-sm text-ocean-dark">pi-mcp-adapter</code>, with telemetry switched off. Nothing else.</p>
+        <p class="leading-relaxed">What it taught me came out of its session logs, which are plain JSONL. The largest session in the directory is the first attempt at this website. It ran 297 messages and 145 tool calls, and the split is the number worth knowing: 75 <code class="font-mono text-sm text-ocean-dark">bash</code>, 32 <code class="font-mono text-sm text-ocean-dark">edit</code>, 26 <code class="font-mono text-sm text-ocean-dark">write</code>, 12 <code class="font-mono text-sm text-ocean-dark">read</code>. Half the session was the model checking what the shell would actually do. Reading that ratio is the first harness skill I developed, and it says more about a run than the transcript does.</p>
+        <p class="leading-relaxed">Pi's lack of opinions is honest, but it means everything above the primitives is yours to build, and building it is exactly the work a small local model is worst at.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">OpenCode: providers, plugins and compaction</h2>
+        <p class="leading-relaxed">I had downloaded <a href="https://opencode.ai/" class="font-semibold text-link hover:text-ocean-dark">OpenCode</a> once before and put it down again without getting anywhere with it. The time I actually used it is the time that produced the config below, and it is the harness where I spent the most tokens: 16,028,123 input and 2,659,633 output on the ledger, for a recorded cost of $0.04, because nearly all of it went to my own endpoints.</p>
+        <p class="leading-relaxed">OpenCode ships with the machinery Pi leaves out: sub-agents, plan mode, a permission system, LSP integration. My config points it at three local providers, adds three MCP servers (one of them <code class="font-mono text-sm text-ocean-dark">nix run nixpkgs#mcp-nixos</code>, for NixOS option lookups), sets <code class="font-mono text-sm text-ocean-dark">"bash": "ask"</code> and <code class="font-mono text-sm text-ocean-dark">"edit": "allow"</code>, and installs six plugins:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">"plugin": [
+  "oh-my-openagent",
+  "opencode-skillful",
+  "opencode-supermemory",
+  "opencode-notifier",
+  "opencode-scheduler",
+  "opencode-dynamic-context-pruning"
+],
+"compaction": {
+  "auto": true,
+  "prune": false,
+  "reserved": 10000
+}</code></pre>
+        <p class="leading-relaxed">The last two of those are the local-model adaptations, and they are the part of the config I would defend. A context pruning plugin and a compaction step that holds 10,000 tokens back are not there to make the agent clever. They are there because with a local model, context is not a bill, it is minutes of my own hardware, and a session that drags its whole history is slow in a way that stops you working.</p>
+        <p class="leading-relaxed">The plan plugin keeps a work ledger at <code class="font-mono text-sm text-ocean-dark">~/.omo/boulder.json</code> with named plans, an agent name and elapsed time. The entry for this website records 95 minutes for the plan that produced the first commit. The same ledger and the session database show the shape of that run: a parent session, then short-lived children doing the reading, one of which took 905,542 input tokens to produce 11,678 output tokens of summary. Sub-agents multiply context faster than they multiply useful work, and when the model is local the price arrives as waiting rather than as money.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">DeepSeek Harness: installed by the flake</h2>
+        <p class="leading-relaxed"><a href="https://github.com/deepseek-ai/deepseek-harness" class="font-semibold text-link hover:text-ocean-dark">DeepSeek Harness</a> is what I run now, and it won on the one thing the other two did not offer: it installs as a Nix flake input, so the harness is part of the system I rebuild rather than something I installed once with npm.</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">programs.dsh = {
+  enable = true;
+  profiles.web = {
+    bundles = [
+      pkgs.dsh.bundles.base
+      pkgs.dsh.bundles.web-app
+      pkgs.dsh.bundles.web-ui
+    ];</code></pre>
+        <p class="leading-relaxed">The provider is the patch quoted above, so every activation rewrites it, and the API key it reads is the string <code class="font-mono text-sm text-ocean-dark">"x"</code>, set in <code class="font-mono text-sm text-ocean-dark">environment.sessionVariables</code>. The endpoint does not authenticate, because reachability is the tailnet, and Strata's own documentation says any key and any model name will be accepted. I would rather declare a dummy than keep a secret in a file that is not secret.</p>
+        <p class="leading-relaxed">The two timeouts in <code class="font-mono text-sm text-ocean-dark">~/.dsh/settings.yaml</code> are both 900,000 ms. Fifteen minutes of patience is arithmetic rather than caution: gimel2 reads a prompt at 253 tokens per second, so a 30,000 token first message costs about two minutes before the first token of the answer appears, and an agent run stacks several of those. It also answers one request at a time unless you turn on batching. A harness with a shorter default will kill work that was going fine.</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">agent-default-model:
+  provider: gimel2
+  model: qwen3.8-flash-next-iq3_s</code></pre>
+        <p class="leading-relaxed">The practical difference from the other two is recovery. A fresh machine, or a wiped home directory, gets the model endpoints, the timeouts and the default model back from <code class="font-mono text-sm text-ocean-dark">nixos-rebuild switch</code>. There is nothing to re-download and no key to go looking for.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What stays on my machines</h2>
+        <p class="leading-relaxed">Worth stating precisely, because "local AI" gets used loosely:</p>
+        <ul class="space-y-2 pl-5 list-disc marker:text-link">
+          <li class="leading-relaxed">The quantized model files sit on hardware I own, and the engine on the laptop is built from source by a Nix expression I wrote.</li>
+          <li class="leading-relaxed">The endpoints are tailnet hostnames. Nothing is listening on the WAN, and the authentication is the WireGuard interface rather than a token.</li>
+          <li class="leading-relaxed">Prompts, tool output and session history stay on my machines. The session logs are the reason this post exists, and no third party has a copy of them.</li>
+          <li class="leading-relaxed">The harness configuration is in the same git repository as the rest of the system config.</li>
+        </ul>
+        <p class="leading-relaxed">One boundary I would rather state than gloss over: the OpenCode config also carried the free hosted models that provider ships with, and I used them for tasks the laptop could not carry. Those sessions are separable in the same database, and the rule I would keep is to know exactly which ones they were rather than to pretend the setup is all local.</p>
+
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">This repository, three harnesses</h2>
+        <p class="leading-relaxed">This repository is the cleanest test case, because all three touched it or touched a version of it. Pi wrote the first attempt, a Next.js app. OpenCode rebuilt the idea, then dropped the framework, leaving a directory with <code class="font-mono text-sm text-ocean-dark">index.html</code>, <code class="font-mono text-sm text-ocean-dark">style.css</code> and <code class="font-mono text-sm text-ocean-dark">app.js</code>, and then ran the plan that produced this repo. DeepSeek Harness has been writing it since. The repo does not care which program made a commit, and that is the point: the parts that made it swappable were decided before any harness was chosen.</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-slate-200"><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">Harness</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">How the model is wired in</th><th class="py-2 pr-4 font-display font-semibold text-ocean-dark">What I tuned for a local model</th></tr>
+            </thead>
+            <tbody class="text-slate-600">
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">Pi</td><td class="py-2 pr-4">a 14 line <code class="font-mono text-xs">models.json</code>, one <code class="font-mono text-xs">openai-completions</code> provider</td><td class="py-2 pr-4">context window 131072, completion budget 4096</td></tr>
+              <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">OpenCode</td><td class="py-2 pr-4">provider blocks on <code class="font-mono text-xs">@ai-sdk/openai-compatible</code>, three hosts</td><td class="py-2 pr-4">compaction holding 10000 tokens back, a pruning plugin, bash set to ask</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">DeepSeek Harness</td><td class="py-2 pr-4">a patch in the flake, one provider, dummy key</td><td class="py-2 pr-4">900000 ms timeouts, an IQ3 quant as the default model</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rounded-card border border-ocean/20 bg-ocean/5 p-5 text-sm">
+          <p class="font-semibold text-ocean-dark mb-1">If you are building the same workflow</p>
+          <ul class="space-y-1 text-slate-600">
+            <li>• Put the model behind an OpenAI-compatible URL before you choose a harness. It is the decision that made every later change cheap.</li>
+            <li>• Set the context budget yourself. A harness default is written for a hosted model, and on a laptop it is usually wrong in both directions.</li>
+            <li>• Keep <code class="font-mono text-sm text-ocean-dark">AGENTS.md</code> in the repository rather than in the tool's config. It is the one artifact that survived all three harnesses unchanged.</li>
+            <li>• Read the tool-call mix in the session log before blaming the model. 75 of 145 calls being <code class="font-mono text-sm text-ocean-dark">bash</code> is a fact about the task.</li>
+            <li>• Put the harness configuration in the same flake as the system, so a rebuilt machine gets the workflow back on its own.</li>
+          </ul>
+        </div>
+
+        <h2 class="mt-2 text-2xl font-display font-semibold text-ocean-dark">Further reading</h2>
+        <ul class="space-y-2">
+          <li><a href="https://pi.dev/" class="font-semibold text-link hover:text-ocean-dark">Pi</a> and its <a href="https://github.com/earendil-works/pi" class="font-semibold text-link hover:text-ocean-dark">source</a>: the minimal harness, and the page listing what it deliberately does not ship.</li>
+          <li><a href="https://opencode.ai/" class="font-semibold text-link hover:text-ocean-dark">OpenCode</a>: the config schema my provider, plugin and compaction blocks are written against.</li>
+          <li><a href="https://github.com/deepseek-ai/deepseek-harness" class="font-semibold text-link hover:text-ocean-dark">DeepSeek Harness</a>: the plugin architecture and the NixOS module I install it through.</li>
+          <li><a href="https://github.com/Niko1221/Strata" class="font-semibold text-link hover:text-ocean-dark">Strata</a>: the inference engine on the two tailnet boxes, and the page that explains how a 125B mixture of experts is split across GPU, RAM and SSD.</li>
+          <li><a href="https://github.com/ikawrakow/ik_llama.cpp" class="font-semibold text-link hover:text-ocean-dark">ik_llama.cpp</a>: the fork behind the laptop endpoint.</li>
+        </ul>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">The numbers come from the session directories and databases each harness keeps, plus the flake module that configures the current one, all on the machine they happened on.</p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

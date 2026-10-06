@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>An editor built up from nothing, on purpose - Ahmed Bouallegui</title>
+  <meta name="description" content="Building Neovim from an empty init.lua: lazy loading, a colourscheme, a tree-sitter grammar for my own file formats, and nixd pointed at the flake.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="An editor built up from nothing, on purpose">
+  <meta property="og:description" content="A Neovim config built from an empty init.lua, including a tree-sitter grammar of my own.">
+  <meta property="og:type" content="article">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/posts/an-editor-built-up-from-nothing.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
+  <meta property="og:url" content="https://bouallegui.me/posts/an-editor-built-up-from-nothing.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-40 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <header class="container relative px-5 md:px-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 font-semibold text-ocean-glow hover:text-white mb-6">&larr; Back to Blog</a>
+        <p class="eyebrow text-ocean-glow">NixOS, in pieces</p>
+        <h1 class="section-title mb-6 text-white text-3xl font-display font-bold leading-tight sm:text-4xl">An editor built up from nothing, on purpose</h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+          <span class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-display font-bold text-ocean-glow">A</span> Ahmed Bouallegui</span>
+          <span>·</span><span><time datetime="2026-05-31">May 31, 2026</time></span>
+          <span>·</span><a href="../blog.html" class="hover:text-white">Part 5 of 8</a>
+        </div>
+      </header>
+    </section>
+
+    <article class="pb-24">
+      <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
+        <p class="leading-relaxed">A Neovim distribution would have been faster. LazyVim or NvChad would have had highlighting and LSP working in an afternoon. I started from an empty <code class="font-mono text-sm text-ocean-dark">init.lua</code> instead and wrote the plugins, colourscheme, keymaps and LSP wiring myself. It took longer, and the payoff shows up when something breaks: I know what every line in the config is for.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Loading plugins on demand</h2>
+        <p class="leading-relaxed">Every plugin declares its own load trigger through <a href="https://github.com/nvim-neorocks/lz.n" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark"><code class="font-mono text-sm text-ocean-dark">lz.n</code></a>: a keypress, a filetype, a command, or eagerly if it genuinely has to be.</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">return {
+  "nvim-treesitter",
+  event = "DeferredUIEnter",
+}
+
+return {
+  "fastaction.nvim",
+  keys = { { "&lt;leader&gt;a", function() require("fastaction").code_action() end } },
+}</code></pre>
+        <p class="leading-relaxed">Nothing pays a startup cost until something asks for it. Each entry in the plugin list says when it loads, so the startup time is something you can reason about instead of measure and shrug at.</p>
+        <p class="leading-relaxed">If you are starting from scratch, set this up early. Retrofitting lazy loading onto a config with thirty eagerly loaded plugins means working out, one at a time, what each plugin actually needs to be loaded for.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">A colourscheme and a grammar</h2>
+        <p class="leading-relaxed">The colourscheme (<code class="font-mono text-sm text-ocean-dark">gxvjbox</code>) is a gruvbox-derived palette I wrote from scratch: a set of hex values, applied to each highlight group by hand. The same base16 table is used outside Neovim, for the terminal, the file manager and the bar, so those tools agree on colours without anyone copying values between five config formats.</p>
+        <p class="leading-relaxed">The less common piece is tree-sitter support for a couple of personal file formats I use for my own project files. I wrote the grammar: a compiled C parser, syntax queries, and a <a href="https://topiary.tweag.io/" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">topiary</a> formatting query, all in <code class="font-mono text-sm text-ocean-dark">neovimConfig/</code> next to the rest of the editor config. A distribution cannot ship that, because the formats only exist for me.</p>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Pointing the language server at this flake</h2>
+        <p class="leading-relaxed">The Nix language server here is not only configured for Nix syntax. It is pointed at this flake's own evaluated option set, so completion on a NixOS option comes from this repository's module tree rather than from generic nixpkgs documentation:</p>
+        <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">options.nixos.expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.amal.options'</code></pre>
+        <p class="leading-relaxed">Swap <code class="font-mono text-sm text-ocean-dark">amal</code> for your own <code class="font-mono text-sm text-ocean-dark">nixosConfigurations</code> name. Once that line is correct, writing Nix inside Neovim gives you completions for your own custom modules, which is the main reason I keep the editor config in the same repo as the system config.</p>
+        <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
+          <a href="a-private-cloud-with-a-guest-list.html" class="card card-link p-5" aria-label="Previous part">
+            <span class="eyebrow block">Part 4</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">A private cloud, sized for the people who actually use it</span>
+          </a>
+          <a href="running-the-model-myself.html" class="card card-link p-5 text-right" aria-label="Next part">
+            <span class="eyebrow block">Part 6</span>
+            <span class="mt-1 block font-display font-semibold leading-snug">Running the model myself</span>
+          </a>
+        </nav>
+
+        <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
+          <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li><a href="my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
+            <li><a href="a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">A desktop that scrolls instead of stacking</a></li>
+          </ul>
+          <p class="mt-3 text-sm text-slate-500">Part 5 of 8 of <a href="../blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+        </div>
+
+        <p class="text-sm text-slate-500">Where this lives: <a href="../portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>
