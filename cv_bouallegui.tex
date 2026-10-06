@@ -1,0 +1,95 @@
+% Copyright (c) 2026 Ahmed Taha Bouallegui
+% SPDX-License-Identifier: GPL-3.0-or-later
+
+% =============================================================================
+%  Ahmed Taha Bouallegui -- CV
+%  Style : moderncv "classic" (the iconic name-banner + section-rule look)
+%  Color : blue (matches personal branding)
+%  Compile: pdflatex cv_bouallegui.tex   (or xelatex)
+% =============================================================================
+\documentclass[a4paper,11pt]{moderncv}
+\moderncvstyle{classic}
+\moderncvcolor{blue}
+
+% Fonts / encoding
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}   % scalable Type1 fonts; microtype refuses to run with bitmap ones
+\usepackage{graphicx}
+
+% Tighten geometry so everything fits on one page
+\usepackage[top=7mm,bottom=5mm,left=12mm,right=12mm]{geometry}
+\setlength{\hintscolumnwidth}{0.175\textwidth}
+\setlength{\parskip}{0pt}\setlength{\itemsep}{0pt}\setlength{\partopsep}{0pt}
+% Project bullets: a plain list environment, so the symbol and the left margin match the
+% French version of the CV.
+\newenvironment{cvlist}
+  {\begin{list}{\strut\textcolor{color1}{\large\rmfamily\textbullet}}{\setlength{\leftmargin}{13pt}\setlength{\labelsep}{6pt}\setlength{\itemsep}{0pt}\setlength{\topsep}{1pt}\setlength{\parsep}{0pt}\setlength{\partopsep}{0pt}}}
+  {\end{list}}
+
+% Contact details
+\name{Ahmed Taha}{Bouallegui}
+\phone{+33 6 68 51 84 86}
+\email{ahmedtbou@tutamail.com}
+\address{Villeneuve d'Ascq, France}
+
+\begin{document}
+\makecvtitle
+\footnotesize
+
+% ---------------------------------------------------------------------------
+\section{Technical Summary}
+\cvitem[.05em]{}{Computer Engineering student specializing in IoT and Cybersecurity. Linux system administration, infrastructure as code, self-hosted environments built with Nix on NixOS, including a home lab that runs its own models locally. Looking for an internship in systems administration or cybersecurity in summer 2027, 10 weeks to 4 months.}
+
+% ---------------------------------------------------------------------------
+\section{Education}
+\cventry[.05em]{2023 to 2028}{M.Eng. in Internet of Things and Cybersecurity}{École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, France}{}{}
+\cventry[.05em]{2023 to 2025}{Preparatory Cycle (MPCSI)}{Polytech Lille}{Villeneuve d'Ascq, France}{}{Graduated with Highest Honors, Top of Class 2023/2024}
+\cventry[.05em]{2023}{Baccalaur\'eat (French high school diploma)}{France}{}{}{Tr\`es Bien (Highest Distinction)}
+
+% ---------------------------------------------------------------------------
+\section{Technical Skills}
+\cvitem[.05em]{Systems \& infra.}{Linux (NixOS, Debian, Arch, Ubuntu), KVM/QEMU, Docker, microVMs, systemd.}
+\cvitem[.05em]{Declarative config.}{Nix/NixOS, sops, reproducible builds, environment management.}
+\cvitem[.05em]{Local AI}{llama.cpp, vLLM.}
+\cvitem[.05em]{Networking \& Security}{Tailscale, ZeroTier, IAM isolation, AWS (EC2, IAM, security groups), CTF (Reverse Engineering, Web/Memory Safety).}
+\cvitem[.05em]{Programming}{Python, C/C++, C\#, Java, Rust, Bash, PostgreSQL, Assembly (AVR/ARM).}
+\cvitem[.05em]{Tools}{Git, KiCad, MATLAB/Simulink, Matplotlib.}
+\cvitem[.05em]{Languages}{English (C1), Arabic (C2), French (C1), German (B1).}
+
+% ---------------------------------------------------------------------------
+\section{Selected Projects}
+\cventry[.05em]{Since Aug 2026}{Local LLM Inference on Consumer Hardware}{}{}{}{
+\begin{cvlist}
+  \item Open-weight models on three machines with \texttt{llama.cpp}: two RTX 3060 boxes and one ThinkPad running on CPU only, reachable only through a VPS.
+  \item A 125B mixture-of-experts model on a 12 GB card: experts split across VRAM, RAM and a 29 GB SSD lookup table. 35 tok/s decode and 253 tok/s prefill, against 12 and 55 before the engine change.
+\end{cvlist}}
+
+\cventry[.05em]{Since Jan 2026}{Self-Hosted Linux Server Infrastructure}{}{}{}{
+\begin{cvlist}
+  \item Headless server: Immich, Jellyfin, Grocy, SearXNG and Samba. Started on Debian in January 2026, rebuilt on NixOS in February from one shared config tree.
+  \item Nothing listens on the public internet: services are reachable only through a VPS, and the repository secrets are encrypted with sops.
+\end{cvlist}}
+
+\cventry[.05em]{Jan to Jun 2026}{Split Ergonomic Keyboard \textbf{(coursework)}}{}{}{}{Schematic and two-layer PCB drawn in KiCad, firmware written in C.}
+
+
+% ---------------------------------------------------------------------------
+\section{Professional Experience}
+\cventry[.05em]{Jun to Jul 2026}{Research Internship, CRIStAL \textbf{(2XS team)}}{IRCICA \textbullet Universit\'e de Lille}{Lille, France}{}{
+\begin{cvlist}
+  \item Removed every fork and exec of \texttt{iw} and \texttt{ip} in the wifi module of a Linux IoT-detection probe, replacing them with direct \texttt{nl80211} and rtnetlink calls and automatic interface discovery.
+  \item Contributed to the 2XS team's embedded work on memory footprint, energy efficiency and security, and to kernel debugging.
+\end{cvlist}}
+
+\cventry[.05em]{Apr 2025 to now}{Fabmanager \textbf{(Fabricarium FabLab)}}{PolyTech Lille}{Villeneuve d'Ascq, France}{}{
+\begin{cvlist}
+  \item Operate and maintain the school's FabLab: 3D printers, laser cutters, CNC, electronics workstations.
+  \item Support students and researchers prototyping hardware and IoT projects; coordinate bookings, safety and open sessions.
+\end{cvlist}}
+
+\cventry[.05em]{Jul to Aug 2023}{Internship in Automation Engineering \textbf{(Valeo)}}{Valeo}{Tunis, Tunisia}{}{
+\begin{cvlist}
+  \item Automated a sound-recognition quality check on a steering-wheel line with Python and Librosa.
+\end{cvlist}}
+
+\end{document}
