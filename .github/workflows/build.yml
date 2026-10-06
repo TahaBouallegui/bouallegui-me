@@ -1,0 +1,70 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build stylesheet
+        run: npm run build
+
+      # css/output.css is committed on purpose, so a push must not contain a stylesheet
+      # that differs from what src/input.css + the templates actually produce.
+      - name: Committed stylesheet is up to date
+        run: |
+          if ! git diff --exit-code css/output.css; then
+            echo "::error::css/output.css is stale. Run 'npm run build' and commit the result."
+            exit 1
+          fi
+
+      - name: Links and assets resolve
+        run: sh scripts/check-links.sh
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: |
+            *.html
+            fr/*.html
+            posts/*.html
+            css/output.css
+            fonts/
+            images/
+            js/
+            cv_bouallegui.pdf
+            cv_bouallegui_fr.pdf
+            feed.xml
+            sitemap.txt
+            robots.txt
+            LICENSE
+            README.md
+          if-no-files-found: error
+
+  # Deploy target is a self-hosted box, so it stays explicit rather than guessed at here.
+  # Uncomment once the repo has a remote and the host has an SSH key in Secrets:
+  #
+  # deploy:
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with: { name: site, path: site }
+  #     - run: rsync -rlptz --delete site/ deploy@bouallegui.me:/srv/bouallegui.me/

@@ -2,3 +2,14 @@ node_modules/
 .DS_Store
 npm-debug.log*
 *.log
+
+# Working notes, screenshots, and drafts that should never ship.
+.scratch/
+
+# LaTeX build artefacts.
+*.aux
+*.out
+*.toc
+
+# css/output.css is deliberately tracked: it is the built stylesheet the site serves,
+# and CI fails if a push contains a stylesheet that does not match `npm run build`.

@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "tailwindcss -i src/input.css -o css/output.css --watch",
     "build": "tailwindcss -i src/input.css -o css/output.css --minify",
-    "serve": "python3 -m http.server 8080"
+    "hero": "esbuild src/hero.js --bundle --format=esm --minify --target=es2020 --outfile=js/vendor/hero.bundle.js",
+    "serve": "node scripts/serve.mjs",
+    "check": "sh scripts/check-links.sh",
+    "feed": "node scripts/build-feed.mjs"
   },
   "keywords": [
     "portfolio",
@@ -14,10 +17,12 @@
     "tailwindcss",
     "personal website"
   ],
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "autoprefixer": "^10.4.0",
+    "esbuild": "^0.27.2",
     "postcss": "^8.4.0",
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.0",
+    "three": "0.186.1"
   }
 }
