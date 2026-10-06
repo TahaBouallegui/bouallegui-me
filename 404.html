@@ -2,14 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 — Page not found</title>
+  <title>404 - Page not found</title>
+  <meta name="description" content="Page not found on bouallegui.me. Links to the portfolio, blog, résumé, and contact page.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#023E8A">
+  <link rel="preload" href="fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="feed.xml">
 </head>
-<body class="bg-surface text-ink flex min-h-screen flex-col items-center justify-center text-center">
-  <h1 class="mb-2 text-6xl font-display font-bold text-ocean">404</h1>
-  <p class="mb-6 text-slate-600">This page wandered off into the void, much like an unhandled promise.</p>
-  <a href="index.html" class="btn-primary">Back home</a>
+<body class="bg-surface text-ink flex min-h-screen flex-col">
+  <nav data-part="nav" aria-label="Primary"></nav>
+
+  <main id="main" class="relative flex flex-1 items-center justify-center bg-ocean-deep px-5 py-32 text-center">
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+    <div class="relative">
+      <p class="eyebrow text-ocean-glow">Error 404</p>
+      <h1 class="mb-3 text-6xl font-display font-bold text-white">Not found</h1>
+      <p class="mx-auto mb-8 max-w-md text-slate-200">This page wandered off, a renamed post, a stale bookmark, or a link that never existed. Everything that does exist is below.</p>
+      <ul class="flex flex-wrap items-center justify-center gap-3">
+        <li><a href="index.html" class="btn-primary">Back home</a></li>
+        <li><a href="portfolio.html" class="btn-outline text-white">Portfolio</a></li>
+        <li><a href="blog.html" class="btn-outline text-white">Blog</a></li>
+        <li><a href="resume.html" class="btn-outline text-white">Résumé</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="js/partials.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

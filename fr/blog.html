@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes - Ahmed Bouallegui</title>
+  <meta name="description" content="Notes de terrain d'Ahmed Bouallegui : une série en huit parties sur la config NixOS qui construit toutes ses machines, plus des notes sur le sans fil, le matériel, l'inférence locale et le cloud.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Notes - Ahmed Bouallegui">
+  <meta property="og:description" content="Notes de terrain : infrastructure Nix, sans fil, matériel, inférence locale.">
+  <meta property="og:type" content="website">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/fr/blog.html">
+  <link rel="alternate" type="application/rss+xml" title="Notes de terrain, en anglais (RSS)" href="../feed.xml">
+  <link rel="alternate" hreflang="en" href="https://bouallegui.me/blog.html">
+  <link rel="alternate" hreflang="fr" href="https://bouallegui.me/fr/blog.html">
+  <link rel="alternate" hreflang="x-default" href="https://bouallegui.me/blog.html">
+  <meta property="og:url" content="https://bouallegui.me/fr/blog.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Principale"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-44 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <div class="container relative px-5 text-center md:px-8">
+        <p class="eyebrow text-ocean-glow">Notes de terrain</p>
+        <h1 class="section-title mb-4 text-white">Notes</h1>
+        <p class="mx-auto max-w-2xl text-slate-200">Notes issues du labo et de mes propres machines. Si une leçon m'a coûté une heure de débogage, elle ne devrait pas vous coûter une journée.</p>
+        <p class="mx-auto mt-3 max-w-2xl text-slate-300 text-sm">Les notes elles-mêmes sont écrites en anglais. S'abonner avec <a href="../feed.xml" class="font-semibold text-ocean-glow transition hover:text-white">RSS</a>.</p>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="container px-5 md:px-8">
+        <div class="mb-10 flex items-end justify-between" data-animate>
+          <div>
+            <p class="eyebrow">Une série</p>
+            <h2 class="section-title mb-3">NixOS, en morceaux</h2>
+            <p class="max-w-2xl text-slate-600">Huit parties, une pièce de la config par partie. Un seul flake construit toutes les machines que je fais tourner.</p>
+          </div>
+        </div>
+        <!-- SERIES:START -->
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-animate>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 1</span><span><time datetime="2026-03-08">8 mars 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Un fichier, une capacité : comment j'ai arrêté de maintenir une liste d'imports</h2>
+            <p class="mb-4 text-sm text-slate-600">Comment la config est posée. import-tree lit chaque fichier de modules/, donc il n'y a pas de liste d'imports à tenir à jour, et une seule convention tient le reste.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">flake-parts</span><span class="chip">import-tree</span></div>
+            <a href="../posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 2</span><span><time datetime="2026-03-29">29 mars 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Un bureau qui fait défiler au lieu d'empiler</h2>
+            <p class="mb-4 text-sm text-slate-600">niri avec noctalia et un jeu de couleurs, empaquetés pour que tout le bureau se construise comme un seul objet, et des menus qui affichent les raccourcis au lieu de demander de les retenir.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">niri</span><span class="chip">noctalia</span><span class="chip">wrappers</span></div>
+            <a href="../posts/a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 3</span><span><time datetime="2026-04-19">19 avril 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Des secrets, gardés avec des clés que j'avais déjà</h2>
+            <p class="mb-4 text-sm text-slate-600">Commiter des secrets à découvert, chiffrés avec age, à partir de clés dérivées par ssh-to-age de clés SSH que vous avez déjà.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">sops-nix</span><span class="chip">age</span></div>
+            <a href="../posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 4</span><span><time datetime="2026-05-10">10 mai 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Un cloud privé, à la taille des gens qui s'en servent vraiment</h2>
+            <p class="mb-4 text-sm text-slate-600">Immich, Jellyfin, Grocy et SearXNG sur un serveur à la maison, sans rien d'atteignable depuis internet. Comment la configuration tailnet-only est montée.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">tailscale</span><span class="chip">immich</span><span class="chip">jellyfin</span></div>
+            <a href="../posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 5</span><span><time datetime="2026-05-31">31 mai 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Un éditeur construit à partir de rien, exprès</h2>
+            <p class="mb-4 text-sm text-slate-600">Construire Neovim depuis un init.lua vide : chargement paresseux, un jeu de couleurs, une grammaire tree-sitter pour mes propres formats de fichier, et nixd pointé sur le flake.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">neovim</span><span class="chip">tree-sitter</span><span class="chip">lz.n</span></div>
+            <a href="../posts/an-editor-built-up-from-nothing.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 6</span><span><time datetime="2026-09-13">13 septembre 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Faire tourner le modèle moi-même</h2>
+            <p class="mb-4 text-sm text-slate-600">ik_llama.cpp construit avec des flags CPU pour le matériel que j'ai vraiment, servant une API OpenAI-compatible à une interface de chat.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">llama.cpp</span><span class="chip">OpenAI API</span></div>
+            <a href="../posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 7</span><span><time datetime="2026-06-21">21 juin 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Un flake, trois machines qui se ressemblent à peine</h2>
+            <p class="mb-4 text-sm text-slate-600">Trois machines qui ne partagent presque rien sauf le flake. Ce qui reste commun, ce qui reste par machine, et comment les empêcher de diverger.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">flake-parts</span><span class="chip">hosts</span></div>
+            <a href="../posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Partie 8</span><span><time datetime="2026-07-12">12 juillet 2026</time></span></div>
+            <h2 class="mb-2 font-display text-lg font-semibold leading-snug">Mon shell est un paquet</h2>
+            <p class="mb-4 text-sm text-slate-600">Le shell comme dérivation : un seul paquet wrappé vers lequel chaque point d'entrée se résout, avec l'identité git fixée à la construction.</p>
+            <div class="mb-4 flex flex-wrap gap-2"><span class="chip">fish</span><span class="chip">wrappers</span></div>
+            <a href="../posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+        </div>
+        <!-- SERIES:END -->
+      </div>
+    </section>
+
+    <section class="py-20 bg-slate-50/70">
+      <div class="container px-5 md:px-8">
+        <div class="mb-10" data-animate>
+          <p class="eyebrow">Le reste</p>
+          <h2 class="section-title mb-0">Matériel, recherche, inférence et outillage</h2>
+        </div>
+        <div class="grid gap-8 lg:grid-cols-2">
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="mb-4 flex aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/moe-split.svg" alt="Diagramme : une grille d'experts à gauche avec une poignée surlignée comme ceux par lesquels un seul jeton passe. À droite, trois cases pour leur emplacement : une RTX 3060 de 12 Go gardant les quelques milliers d'experts les plus chauds, 64 Go de RAM les gardant tous, et un SSD NVMe gardant une table de recherche de 29 Go" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Inférence</span><span><time datetime="2026-09-27">27 sept. 2026</time></span></div>
+              <h2 class="mb-2 font-display text-xl font-semibold">Faire tenir un modèle de 125 Md de paramètres sur une carte de 12 Go</h2>
+              <p class="mb-4 text-slate-600">Le mélange d'experts, la quantification et le contexte qui ont mis un modèle de 125 milliards de paramètres sur une RTX 3060, avec les débits mesurés sur trois machines.</p>
+              <a href="../posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="mb-4 flex aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/harnesses.svg" alt="Diagramme : trois harnesses, pi, opencode et dsh, chacun avec une flèche étiquetée openai-completions pointant vers une frontière en pointillés marquée mon propre matériel uniquement. À l'intérieur, trois endpoints : amal sur le port 8901 avec ik_llama.cpp, gimel sur le port 8080 avec llama.cpp, et gimel2 sur le port 8080 avec Strata, deux i9-13900 avec une RTX 3060. Sous la frontière, une flèche vers l'endpoint d'inférence de quelqu'un d'autre barrée." width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Outillage</span><span><time datetime="2026-10-04">4 oct. 2026</time></span></div>
+              <h2 class="mb-2 font-display text-xl font-semibold">Ce qu'est un harness, appris par la voie lente</h2>
+              <p class="mb-4 text-slate-600">Pi, OpenCode et DeepSeek Harness pointés sur le même endpoint OpenAI-compatible sur mon propre matériel, et ce que le harness ajoute au modèle : la boucle, les appels d'outils, les skills, et une configuration qui tient dans le même flake que le reste du système.</p>
+              <a href="../posts/what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="mb-4 flex aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/wireless.svg" alt="Diagramme : à gauche le module wifi fork et exec iw et ip avant d'atteindre le noyau ; à droite il envoie des messages nl80211 et rtnetlink sur une seule socket" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Sans fil</span><span><time datetime="2026-08-21">21 août 2026</time></span></div>
+              <h2 class="mb-2 font-display text-xl font-semibold">Le module wifi a arrêté d'appeler iw en shell</h2>
+              <p class="mb-4 text-slate-600">Ce que j'ai appris en remplaçant les fork and exec d'iw et d'ip par des messages nl80211 et rtnetlink dans un outil de détection d'objets connectés, avec le code du noyau et les extraits de la vraie history git.</p>
+              <a href="../posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="mb-4 flex aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/keyboard.jpg" alt="La moitié de clavier construite sur masque de soudure vert, switchs dans des sockets hot-swap et une prise USB soudée au bord de la carte" width="868" height="1156" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Matériel</span><span><time datetime="2026-07-05">5 juil. 2026</time></span></div>
+              <h2 class="mb-2 font-display text-xl font-semibold">Un clavier split qui a tué son propre microcontrôleur</h2>
+              <p class="mb-4 text-slate-600">30 touches, 16 LED RVB, deux pilotes TLC5947 en cascade, et environ 0,9 A de rétroéclairage contre une alimentation de 300 mA. Ce que la carte m'a appris sur la lecture d'une fiche technique avant de commander les composants.</p>
+              <a href="../posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="mb-4 flex aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/aws.svg" alt="Diagramme : en haut, un chemin d'un portable à travers un security group vers une instance EC2 faisant tourner nginx sur le port 80 en eu-west-3, la région Paris. En dessous, trois tuiles pour ce qui continue d'exister après l'arrêt de l'instance : le volume EBS, l'adresse IPv4 publique, et l'instance elle-même, qui est la seule des trois à cesser d'être facturée" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500"><span class="chip">Cloud</span><span><time datetime="2025-11-16">16 nov. 2025</time></span></div>
+              <h2 class="mb-2 font-display text-xl font-semibold">À quoi ressemble un compte AWS vu de l'intérieur</h2>
+              <p class="mb-4 text-slate-600">Tout ce que je fais tourner est sur du matériel que je possède, alors j'ai ouvert un compte pour voir l'autre côté : security groups, paires de clés, rôles d'instance, et ce qui continue de facturer après l'arrêt de l'instance.</p>
+              <a href="../posts/an-aws-account-from-the-inside.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="container px-5 md:px-8">
+        <div class="mb-10 max-w-2xl" data-animate>
+          <p class="eyebrow">Dans la file</p>
+          <h2 class="section-title mb-0">Ce que j'écris ensuite</h2>
+        </div>
+        <ul class="grid gap-4 sm:grid-cols-2" data-animate>
+          <li class="card">
+            <h3 class="mb-1 font-display font-semibold text-ocean-dark">Jeanne d'Hack : ce que les défis de RE ont vraiment appris</h3>
+            <p class="text-sm text-slate-600">Notes prises sur les défis d'ingénierie inverse binaire et de corruption mémoire, défi par défi.</p>
+          </li>
+          <li class="card">
+            <h3 class="mb-1 font-display font-semibold text-ocean-dark">Empreinte d'un appareil à partir de son trafic</h3>
+            <p class="text-sm text-slate-600">Comment le module wifi décide qu'une MAC est un appareil ou un point d'accès, et ce que les préfixes OUI, les sondes mDNS et SSDP pourraient ajouter.</p>
+          </li>
+          <li class="card">
+            <h3 class="mb-1 font-display font-semibold text-ocean-dark">Une grammaire pour une langue que je suis seul à parler</h3>
+            <p class="text-sm text-slate-600">La grammaire tree-sitter de la partie 5 en entier : le fichier de grammaire, les requêtes, et les règles de formatage topiary.</p>
+          </li>
+        </ul>
+        <p class="mt-8 text-sm text-slate-500">Rien ici n'est publié avant d'être écrit. Pas encore de flux RSS. Dites-le si vous en voulez un et je l'ajouterai.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

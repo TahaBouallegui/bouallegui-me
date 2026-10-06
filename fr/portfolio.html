@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projets - Ahmed Bouallegui</title>
+  <meta name="description" content="Travail sélectionné en systèmes et sécurité par Ahmed Bouallegui : infrastructure Nix reproductible, serveur auto-hébergé, détection de stations sans fil sur nl80211, ingénierie inverse en CTF, et contrôle qualité audio sur ligne de production.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Projets - Ahmed Bouallegui">
+  <meta property="og:description" content="Travail sélectionné en systèmes et sécurité : infrastructure Nix, serveurs auto-hébergés, détection nl80211, RE en CTF, automatisation de contrôle qualité audio.">
+  <meta property="og:type" content="website">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/fr/portfolio.html">
+  <link rel="alternate" type="application/rss+xml" title="Notes de terrain, en anglais (RSS)" href="../feed.xml">
+  <link rel="alternate" hreflang="en" href="https://bouallegui.me/portfolio.html">
+  <link rel="alternate" hreflang="fr" href="https://bouallegui.me/fr/portfolio.html">
+  <link rel="alternate" hreflang="x-default" href="https://bouallegui.me/portfolio.html">
+  <meta property="og:url" content="https://bouallegui.me/fr/portfolio.html">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Principale"></nav>
+
+  <main id="main">
+    <section class="relative pt-32 pb-44 bg-ocean-deep">
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+      <div class="container relative px-5 text-center md:px-8">
+        <p class="eyebrow text-ocean-glow">Ce que je construis</p>
+        <h1 class="section-title mb-4 text-white">Projets</h1>
+        <p class="mx-auto max-w-2xl text-slate-200">Des choses que j'ai réellement fait tourner, cassées ou maintenues. Chacune est partie d'un problème sur lequel je suis tombé moi-même. Quand le code est privé (travail de stage, ou infrastructure qui porte de vrais identifiants), je le dis au lieu de laisser croire qu'un dépôt existe.</p>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="container px-5 md:px-8">
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+          <article id="nix-monorepo" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/nix.svg" alt="Diagramme : un flake Nix dessiné comme six lambdas alimentant trois machines : un ThinkPad, un portable retiré et un serveur headless appelé aleph" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Un flake pour toutes les machines que je fais tourner</h2>
+              <p class="mb-3 text-sm text-slate-600">Un monorepo NixOS : flake-parts avec modules auto-importés, un portable, un portable retiré gardé par conservation, et un serveur headless construit depuis le même arbre. Les secrets vivent dans le dépôt chiffrés ; les services ne sont atteignables que via un VPS.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">NixOS</span><span class="chip">flake-parts</span><span class="chip">sops-nix</span><span class="chip">Tailscale</span></div>
+              <p class="mb-3 text-xs text-slate-500">Depuis février 2026 · config non publiée, une série en huit parties l'est</p>
+              <a href="../posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">Commencer la série &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes (en anglais) : <a href="../posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">Un fichier, une capacité : comment j'ai arrêté de maintenir une liste d'imports</a> · <a href="../posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Des secrets, gardés avec des clés que j'avais déjà</a> · <a href="../posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">Un flake, trois machines qui se ressemblent à peine</a></p>
+            </div>
+          </article>
+
+          <article id="self-hosted" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/vps.svg" alt="Diagramme : trois appareils sur un tailnet qui atteignent un serveur headless appelé aleph faisant tourner immich, jellyfin, grocy, searxng, samba et un llm local ; la flèche venant d'internet est barrée car aucun port n'est ouvert" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Infrastructure serveur auto-hébergée</h2>
+              <p class="mb-3 text-sm text-slate-600">Un serveur headless qui fait tourner Immich, Jellyfin, Grocy, SearXNG, Samba et un LLM local derrière une API OpenAI-compatible. Il a commencé sous Debian en janvier 2026 et a été reconstruit sous NixOS en février. Rien n'écoute sur internet : tous les services sont accessibles uniquement via un VPS.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">NixOS</span><span class="chip">Tailscale</span><span class="chip">Immich</span><span class="chip">Jellyfin</span></div>
+              <p class="mb-3 text-xs text-slate-500">Depuis janvier 2026 · en service, non publié</p>
+              <a href="../posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">Lire la note &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes (en anglais) : <a href="../posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">Un cloud privé, à la taille des gens qui s'en servent vraiment</a> · <a href="../posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Faire tourner le modèle moi-même</a></p>
+            </div>
+          </article>
+
+          <article id="local-llm" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/moe-split.svg" alt="Diagramme : une grille d'experts à gauche avec une poignée surlignée comme ceux par lesquels un seul jeton passe. À droite, trois cases pour leur emplacement : une RTX 3060 de 12 Go gardant les quelques milliers d'experts les plus chauds, 64 Go de RAM les gardant tous, et un SSD NVMe gardant une table de recherche de 29 Go" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Une pile de modèles locale que je peux mesurer</h2>
+              <p class="mb-3 text-sm text-slate-600">Trois machines, trois moteurs d'inférence, et les choix de quantification et de contexte qui ont mis un mélange d'experts de 125 milliards de paramètres sur une carte de 12 Go. Chaque endpoint parle une API OpenAI-compatible et n'est atteignable que via un VPS ; la configuration des harnesses vit dans le même flake que le reste du système.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">llama.cpp</span><span class="chip">Strata</span><span class="chip">GGUF</span><span class="chip">Tailscale</span></div>
+              <p class="mb-3 text-xs text-slate-500">Depuis août 2026 · config non publiée</p>
+              <a href="../posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Lire les mesures &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes (en anglais) : <a href="../posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Faire tourner le modèle moi-même</a> · <a href="../posts/what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">Ce qu'est un harness, appris par la voie lente</a></p>
+            </div>
+          </article>
+
+          <article id="wireless" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/wireless.svg" alt="Diagramme : à gauche le module wifi fork et exec iw et ip avant d'atteindre le noyau ; à droite il envoie des messages nl80211 et rtnetlink sur une seule socket" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Détection sans fil sur nl80211</h2>
+              <p class="mb-3 text-sm text-slate-600">Un stage de recherche avec l'équipe 2XS au CRIStAL, sur le module wifi de lili : une sonde en mode monitor qui balaye 31 canaux, analyse les trames de gestion 802.11 et publie appareils, points d'accès et liaisons sur un bus MQTT. Ma partie était la gestion des interfaces, d'abord un dump nl80211 pour découvrir les interfaces, puis des appels genl et rtnetlink à la place de chaque fork and exec de iw et ip.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">C</span><span class="chip">netlink</span><span class="chip">802.11</span><span class="chip">libnl</span></div>
+              <p class="mb-3 text-xs text-slate-500">Juin à juillet 2026 · IRCICA, Université de Lille · code non publié</p>
+              <a href="../posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">Lire la note &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes (en anglais) : <a href="../posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">Le module wifi a arrêté d'appeler iw en shell</a></p>
+            </div>
+          </article>
+
+          <article id="keyboard" class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/keyboard.svg" alt="Diagramme : une matrice de touches 5 par 6 et 16 LED RVB alimentant un ATmega32U4 par onze broches, avec 576 bits sortant vers deux pilotes TLC5947 en cascade" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Un clavier mécanique split, du schéma à la soudure</h2>
+              <p class="mb-3 text-sm text-slate-600">Une moitié d'un clavier split de 30 touches : schéma et PCB deux couches dans KiCad, ATmega32U4 faisant tourner le HID LUFA, 16 LED RVB sur deux pilotes TLC5947 en cascade, charge Li-ion et convertisseur boost sur la même carte. 112 empreintes, et le courant du rétroéclairage a tué le premier microcontrôleur.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">KiCad</span><span class="chip">AVR</span><span class="chip">C</span><span class="chip">LUFA</span><span class="chip">conception de PCB</span></div>
+              <p class="mb-3 text-xs text-slate-500">Janvier à juin 2026 · projet de cours avec Thimotée Reugo · code non publié</p>
+              <a href="../posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">Lire la note &rarr;</a>
+              <p class="mt-3 text-xs text-slate-500">Notes (en anglais) : <a href="../posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">Un clavier split qui a tué son propre microcontrôleur</a></p>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/re.svg" alt="Diagramme : un hexdump d'octets avec un octet encadré, annoté 0x000000f0 ret" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Ingénierie inverse binaire et pratique de CTF</h2>
+              <p class="mb-3 text-sm text-slate-600">Jeanne d'Hack : un événement d'équipe couvrant l'ingénierie inverse binaire, les vulnérabilités d'applications web et les exploits de corruption mémoire. Ce que j'en retire va dans des notes ici plutôt que dans des classements.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Ghidra</span><span class="chip">GDB</span><span class="chip">pwntools</span></div>
+              <p class="mb-3 text-xs text-slate-500">Janvier à février 2026 · une compétition, pas un produit</p>
+              <a href="blog.html" class="font-semibold text-link hover:text-ocean-dark">Voir les notes &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/audio.svg" alt="Diagramme : la forme d'onde d'un son de production avec une bande passante en pointillés dessinée au-dessus et en dessous" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Contrôle qualité audio sur une ligne de production</h2>
+              <p class="mb-3 text-sm text-slate-600">Un stage d'automatisation chez Valeo : automatiser une étape de filtrage par reconnaissance sonore sur une ligne de volants automobiles, avec Python et Librosa pour l'analyse et Manim plus Ableton Live pour la revue visuelle.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">Python</span><span class="chip">Librosa</span><span class="chip">Manim</span></div>
+              <p class="mb-3 text-xs text-slate-500">Juillet à août 2023 · propriétaire</p>
+              <a href="contact.html" class="font-semibold text-link hover:text-ocean-dark">Demander l'approche &rarr;</a>
+            </div>
+          </article>
+
+          <article class="card card-link fade-in overflow-hidden p-0" data-animate>
+            <div class="aspect-video overflow-hidden bg-ocean-deep"><img src="../images/projects/fablab.svg" alt="Diagramme : un plateau d'imprimante avec des parcours d'outil en couches et le contour d'un portique, annoté mise à niveau du plateau" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img"></div>
+            <div class="p-5">
+              <h2 class="mb-1 font-display font-semibold">Direction du FabLab Fabricarium</h2>
+              <p class="mb-3 text-sm text-slate-600">Fabmanager à Polytech Lille : garder utilisables les imprimantes 3D, les découpeuses laser, la CNC et les établis d'électronique ; assumer la sécurité, les réservations et les sessions ouvertes, et partager la zone électronique avec le club Robotech.</p>
+              <div class="mb-4 flex flex-wrap gap-2"><span class="chip">impression 3D</span><span class="chip">laser</span><span class="chip">CNC</span><span class="chip">KiCad</span></div>
+              <p class="mb-3 text-xs text-slate-500">Avril 2025 à aujourd'hui · de l'exploitation, pas du code</p>
+              <a href="about.html" class="font-semibold text-link hover:text-ocean-dark">En savoir plus &rarr;</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="py-20 bg-slate-50/70">
+      <div class="container px-5 md:px-8 text-center" data-animate>
+        <h2 class="section-title mb-6">Le détail ?</h2>
+        <p class="mx-auto mb-8 max-w-xl text-slate-600">L'essentiel de cela tourne sur des machines que j'administre, donc les artefacts honnêtes sont des notes et des patterns de configuration plutôt que des dépôts publics. Si quelque chose ici rejoint ce sur quoi vous travaillez, demandez et je vous le parcourrai.</p>
+        <a href="contact.html" class="btn-primary">Me contacter</a>
+      </div>
+    </section>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

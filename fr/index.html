@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahmed Taha Bouallegui - Cybersécurité et systèmes, bien faits</title>
+  <meta name="description" content="Portfolio et notes de terrain d'Ahmed Taha Bouallegui : étudiant en école d'ingénieur (IoT et cybersécurité) qui traite les systèmes comme des choses vivantes à comprendre, à durcir et à améliorer.">
+  <meta name="theme-color" content="#023E8A">
+  <meta property="og:title" content="Ahmed Taha Bouallegui - Cybersécurité et systèmes, bien faits">
+  <meta property="og:description" content="Portfolio et notes de terrain d'un futur ingénieur en cybersécurité et systèmes.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="canonical" href="https://bouallegui.me/fr/">
+  <link rel="alternate" type="application/rss+xml" title="Notes de terrain, en anglais (RSS)" href="../feed.xml">
+  <link rel="alternate" hreflang="en" href="https://bouallegui.me/">
+  <link rel="alternate" hreflang="fr" href="https://bouallegui.me/fr/">
+  <link rel="alternate" hreflang="x-default" href="https://bouallegui.me/">
+  <meta property="og:url" content="https://bouallegui.me/fr/">
+  <meta property="og:site_name" content="bouallegui.me">
+  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+</head>
+<body class="bg-surface text-ink">
+  <nav data-part="nav" aria-label="Principale"></nav>
+
+  <main id="main">
+    <!-- HERO -->
+    <section id="hero" class="relative flex min-h-screen items-center overflow-hidden bg-gradient-to-b from-[#0A1A2F] via-ocean-deep to-ocean-dark">
+      <div id="hero-canvas" class="absolute inset-0 z-0" data-parallax="0.2"></div>
+      <div class="container relative z-10 px-5 pb-32 pt-32 text-center md:px-8" data-parallax="0.1">
+        <img src="../images/portrait.jpg" alt="Portrait d'Ahmed Bouallegui sur fond blanc" width="1215" height="1563" loading="eager" decoding="async" class="mx-auto mb-7 h-28 w-28 rounded-full object-cover object-top ring-2 ring-ocean-glow/60 sm:h-32 sm:w-32">
+        <p class="eyebrow text-ocean-glow text-[0.68rem] tracking-[0.18em] sm:text-xs sm:tracking-[0.25em]">Cybersécurité &amp; systèmes, bien faits</p>
+        <h1 class="mt-4 text-4xl font-display font-bold leading-[1.05] text-white sm:text-6xl lg:text-7xl glow-text">Ahmed Taha Bouallegui</h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-200/90">
+          Étudiant en école d'ingénieur à Polytech Lille. Je travaille sur les systèmes Linux, l'infrastructure déclarative et la sécurité qui va autour. Je cherche un stage en administration systèmes ou en cybersécurité, été 2027, 10 semaines à 4 mois.
+        </p>
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <a href="portfolio.html" class="btn-primary">Voir mes projets</a>
+          <a href="blog.html" class="btn-outline text-white">Lire les notes</a>
+          <a href="../cv_bouallegui_fr.pdf" class="btn-outline text-white" download>CV (PDF)</a>
+        </div>
+      </div>
+      <a href="#about" class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60 transition hover:text-white">
+        <span class="text-xs uppercase tracking-widest">Défiler</span>
+        <span aria-hidden="true">&#8595;</span>
+      </a>
+    </section>
+
+    <!-- ABOUT TEASER -->
+    <section id="about" class="py-24 bg-surface">
+      <div class="container px-5 md:px-8">
+        <div class="mb-14 max-w-2xl" data-animate>
+          <p class="eyebrow">Qui je suis</p>
+          <h2 class="section-title">Les systèmes qui tiennent le monde, et ceux qui le cassent.</h2>
+          <p class="text-slate-600 leading-relaxed">
+            Je passe mes journées à réfléchir à la façon dont une infrastructure tombe en panne. Un firewall mal configuré, une dépendance non patchée, une condition de course que personne n'a demandée. Les petits détails qui coûtent cher. J'aime le moment où une attaque cesse d'être un mystère et où l'on finit par voir le système clairement.
+          </p>
+        </div>
+        <div class="grid gap-6 lg:grid-cols-5">
+          <div class="card fade-in lg:col-span-3" data-animate>
+            <h3 class="mb-5 font-display text-lg font-semibold">Ce avec quoi je travaille</h3>
+            <div class="space-y-4">
+              <div>
+                <p class="mb-2 text-sm font-semibold text-slate-700">Systèmes &amp; administration</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="chip">NixOS</span><span class="chip">Debian</span><span class="chip">systemd</span><span class="chip">Docker</span><span class="chip">KVM/QEMU</span><span class="chip">services auto-hébergés</span>
+                </div>
+              </div>
+              <div>
+                <p class="mb-2 text-sm font-semibold text-slate-700">Infrastructure IA locale</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="chip">llama.cpp</span><span class="chip">vLLM</span>
+                </div>
+              </div>
+              <div>
+                <p class="mb-2 text-sm font-semibold text-slate-700">Réseau &amp; sécurité</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="chip">Tailscale</span><span class="chip">ZeroTier</span><span class="chip">isolation par utilisateur</span><span class="chip">AWS : EC2, IAM, security groups</span><span class="chip">CTF : RE</span>
+                </div>
+              </div>
+              <div>
+                <p class="mb-2 text-sm font-semibold text-slate-700">Embarqué &amp; sans fil</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="chip">C</span><span class="chip">nl80211 / rtnetlink</span><span class="chip">802.11</span><span class="chip">ATmega32U4</span><span class="chip">KiCad</span>
+                </div>
+              </div>
+              <div>
+                <p class="mb-2 text-sm font-semibold text-slate-700">Programmation</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="chip">Python</span><span class="chip">C/C++</span><span class="chip">Java</span><span class="chip">Nix</span><span class="chip">Bash</span><span class="chip">Rust</span><span class="chip">PostgreSQL</span>
+                </div>
+              </div>
+            </div>
+            <p class="mt-5 text-sm text-slate-500">La liste complète, avec le travail derrière chaque ligne, est sur le <a href="resume.html" class="font-semibold text-link hover:text-ocean-dark">CV</a>.</p>
+          </div>
+          <div class="card fade-in flex flex-col justify-center lg:col-span-2" data-animate>
+            <h3 class="mb-3 font-display text-lg font-semibold">Ce que je cherche</h3>
+            <p class="text-sm leading-relaxed text-slate-600">Un stage en administration systèmes ou en cybersécurité, été 2027, 10 semaines à 4 mois. L'essentiel de ce qui suit est mon propre travail, sur mes propres machines. Le clavier split était un projet de cours, et le travail sur le wifi un stage de recherche ; c'est indiqué là où ils apparaissent.</p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href="../cv_bouallegui_fr.pdf" class="btn-primary" download>Télécharger le CV (PDF)</a>
+              <a href="mailto:ahmedtbou@tutamail.com" class="btn-outline">Me contacter</a>
+            </div>
+            <p class="mt-4 text-sm text-slate-500">Le même contenu en page web : <a href="resume.html" class="font-semibold text-link hover:text-ocean-dark">CV</a>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section class="py-24 bg-slate-50/70">
+      <div class="container px-5 md:px-8">
+        <div class="mb-12 flex items-end justify-between" data-animate>
+          <div>
+            <p class="eyebrow">Travail sélectionné</p>
+            <h2 class="section-title mb-0">Projets</h2>
+          </div>
+          <a href="portfolio.html" class="hidden font-semibold text-link hover:text-ocean-dark sm:inline">Tout voir &rarr;</a>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="card card-link overflow-hidden fade-in p-0" data-animate>
+            <div class="relative aspect-video overflow-hidden bg-ocean-deep">
+              <img src="../images/projects/nix.svg" alt="Diagramme : un flake Nix dessiné comme six lambdas alimentant trois machines : un ThinkPad, un portable retiré et un serveur headless appelé aleph" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img">
+            </div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold"><a href="../posts/one-file-one-capability.html" class="hover:text-link">Un flake pour toutes les machines que je fais tourner</a></h3>
+              <p class="mb-3 text-sm text-slate-600">Un monorepo NixOS : modules de fonctionnalités partagés, matériel par machine, secrets chiffrés, services accessibles uniquement via un VPS.</p>
+              <span class="chip">NixOS</span> <span class="chip">flake-parts</span> <span class="chip">sops-nix</span>
+            </div>
+          </article>
+          <article class="card card-link overflow-hidden fade-in p-0" data-animate>
+            <div class="relative aspect-video overflow-hidden bg-ocean-deep">
+              <img src="../images/projects/vps.svg" alt="Diagramme : trois appareils sur un tailnet qui atteignent un serveur headless appelé aleph faisant tourner immich, jellyfin, grocy, searxng, samba et un llm local ; la flèche venant d'internet est barrée car aucun port n'est ouvert" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img">
+            </div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold"><a href="../posts/a-private-cloud-with-a-guest-list.html" class="hover:text-link">Infrastructure serveur auto-hébergée</a></h3>
+              <p class="mb-3 text-sm text-slate-600">Un serveur NixOS headless : services de photos, de médias, de courses et de recherche, plus un LLM local, accessibles uniquement via un VPS.</p>
+              <span class="chip">NixOS</span> <span class="chip">Tailscale</span> <span class="chip">Immich</span>
+            </div>
+          </article>
+          <article class="card card-link overflow-hidden fade-in lg:col-span-1 p-0" data-animate>
+            <div class="relative aspect-video overflow-hidden bg-ocean-deep">
+              <img src="../images/projects/wireless.svg" alt="Diagramme : à gauche le module wifi fork et exec iw et ip avant d'atteindre le noyau ; à droite il envoie des messages nl80211 et rtnetlink sur une seule socket" width="640" height="360" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img">
+            </div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold"><a href="../posts/nl80211-wireless-detection.html" class="hover:text-link">Détection sans fil sur nl80211</a></h3>
+              <p class="mb-3 text-sm text-slate-600">Une sonde en mode monitor qui balaye 31 canaux et publie ce qu'elle entend sur MQTT. Ma partie : la gestion des interfaces sur netlink plutôt que par sous-processus.</p>
+              <span class="chip">C</span> <span class="chip">netlink</span> <span class="chip">802.11</span>
+            </div>
+          </article>
+          <article class="card card-link overflow-hidden fade-in lg:col-span-2 p-0" data-animate>
+            <div class="relative aspect-video overflow-hidden bg-ocean-deep">
+              <img src="../images/projects/keyboard.jpg" alt="La moitié de clavier construite sur masque de soudure vert, switchs dans des sockets hot-swap et une prise USB soudée au bord de la carte" width="868" height="1156" loading="lazy" decoding="async" class="h-full w-full object-cover" data-lightbox="img">
+            </div>
+            <div class="p-5">
+              <h3 class="mb-1 font-display font-semibold"><a href="../posts/a-keyboard-that-took-out-its-own-mcu.html" class="hover:text-link">Un clavier split, du schéma à la soudure</a></h3>
+              <p class="mb-3 text-sm text-slate-600">Schéma et PCB deux couches dans KiCad, firmware HID ATmega32U4, 16 LED RVB sur deux pilotes PWM en cascade.</p>
+              <span class="chip">KiCad</span> <span class="chip">AVR</span> <span class="chip">LUFA</span> <span class="chip">projet de cours</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECENT POSTS -->
+    <section class="py-24 bg-surface">
+      <div class="container px-5 md:px-8">
+        <div class="mb-12" data-animate>
+          <p class="eyebrow">Depuis les notes</p>
+          <h2 class="section-title">Notes récentes</h2>
+          <p class="mt-3 text-sm text-slate-500">Les notes elles-mêmes sont en anglais.</p>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
+              <span class="chip">Inférence</span> <span><time datetime="2026-10-04">4 oct. 2026</time></span>
+            </div>
+            <h3 class="mb-2 font-display text-lg font-semibold"><a href="../posts/what-a-harness-is-learned-the-slow-way.html" class="hover:text-link">Ce qu'est un harness, appris par la voie lente</a></h3>
+            <p class="mb-4 text-sm text-slate-600">Pi, OpenCode et DeepSeek Harness, tous pointés sur le même endpoint OpenAI-compatible sur mes propres machines. Un workflow d'IA locale qui tient dans un flake.</p>
+            <a href="../posts/what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
+              <span class="chip">Inférence</span> <span><time datetime="2026-09-27">27 sept. 2026</time></span>
+            </div>
+            <h3 class="mb-2 font-display text-lg font-semibold"><a href="../posts/getting-a-125b-model-onto-a-12gb-card.html" class="hover:text-link">Faire tenir un modèle de 125 Md de paramètres sur une carte de 12 Go</a></h3>
+            <p class="mb-4 text-sm text-slate-600">Moteur, quantification et contexte sur trois machines, avec les débits de décodage et de préfill que chacune donne.</p>
+            <a href="../posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
+              <span class="chip">Série · 8 parties</span> <span><time datetime="2026-03-08">mars</time> à <time datetime="2026-09-13">sept. 2026</time></span>
+            </div>
+            <h3 class="mb-2 font-display text-lg font-semibold"><a href="../posts/one-file-one-capability.html" class="hover:text-link">NixOS, en morceaux</a></h3>
+            <p class="mb-4 text-sm text-slate-600">Un seul flake construit toutes les machines que je fais tourner. Huit parties, un morceau chacune : la structure, les secrets, les services, le bureau, l'éditeur.</p>
+            <a href="blog.html" class="font-semibold text-link hover:text-ocean-dark">Voir la série &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
+              <span class="chip">Sans fil</span> <span><time datetime="2026-08-21">21 août 2026</time></span>
+            </div>
+            <h3 class="mb-2 font-display text-lg font-semibold"><a href="../posts/nl80211-wireless-detection.html" class="hover:text-link">Le module wifi a arrêté d'appeler iw en shell</a></h3>
+            <p class="mb-4 text-sm text-slate-600">Découverte des interfaces par un dump nl80211, puis cinq fork and exec remplacés par des messages genl et rtnetlink.</p>
+            <a href="../posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+          <article class="card card-link fade-in" data-animate>
+            <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
+              <span class="chip">Cloud</span> <span><time datetime="2025-11-16">16 nov. 2025</time></span>
+            </div>
+            <h3 class="mb-2 font-display text-lg font-semibold"><a href="../posts/an-aws-account-from-the-inside.html" class="hover:text-link">À quoi ressemble un compte AWS vu de l'intérieur</a></h3>
+            <p class="mb-4 text-sm text-slate-600">Security groups, paires de clés, rôles d'instance, et ce qui continue de facturer après l'arrêt de l'instance. Notes prises du côté de la pile que je n'avais jamais touché.</p>
+            <a href="../posts/an-aws-account-from-the-inside.html" class="font-semibold text-link hover:text-ocean-dark">Lire &rarr;</a>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+  <!-- Bundled from src/hero.js plus three 0.186.1 (make hero). No third-party script is fetched at page load. -->
+  <script type="module" src="../js/vendor/hero.bundle.js"></script>
+</body>
+</html>

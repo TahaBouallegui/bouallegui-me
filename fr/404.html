@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page introuvable</title>
+  <meta name="description" content="Page introuvable sur bouallegui.me. Liens vers les projets, les notes, le CV et la page de contact.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#023E8A">
+  <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/output.css">
+  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+  <link rel="alternate" type="application/rss+xml" title="Notes de terrain, en anglais (RSS)" href="../feed.xml">
+</head>
+<body class="bg-surface text-ink flex min-h-screen flex-col">
+  <nav data-part="nav" aria-label="Principale"></nav>
+
+  <main id="main" class="relative flex flex-1 items-center justify-center bg-ocean-deep px-5 py-32 text-center">
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-ocean-deep to-surface" aria-hidden="true"></div>
+    <div class="relative">
+      <p class="eyebrow text-ocean-glow">Erreur 404</p>
+      <h1 class="mb-3 text-6xl font-display font-bold text-white">Introuvable</h1>
+      <p class="mx-auto mb-8 max-w-md text-slate-200">Cette page est partie ailleurs, une note renommée, un favori périmé, ou un lien qui n'a jamais existé. Tout ce qui existe est ci-dessous.</p>
+      <ul class="flex flex-wrap items-center justify-center gap-3">
+        <li><a href="index.html" class="btn-primary">Retour à l'accueil</a></li>
+        <li><a href="portfolio.html" class="btn-outline text-white">Projets</a></li>
+        <li><a href="blog.html" class="btn-outline text-white">Notes</a></li>
+        <li><a href="resume.html" class="btn-outline text-white">CV</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <footer data-part="footer"></footer>
+
+  <script src="../js/partials.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>
