@@ -1,0 +1,33 @@
+# Cloudflare Pages response headers, read from the output directory (the repo root).
+# Rules: one path pattern, then indented "Name: value" lines. Max 100 rules, 2000 chars per line.
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Every page is served from this one origin, so a cross-origin embed of og.png would need
+# Cross-Origin-Resource-Policy. It is deliberately not set: social crawlers fetch the image
+# as a top-level navigation, and a same-origin policy here would break link previews.
+
+# A Pages deployment is reachable on <project>.pages.dev as well as on the domain. Those
+# preview URLs must never be indexed next to the canonical ones.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+# Fonts are latin subsets that change a couple of times a year, and the images are content,
+# not code: both can sit in a browser cache for a month without anyone waiting on a rebuild.
+/fonts/*
+  Cache-Control: public, max-age=2592000
+/images/*
+  Cache-Control: public, max-age=2592000
+
+# css/output.css and js/*.js keep their names across edits, so they get a week, not a year.
+/css/*
+  Cache-Control: public, max-age=604800
+/js/*
+  Cache-Control: public, max-age=604800
