@@ -200,7 +200,7 @@ const page = (p, title, body) => `<!DOCTYPE html>
   <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
   <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../css/output.css">
-  <script>(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}document.documentElement.classList.add("js");})();</script>
+  <script src="../js/theme.js"></script>
 </head>
 <body class="bg-surface text-ink">
   <nav data-part="nav" aria-label="Primary"></nav>
@@ -229,7 +229,6 @@ ${body}
 
   <footer data-part="footer"></footer>
 
-  <script src="../js/partials.js"></script>
   <script src="../js/main.js"></script>
 </body>
 </html>

@@ -1,17 +1,14 @@
 // Copyright (c) 2026 Ahmed Taha Bouallegui
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// Global interaction layer. Loaded AFTER js/partials.js and BEFORE </body>.
+// Global interaction layer. Loaded before </body>, after js/theme.js has run.
 (function () {
   'use strict';
 
-  var nav = document.querySelector('[data-part="nav"]');
-  var footer = document.querySelector('[data-part="footer"]');
-
-  // Labels for the parts this script builds (skip link, toggles, lightbox). The page's own
-  // language comes from js/partials.js, which sets SITE_LANG from the path, so fr/*.html and
-  // the posts get the right strings without a second copy of this file.
-  var T = window.SITE_LANG === 'fr'
+  // Labels for the parts this script touches (toggles, lightbox). The nav and the footer are
+  // in the page already, stamped at build time by scripts/render-partials.mjs, so the only
+  // thing left to localise here is the strings this script writes at runtime.
+  var T = document.documentElement.lang === 'fr'
     ? { light: 'Passer au thème clair', dark: 'Passer au thème sombre', skip: 'Aller au contenu principal',
         open: 'Ouvrir le menu', close: 'Fermer le menu', top: 'Haut de page',
         preview: 'Aperçu de l’image', closeImg: "Fermer l'image", enlarge: 'agrandir', image: 'Image' }
@@ -19,17 +16,11 @@
         open: 'Open menu', close: 'Close menu', top: 'Back to top',
         preview: 'Image preview', closeImg: 'Close image', enlarge: 'enlarge', image: 'Image' };
 
-  // Inject shared nav + footer (identical markup on every page).
-  if (window.PARTIALS) {
-    if (window.PARTIALS.nav && nav) nav.insertAdjacentHTML('afterbegin', window.PARTIALS.nav);
-    if (window.PARTIALS.footer && footer) footer.insertAdjacentHTML('afterbegin', window.PARTIALS.footer);
-  }
-
   // Footer copyright year.
   var cy = document.getElementById('current-year');
   if (cy) cy.textContent = String(new Date().getFullYear());
 
-  // Theme toggle. The initial theme is set by an inline script in <head>, before paint,
+  // Theme toggle. The initial theme is set by js/theme.js in <head>, before paint,
   // so there is no flash; this handles the button, persistence, and chrome colours.
   (function themeToggle() {
     var btn = document.getElementById('theme-toggle');
@@ -85,7 +76,8 @@
     paint();
   })();
 
-  // Skip link (injected once, first focusable element).
+  // Skip link. Every page carries it in the markup already; this only covers a page that was
+  // generated without it, so the keyboard path to #main never depends on the build step.
   if (!document.getElementById('skip')) {
     var skip = document.createElement('a');
     skip.id = 'skip';
@@ -95,8 +87,8 @@
     document.body.insertBefore(skip, document.body.firstChild);
   }
 
-  // Highlight the active nav link. Nav hrefs are resolved against partials.js's own URL and
-  // this page may live in a subdirectory, so compare on the file name.
+  // Highlight the active nav link. The hrefs are relative to the page, and the same stamped
+  // markup serves the root, fr/ and posts/, so compare on the file name.
   (function () {
     var here = location.pathname.split('/').pop() || 'index.html';
     var links = document.querySelectorAll('#main-menu a');
