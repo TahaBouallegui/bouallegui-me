@@ -88,13 +88,20 @@
   }
 
   // Highlight the active nav link. The hrefs are relative to the page, and the same stamped
-  // markup serves the root, fr/ and posts/, so compare on the file name.
+  // markup serves the root, fr/ and posts/, so resolve each one and compare paths. The home link
+  // is the clean URL (./ or ../), which resolves to / or /fr/ rather than to a file name, so a
+  // file-name comparison would leave the home link unmarked on the two index pages.
   (function () {
-    var here = location.pathname.split('/').pop() || 'index.html';
+    function pathOf(href) {
+      try { return new URL(href, location.href).pathname.replace(/index\.html$/, '/').replace(/\/$/, ''); }
+      catch (err) { return null; }
+    }
+    var here = pathOf(location.pathname) || '/';
     var links = document.querySelectorAll('#main-menu a');
     for (var i = 0; i < links.length; i++) {
-      var href = links[i].getAttribute('href') || '';
-      if (href.split('/').pop() === here) links[i].setAttribute('aria-current', 'page');
+      var href = pathOf(links[i].getAttribute('href') || '');
+      if (href === null) continue;
+      if ((href || '/') === here) links[i].setAttribute('aria-current', 'page');
     }
   })();
 

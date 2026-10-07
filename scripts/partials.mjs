@@ -28,37 +28,55 @@ const UI = {
   },
 };
 
-// Pages with a French counterpart. The posts have none, so their switch points at the French
-// blog index, which says so on the page itself.
+// Where the language switch points for a page given its path relative to the site root. The
+// href is relative to the root and navHtml prefixes it with the page's own ../, which is why
+// the English home comes back as an empty string: ../ plus nothing is the site root.
+// The posts have no translation, so their switch points at the French blog index, which says so
+// on the page itself. The two index pages switch to the clean directory URL, for the same reason
+// the nav does: /index.html is 301ed to / by _redirects, and /fr/index.html to /fr/.
 export const TRANSLATED = ['index.html', 'portfolio.html', 'blog.html', 'about.html', 'resume.html', 'contact.html', '404.html'];
 
-// Where the language switch points for a page given its path relative to the site root.
 export function langLink(rel) {
   const page = rel.replace(/^fr\//, '') || 'index.html';
-  if (rel.startsWith('fr/')) return { href: page, hreflang: 'en', label: 'EN', aria: 'Read this page in English' };
-  if (TRANSLATED.includes(page)) return { href: `fr/${page}`, hreflang: 'fr', label: 'FR', aria: 'Lire cette page en français' };
+  if (rel.startsWith('fr/')) {
+    const href = page === 'index.html' ? '' : page;
+    return { href, hreflang: 'en', label: 'EN', aria: 'Read this page in English' };
+  }
+  if (TRANSLATED.includes(page)) {
+    const href = page === 'index.html' ? 'fr/' : `fr/${page}`;
+    return { href, hreflang: 'fr', label: 'FR', aria: 'Lire cette page en français' };
+  }
   return { href: 'fr/blog.html', hreflang: 'fr', label: 'FR', aria: 'Lire cette page en français' };
 }
 
-// hrefs in the stamped markup are relative to the page, so a page one directory down needs ../
-export function navHtml({ root = '', lang = 'en', link = null }) {
+// hrefs in the stamped markup are relative to the page. `home` doubles as the prefix for the other
+// five nav targets, because it is the current page's own directory: ./ at the root, ./ inside fr/,
+// ../ from posts/. Using root for those instead sends every French page to the English portfolio,
+// blog, about, CV and contact, which resolves fine and is therefore invisible to a link check.
+//
+// `home` is passed in rather than built from root: the home page of a French page is /fr/, not
+// the English root, and root alone cannot tell those two apart. It is the clean URL (./ or ../),
+// not index.html, because _redirects 301s /index.html to / and the canonical tag says /: linking
+// the file name would put a redirect in the middle of the most common click on the site.
+// `root` stays for the language switch, which by design crosses the boundary.
+export function navHtml({ root = '', home = './', lang = 'en', link = null }) {
   const t = UI[lang];
   const switchHref = link ? root + link.href : '';
   return `
   <div id="site-header" class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
     <div class="container flex h-16 items-center justify-between px-5 md:px-8">
-      <a href="${root}index.html" class="flex items-center gap-2.5 font-display text-lg font-bold text-white">
+      <a href="${home}" class="flex items-center gap-2.5 font-display text-lg font-bold text-white">
         <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-ocean font-mono text-sm font-bold text-white">BL</span>
         <span class="nav-brand">Bouallegui</span>
       </a>
       <div class="flex items-center gap-6">
         <ul id="main-menu" class="hidden md:flex items-center gap-7 font-display font-medium text-white">
-          <li><a href="${root}index.html" class="hover:text-link">${t.home}</a></li>
-          <li><a href="${root}portfolio.html" class="hover:text-link">${t.portfolio}</a></li>
-          <li><a href="${root}blog.html" class="hover:text-link">${t.blog}</a></li>
-          <li><a href="${root}about.html" class="hover:text-link">${t.about}</a></li>
-          <li><a href="${root}resume.html" class="hover:text-link">${t.resume}</a></li>
-          <li><a href="${root}contact.html" class="hover:text-link">${t.contact}</a></li>
+          <li><a href="${home}" class="hover:text-link">${t.home}</a></li>
+          <li><a href="${home}portfolio.html" class="hover:text-link">${t.portfolio}</a></li>
+          <li><a href="${home}blog.html" class="hover:text-link">${t.blog}</a></li>
+          <li><a href="${home}about.html" class="hover:text-link">${t.about}</a></li>
+          <li><a href="${home}resume.html" class="hover:text-link">${t.resume}</a></li>
+          <li><a href="${home}contact.html" class="hover:text-link">${t.contact}</a></li>
         </ul>
         ${link ? `<a class="lang-switch flex h-8 items-center justify-center rounded-md border border-white/25 px-2 font-display text-xs font-semibold tracking-wider text-white/80 transition-colors duration-200 hover:border-white hover:text-white" href="${switchHref}" hreflang="${link.hreflang}" lang="${link.hreflang}" aria-label="${link.aria}">${link.label}</a>` : ''}
         <button id="theme-toggle" type="button" class="theme-toggle -mr-1 flex h-8 w-8 items-center justify-center rounded-md transition-colors duration-200" aria-pressed="false" aria-label="${t.theme}">
@@ -73,12 +91,12 @@ export function navHtml({ root = '', lang = 'en', link = null }) {
       </div>
     </div>
     <ul id="mobile-menu" class="flex max-h-[70vh] flex-col gap-1 overflow-auto bg-surface px-6 py-4 text-lg font-medium text-ink hidden md:hidden" aria-label="Mobile menu">
-      <li><a href="${root}index.html" class="block py-2 hover:text-link">${t.home}</a></li>
-      <li><a href="${root}portfolio.html" class="block py-2 hover:text-link">${t.portfolio}</a></li>
-      <li><a href="${root}blog.html" class="block py-2 hover:text-link">${t.blog}</a></li>
-      <li><a href="${root}about.html" class="block py-2 hover:text-link">${t.about}</a></li>
-      <li><a href="${root}resume.html" class="block py-2 hover:text-link">${t.resume}</a></li>
-      <li><a href="${root}contact.html" class="block py-2 hover:text-link">${t.contact}</a></li>
+      <li><a href="${home}" class="block py-2 hover:text-link">${t.home}</a></li>
+      <li><a href="${home}portfolio.html" class="block py-2 hover:text-link">${t.portfolio}</a></li>
+      <li><a href="${home}blog.html" class="block py-2 hover:text-link">${t.blog}</a></li>
+      <li><a href="${home}about.html" class="block py-2 hover:text-link">${t.about}</a></li>
+      <li><a href="${home}resume.html" class="block py-2 hover:text-link">${t.resume}</a></li>
+      <li><a href="${home}contact.html" class="block py-2 hover:text-link">${t.contact}</a></li>
       ${link ? `<li><a href="${switchHref}" hreflang="${link.hreflang}" lang="${link.hreflang}" class="block py-2 font-semibold text-link">${link.aria}</a></li>` : ''}
     </ul>
   </div>

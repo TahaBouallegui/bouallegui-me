@@ -30,6 +30,9 @@ for (const rel of pages) {
   const src = readFileSync(file, 'utf8');
   const opts = {
     root: rel.includes('/') ? '../' : '',
+    // The home page for this page: /fr/ for a French one, / for everything else, written as the
+    // clean URL so the click does not go through the /index.html redirect in _redirects.
+    home: rel.startsWith('fr/') ? './' : rel.includes('/') ? '../' : './',
     lang: rel.startsWith('fr/') ? 'fr' : 'en',
   };
   const link = langLink(rel);
