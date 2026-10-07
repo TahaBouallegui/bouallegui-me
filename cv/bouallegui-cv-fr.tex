@@ -5,8 +5,8 @@
 %  Ahmed Taha Bouallegui -- CV (version française)
 %  Style : moderncv "classic" (the iconic name-banner + section-rule look)
 %  Color : blue (matches personal branding)
-%  Compile: pdflatex cv_bouallegui_fr.tex   (or xelatex)
-%  Le contenu suit cv_bouallegui.tex : mêmes projets, mêmes dates, mêmes chiffres.
+%  Compile: pdflatex bouallegui-cv-fr.tex   (or xelatex), from this directory
+%  Le contenu suit bouallegui-cv-en.tex : mêmes projets, mêmes dates, mêmes chiffres.
 % =============================================================================
 \documentclass[a4paper,11pt]{moderncv}
 \moderncvstyle{classic}
@@ -16,6 +16,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}   % scalable Type1 fonts; microtype refuses to run with bitmap ones
 \usepackage{graphicx}
+% Toutes les images du CV sont a cote de la source, dans img/.
+\graphicspath{{img/}}
 \usepackage[french]{babel}
 
 % Puces maitrisees : babel-french redefinit itemize (tiret demi-cadratin, grande marge
@@ -39,7 +41,7 @@
 \social[github]{TahaBouallegui}
 
 % La photo d'identité est la convention française ; le CV anglais n'en a pas.
-\photo[60pt][0.4pt]{images/cv/portrait-cv.jpg}
+\photo[60pt][0.4pt]{portrait-cv.jpg}
 
 % Logo de l'école ou de l'entreprise, placé devant le nom de l'institution.
 \newcommand{\cvlogo}[2][11pt]{\raisebox{-0.3em}{\includegraphics[height=#1]{#2}}\hspace{4pt}}
@@ -54,8 +56,8 @@
 
 % ---------------------------------------------------------------------------
 \section{Formation}
-\cventry[.05em]{2023 à 2028}{M.Eng Internet of Things and Cybersecurity}{\cvlogo[13pt]{images/cv/polytech-mark.png}École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, France}{}{}
-\cventry[.05em]{2023 à 2025}{Cycle préparatoire (MPCSI)}{\cvlogo[13pt]{images/cv/polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, France}{}{Diplômé avec félicitations, major de promotion 2023/2024}
+\cventry[.05em]{2023 à 2028}{M.Eng Internet of Things and Cybersecurity}{\cvlogo[13pt]{polytech-mark.png}École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, France}{}{}
+\cventry[.05em]{2023 à 2025}{Cycle préparatoire (MPCSI)}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, France}{}{Diplômé avec félicitations, major de promotion 2023/2024}
 \cventry[.05em]{2023}{Baccalauréat}{France}{}{}{Mention Très Bien}
 
 % ---------------------------------------------------------------------------
@@ -87,19 +89,19 @@
 
 % ---------------------------------------------------------------------------
 \section{Expériences professionnelles}
-\cventry[.05em]{Juin à juil. 2026}{Stage de recherche, CRIStAL \textbf{(équipe 2XS)}}{\cvlogo[13pt]{images/cv/univ-lille-mark.png}IRCICA \textbullet Université de Lille}{Lille, France}{}{
+\cventry[.05em]{Juin à juil. 2026}{Stage de recherche, CRIStAL \textbf{(équipe 2XS)}}{\cvlogo[13pt]{univ-lille-mark.png}IRCICA \textbullet Université de Lille}{Lille, France}{}{
 \begin{cvlist}
   \item Retiré chaque fork and exec de \texttt{iw} et \texttt{ip} du module wifi d'une sonde Linux de détection d'objets connectés au profit d'appels directs \texttt{nl80211} et rtnetlink, avec découverte automatique des interfaces.
   \item Contribué aux travaux de l'équipe 2XS sur l'empreinte mémoire, l'efficacité énergétique et la sécurité du logiciel embarqué.
 \end{cvlist}}
 
-\cventry[.05em]{Avr. 2025 à ce jour}{Fabmanager \textbf{(FabLab Fabricarium)}}{\cvlogo[13pt]{images/cv/polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, France}{}{
+\cventry[.05em]{Avr. 2025 à ce jour}{Fabmanager \textbf{(FabLab Fabricarium)}}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, France}{}{
 \begin{cvlist}
   \item Exploitation et maintenance du FabLab de l'école : imprimantes 3D, découpeuses laser, CNC et postes d'électronique.
   \item Accompagnement des étudiants qui prototypent du matériel et des projets IoT ; réservations, sécurité et sessions ouvertes.
 \end{cvlist}}
 
-\cventry[.05em]{Juil. à août 2023}{Stage en ingénierie de l'automatisation}{\cvlogo[10pt]{images/cv/valeo.png}Valeo}{Tunis, Tunisie}{}{
+\cventry[.05em]{Juil. à août 2023}{Stage en ingénierie de l'automatisation}{\cvlogo[10pt]{valeo.png}Valeo}{Tunis, Tunisie}{}{
 \begin{cvlist}
   \item Automatisation d'un contrôle qualité par reconnaissance sonore sur une ligne de production de volants, avec Python et Librosa.
 \end{cvlist}}

@@ -5,8 +5,10 @@ const token = (name) => `rgb(var(${name}) / <alpha-value>)`;
 
 module.exports = {
   // One glob per kind of source: 404.html and any new page are picked up automatically,
-  // and fr/*.html is the French mirror of the six index pages.
-  content: ["./*.html", "./fr/*.html", "./posts/*.html", "./js/**/*.js"],
+  // and fr/*.html is the French mirror of the six index pages. src/blog/template.html is
+  // scanned too even though it is never served: it is the skeleton a new note is copied
+  // from, and its classes have to be in the stylesheet before the first rebuild.
+  content: ["./*.html", "./fr/*.html", "./posts/*.html", "./src/blog/*.html", "./js/**/*.js"],
   // The toggle sets <html data-theme="dark">. Users without JS get the OS preference,
   // which is handled by the @media block in src/input.css.
   darkMode: ["selector", '[data-theme="dark"]'],

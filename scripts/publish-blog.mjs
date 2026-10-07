@@ -3,18 +3,18 @@
 
 // Publish the NixOS series: markdown drafts -> posts/<slug>.html in the site template.
 //
-//   node scripts/publish-blog.mjs                 build posts/ from blog-src/
+//   node scripts/publish-blog.mjs                 build posts/ from src/blog/
 //   node scripts/publish-blog.mjs --import [dir]  copy drafts out of the NixOS config
-//                                                 repo into blog-src/ (one-time import;
+//                                                 repo into src/blog/ (one-time import;
 //                                                 applies PATCHES + REDACTIONS)
 //
-// The published prose lives in blog-src/ next to the site, so editing it is a normal
+// The published prose lives in src/blog/ next to the site, so editing it is a normal
 // diff against this repo. Your originals in ~/.config/nixos/blog stay untouched.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 
 const argv = process.argv.slice(2);
 const IMPORT = argv.includes('--import');
-const SRC = IMPORT ? (argv.find((a) => !a.startsWith('--')) ?? '/home/atb/.config/nixos/blog') : 'blog-src';
+const SRC = IMPORT ? (argv.find((a) => !a.startsWith('--')) ?? '/home/atb/.config/nixos/blog') : 'src/blog';
 // One publication date per part, set in the POSTS table below.
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const MONTHS_SHORT = MONTHS.map((m) => m.slice(0, 3));
@@ -191,6 +191,7 @@ const page = (p, title, body) => `<!DOCTYPE html>
   <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../fonts/fonts.css">
   <link rel="canonical" href="https://bouallegui.me/posts/${p.slug}.html">
+  <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
   <meta property="og:url" content="https://bouallegui.me/posts/${p.slug}.html">
   <meta property="og:site_name" content="bouallegui.me">
   <meta property="og:image" content="https://bouallegui.me/images/og.png">
@@ -239,7 +240,7 @@ const titles = {};
 const prepared = [];
 
 if (IMPORT) {
-  mkdirSync('blog-src', { recursive: true });
+  mkdirSync('src/blog', { recursive: true });
   for (const p of POSTS) {
     let md = readFileSync(`${SRC}/${p.file}`, 'utf8');
     for (const [file, from, to] of PATCHES) {
@@ -250,8 +251,8 @@ if (IMPORT) {
     for (const [re, to] of REDACTIONS) {
       if (re.test(md)) { md = md.replace(re, to); applied.push([p.file, String(re), to]); }
     }
-    writeFileSync(`blog-src/${p.file}`, md);
-    console.log(`  blog-src/${p.file}  ←  ${SRC}/${p.file}`);
+    writeFileSync(`src/blog/${p.file}`, md);
+    console.log(`  src/blog/${p.file}  ←  ${SRC}/${p.file}`);
   }
   console.log('\nimport edits (your drafts elsewhere are not touched):');
   for (const [f, from, to] of applied) console.log(`  ${f}: ${from.slice(0, 60)}  ->  ${to.slice(0, 40)}`);
@@ -261,7 +262,7 @@ if (IMPORT) {
 for (const p of POSTS) {
   let md = readFileSync(`${SRC}/${p.file}`, 'utf8');
   // Redactions are re-applied on every build as a safety net; prose edits live in
-  // blog-src/ as ordinary committed text, reviewable with git diff.
+  // src/blog/ as ordinary committed text, reviewable with git diff.
   for (const [re, to] of REDACTIONS) {
     if (re.test(md)) { md = md.replace(re, to); applied.push([p.file, String(re), to]); }
   }

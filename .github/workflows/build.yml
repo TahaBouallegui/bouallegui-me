@@ -48,8 +48,7 @@ jobs:
             fonts/
             images/
             js/
-            cv_bouallegui.pdf
-            cv_bouallegui_fr.pdf
+            cv/*.pdf
             feed.xml
             sitemap.txt
             robots.txt

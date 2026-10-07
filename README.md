@@ -12,21 +12,26 @@ blog.html             published notes + what is in the queue
 about.html            the longer story
 resume.html           the CV in HTML (print stylesheet included)
 contact.html          mailto composer + direct channels
+404.html              the not-found page, served by the host on any miss
 fr/*.html             French mirror of the six pages above (the notes stay in English)
 posts/*.html          one file per note
-blog-post-template.html  authoring skeleton (noindex, not in the sitemap)
-src/input.css         the only CSS source
-src/hero.js           the 3D hero, written against the three API
-css/output.css        generated - do not hand-edit
-js/vendor/hero.bundle.js  generated from src/hero.js + three - do not hand-edit
 feed.xml              RSS 2.0 of every note, generated from posts/*.html - do not hand-edit
-fonts/                self-hosted latin subsets + fonts.css
-images/projects/      hand-drawn SVG diagrams (640x360), no stock photography
-images/cv/            CV photo and the institution marks used by the French CV
+sitemap.txt           every URL the site wants indexed
+robots.txt            allow all, plus the Sitemap line
+css/output.css        generated - do not hand-edit
 js/partials.js        nav + footer + language switch, injected on every page
 js/main.js            nav state, lightbox, fade-ins, parallax
-cv_bouallegui.pdf     one-page CV, built from cv_bouallegui.tex
-cv_bouallegui_fr.pdf  the same CV in French, built from cv_bouallegui_fr.tex
+js/vendor/hero.bundle.js  generated from src/hero.js + three - do not hand-edit
+fonts/                self-hosted latin subsets + fonts.css
+images/               favicon, social card, portrait
+images/projects/      hand-drawn SVG diagrams (640x360), no stock photography
+src/input.css         the only CSS source
+src/hero.js           the 3D hero, written against the three API
+src/blog/*.md         the NixOS series drafts that posts/ is generated from
+src/blog/template.html  authoring skeleton for a hand-written note, not served
+cv/                   both CVs: the LaTeX source and the PDFs the site links
+cv/img/               the CV photo and the institution marks used by the French CV
+scripts/              feed, blog generator, font subsets, social card, dev server, link check
 ```
 
 ## Commands
@@ -60,7 +65,7 @@ language the page is in from its path relative to the site root, and points the 
 matching page: `about.html` to `fr/about.html`, `fr/about.html` back to `about.html`. A note has
 no translation, so on `posts/*` the switch goes to `fr/blog.html`, which says the notes are in
 English. Each pair cross-links with `hreflang` alternates and both URLs are in `sitemap.txt`.
-The CV follows the same split: `cv_bouallegui.pdf` and `cv_bouallegui_fr.pdf`.
+The CV follows the same split: `cv/bouallegui-cv-en.pdf` and `cv/bouallegui-cv-fr.pdf`.
 
 One caveat when opening files directly: browsers block ES modules over `file://`, so the 3D hero
 stays a CSS gradient there. Everything else works. For the real thing, run `npm run serve`.
@@ -105,7 +110,7 @@ location ~* \.(woff2)$ { add_header Cache-Control "public, max-age=31536000, imm
 ## Where the blog sources live
 
 The eight-part NixOS series is generated from markdown drafts that live in the NixOS config
-repo (`~/.config/nixos/blog/NN-*.md`), not in this repository. The copies in `blog-src/` are
+repo (`~/.config/nixos/blog/NN-*.md`), not in this repository. The copies in `src/blog/` are
 numbered 01 to 09 with 06 missing: that part was dropped upstream, and the gaps are left in
 place so the file names still line up with the config repo. Edit them there, then
 run `node scripts/publish-blog.mjs` to regenerate `posts/*.html`, the series grid in
@@ -129,8 +134,8 @@ Print output is unaffected: the `@media print` rules force black on white.
 ## License
 
 GPL-3.0-or-later, full text in `LICENSE`. That covers the HTML, the CSS, the JavaScript, the build
-scripts, the diagrams in `images/projects/` and the writing in `posts/`. If you publish something
-built from this repository, the same terms apply to the whole of it.
+scripts, the diagrams in `images/projects/`, the CV sources in `cv/` and the writing in `posts/`.
+If you publish something built from this repository, the same terms apply to the whole of it.
 
 A few things here are not mine to license:
 
@@ -142,11 +147,11 @@ A few things here are not mine to license:
   parametric definition the NixOS project publishes, so the mark itself is theirs. NixOS design
   assets are CC BY 4.0 by the NixOS Project and contributors ([NixOS/branding](https://github.com/NixOS/branding));
   the attribution is also in a comment inside that file.
-- `images/cv/`: the Polytech Lille, Université de Lille and Valeo marks that sit next to those
+- `cv/img/`: the Polytech Lille, Université de Lille and Valeo marks that sit next to those
   names in the French CV. They come from Wikimedia Commons (`File:Polytech Lille logo.gif` under
   CC0, `File:Logotype Université de Lille 2022.svg` and `File:Valeo Logo.svg` tagged public domain
   as simple logos), cropped to their monograms with ImageMagick. They are the institutions'
-  trademarks and are used only to identify where I studied and worked. `images/cv/portrait-cv.jpg`
+  trademarks and are used only to identify where I studied and worked. `cv/img/portrait-cv.jpg`
   is a crop of my own portrait, used as the CV photo; the French CV carries one because that is the
   convention here, the English one does not.
 

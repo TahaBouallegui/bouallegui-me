@@ -42,15 +42,17 @@ feed:
 
 cv: cv-en cv-fr
 
+# Each CV is compiled twice so the page breaks settle: both have to stay on one page.
+# Without a system texlive, the Nix shell that carries the right packages is:
+#   nix shell --impure --expr '(with import <nixpkgs> {}; texlive.combine { inherit (texlive) scheme-medium moderncv babel-french; })'
 cv-en:
-	pdflatex cv_bouallegui.tex && pdflatex cv_bouallegui.tex && rm -f cv_bouallegui.aux cv_bouallegui.log cv_bouallegui.out
+	cd cv && pdflatex -interaction=nonstopmode bouallegui-cv-en.tex && pdflatex -interaction=nonstopmode bouallegui-cv-en.tex && rm -f bouallegui-cv-en.aux bouallegui-cv-en.log bouallegui-cv-en.out
 
 cv-fr:
-	pdflatex cv_bouallegui_fr.tex && pdflatex cv_bouallegui_fr.tex && rm -f cv_bouallegui_fr.aux cv_bouallegui_fr.log cv_bouallegui_fr.out
+	cd cv && pdflatex -interaction=nonstopmode bouallegui-cv-fr.tex && pdflatex -interaction=nonstopmode bouallegui-cv-fr.tex && rm -f bouallegui-cv-fr.aux bouallegui-cv-fr.log bouallegui-cv-fr.out
 
 check:
 	sh scripts/check-links.sh
 
 clean:
-	rm -f cv_bouallegui.aux cv_bouallegui.log cv_bouallegui.out
-	rm -f cv_bouallegui_fr.aux cv_bouallegui_fr.log cv_bouallegui_fr.out
+	rm -f cv/*.aux cv/*.log cv/*.out
