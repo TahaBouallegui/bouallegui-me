@@ -52,9 +52,9 @@ scripts/              feed, blog generator, nav/footer stamping, crawler, sitema
 | `npm run feed` | rebuild `feed.xml` from `posts/*.html` (titles, summaries and dates are read back out of the pages) |
 | `make partials` | stamp the nav, the footer and the skip link into all 27 pages from `scripts/partials.mjs` |
 | `npm run serve` | local preview on `http://localhost:8080` (dependency-free Node server) |
-| `make css` / `make check` / `make fonts` / `make og` / `make hero` / `make feed` / `make cv` | see `Makefile` |
+| `make css` / `make check` / `make fonts` / `make og` / `make hero` / `make feed` / `make partials` / `make cv` / `make crawl` / `make sitemap` | see `Makefile` |
 | `node scripts/publish-blog.mjs` | regenerate the NixOS series from the markdown drafts (see below) |
-| `node scripts/crawl.mjs` | serve the repo and fetch every reference the way a browser does, `srcset` candidates included |
+| `node scripts/crawl.mjs` | serve the repo and fetch every reference the way a browser does, `srcset` candidates included, and fail if a French page's nav points at an English page |
 | `node scripts/check-sitemap.mjs` | sitemap.txt must list exactly the indexable pages |
 
 ## How paths work (read this if the site looks unstyled)
@@ -91,6 +91,8 @@ stays a CSS gradient there. Everything else works. For the real thing, run `npm 
   committed stylesheet does not match a fresh build.
 - **Fade-ins are gated on `<html class="js">`.** Without JavaScript the site is still readable
   and navigable - the nav, the footer and the skip link are in the HTML, not injected at runtime.
+  On a phone the menu is simply open, the hamburger is hidden, and the contact form says in a
+  `<noscript>` note that it needs JavaScript and gives the address to write to instead.
   Keep it that way.
 - **No inline script, no inline style.** `_headers` sets `script-src 'self'; style-src 'self'`, so
   anything inline is blocked in the browser. That is why the theme script is `js/theme.js`.

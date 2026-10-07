@@ -5,7 +5,7 @@
 
 NODE ?= node
 
-.PHONY: help dev build css fonts og hero feed partials cv cv-en cv-fr check clean
+.PHONY: help dev build css fonts og hero feed partials crawl sitemap cv cv-en cv-fr check clean
 
 help:
 	@printf '%s\n' \
@@ -17,6 +17,8 @@ help:
 	"make feed      rebuild feed.xml from the posts (commit the result)" \
 	"make partials  stamp nav, footer and skip link into every page (commit the result)" \
 	"make cv        build both CV PDFs (needs texlive with moderncv and babel-french)" \
+	"make crawl     serve the repo and fetch every reference the way a browser does" \
+	"make sitemap   report pages missing from sitemap.txt, or listed with no page behind them" \
 	"make check     links, every reference fetched over HTTP, and the sitemap"
 
 css:
@@ -57,10 +59,19 @@ cv-en:
 cv-fr:
 	cd cv && pdflatex -interaction=nonstopmode bouallegui-cv-fr.tex && pdflatex -interaction=nonstopmode bouallegui-cv-fr.tex && rm -f bouallegui-cv-fr.aux bouallegui-cv-fr.log bouallegui-cv-fr.out
 
+# check-links.sh proves every written reference points at a file. crawl.mjs goes further: it
+# serves the repo and requests each reference from the page's own URL, so a relative path that is
+# right on disk but wrong from the page shows up as a 404. It exits non-zero, so CI gates on it.
+crawl:
+	$(NODE) scripts/crawl.mjs
+
+sitemap:
+	$(NODE) scripts/check-sitemap.mjs
+
 check:
 	sh scripts/check-links.sh
-	$(NODE) scripts/crawl.mjs
-	$(NODE) scripts/check-sitemap.mjs
+	$(MAKE) crawl
+	$(MAKE) sitemap
 
 clean:
 	rm -f cv/*.aux cv/*.log cv/*.out

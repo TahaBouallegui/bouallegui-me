@@ -8,6 +8,8 @@
 // reference the way a browser would, so a relative path that is right on disk but wrong from
 // the page's own URL (posts/*.html and fr/*.html are one level down) shows up as a 404.
 // Stylesheet url() values resolve against the stylesheet, not the page, and that is checked too.
+// It also checks that the nav of a French page stays inside /fr/, which no amount of link checking
+// catches, because the English page it points at exists.
 //
 // Exits non-zero if anything 404s, so CI can gate on it.
 
@@ -28,7 +30,9 @@ const TYPES = {
 
 const srv = createServer((req, res) => {
   const p = decodeURIComponent((req.url || '/').split('?')[0]);
-  const f = normalize(join(ROOT, p));
+  // A directory URL means its index page, the way a static host resolves one. The sitemap lists
+  // / and /fr/, and the nav links ./ and ../, so those must answer 200 here as they do on the host.
+  const f = normalize(join(ROOT, p.endsWith('/') ? p + 'index.html' : p));
   if (!f.startsWith(ROOT) || !existsSync(f) || !statSync(f).isFile()) { res.writeHead(404).end('404'); return; }
   res.writeHead(200, { 'content-type': TYPES[extname(f).toLowerCase()] || 'application/octet-stream' });
   createReadStream(f).pipe(res);
@@ -41,10 +45,28 @@ const pages = [
   ...readdirSync(join(ROOT, 'posts')).filter((f) => f.endsWith('.html')).map((f) => '/posts/' + f),
 ];
 
-let bad = 0, checked = 0;
+let bad = 0, checked = 0, misplaced = 0;
 for (const page of pages) {
   const url = `http://127.0.0.1:${PORT}${page}`;
   const html = await (await fetch(url)).text();
+
+  // The nav is stamped from one template, so a French page can end up sending its reader to the
+  // English portfolio: the reference resolves, returns 200, and only the language is wrong. A link
+  // check cannot see that, so compare each nav target against the page's own language. The
+  // language switch carries hreflang and is meant to cross, so it is left alone.
+  const nav = (html.match(/<nav[\s\S]*?<\/nav>/) || [''])[0];
+  const wantFr = page.startsWith('/fr/');
+  for (const m of nav.matchAll(/<a\b([^>]*)>/g)) {
+    const attrs = m[1];
+    if (/hreflang=/.test(attrs)) continue;
+    const href = (attrs.match(/href="([^"]*)"/) || [])[1];
+    if (!href || /^(https?:|mailto:|tel:|#)/.test(href)) continue;
+    const path = new URL(href, url).pathname;
+    if (path.startsWith('/fr/') !== wantFr) {
+      misplaced++;
+      console.log(`  wrong language  ${page}  ->  ${href}   resolved: ${path}`);
+    }
+  }
 
   const refs = [];
   for (const m of html.matchAll(/(?:href|src)="([^"]+)"/g)) refs.push([m[1], url]);
@@ -71,6 +93,6 @@ for (const page of pages) {
     if (code !== 200) { bad++; console.log(`  ${code}  ${page}  ->  ${ref}   resolved: ${abs.pathname}`); }
   }
 }
-console.log(`${pages.length} pages: ${checked} local refs fetched, ${bad} broken`);
+console.log(`${pages.length} pages: ${checked} local refs fetched, ${bad} broken, ${misplaced} nav links in the wrong language`);
 srv.close();
-process.exit(bad ? 1 : 0);
+process.exit(bad || misplaced ? 1 : 0);
