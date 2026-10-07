@@ -11,6 +11,13 @@
 \documentclass[a4paper,11pt]{moderncv}
 \moderncvstyle{classic}
 \moderncvcolor{blue}
+% Vrais glyphes pour les coordonnees et les deux adresses de profil, au lieu des
+% abbreviations "in" / "gh" que le style classic utilise par defaut.
+\moderncvicons{awesome}
+% Le bloc des coordonnées est un peu plus serré que la taille par défaut : il partage
+% la ligne d'en-tête avec le nom et la photo, et à 10pt l'icône de l'e-mail touchait
+% la dernière lettre du nom.
+\renewcommand*{\addressfont}{\fontsize{9}{11}\selectfont\mdseries\slshape}
 
 % Fonts / encoding
 \usepackage[utf8]{inputenc}
@@ -37,17 +44,25 @@
 \phone{+33 6 68 51 84 86}
 \email{ahmedtbou@tutamail.com}
 \address{Villeneuve d'Ascq, France}
-\social[linkedin][www.linkedin.com/in/ahmed-taha-bouallegui-474215306]{LinkedIn}
-\social[github]{TahaBouallegui}
 
 % La photo d'identité est la convention française ; le CV anglais n'en a pas.
-\photo[60pt][0.4pt]{portrait-cv.jpg}
+% 54pt et non 60pt : le nom, les coordonnées et la photo se partagent la même ligne
+% d'en-tête, et à 60pt l'icône de l'e-mail touchait la dernière lettre du nom.
+\photo[54pt][0.4pt]{portrait-cv.jpg}
 
 % Logo de l'école ou de l'entreprise, placé devant le nom de l'institution.
 \newcommand{\cvlogo}[2][11pt]{\raisebox{-0.3em}{\includegraphics[height=#1]{#2}}\hspace{4pt}}
 
 \begin{document}
 \makecvtitle
+% Sur papier il n'y a pas d'hypertexte, donc les deux adresses de profil sont imprimees
+% en entier. Elles passent sous le filet du titre : l'adresse LinkedIn complete fait
+% 246pt de large, et dans l'en-tete elle ne tiendrait a cote du nom et de la photo que
+% si le nom descendait a 22pt.
+\vspace{-14pt}
+\begingroup\small\color{color2}\centering
+\linkedinsocialsymbol www.linkedin.com/in/ahmed-taha-bouallegui-474215306\hspace{2.5em}\githubsocialsymbol github.com/TahaBouallegui\par
+\endgroup
 \footnotesize
 
 % ---------------------------------------------------------------------------
