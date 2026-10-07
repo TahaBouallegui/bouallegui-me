@@ -17,7 +17,7 @@ help:
 	"make feed      rebuild feed.xml from the posts (commit the result)" \
 	"make partials  stamp nav, footer and skip link into every page (commit the result)" \
 	"make cv        build both CV PDFs (needs texlive with moderncv and babel-french)" \
-	"make check     verify every local href/src/url() resolves and no href=\"#\" remains"
+	"make check     links, every reference fetched over HTTP, and the sitemap"
 
 css:
 	npm run build
@@ -59,6 +59,8 @@ cv-fr:
 
 check:
 	sh scripts/check-links.sh
+	$(NODE) scripts/crawl.mjs
+	$(NODE) scripts/check-sitemap.mjs
 
 clean:
 	rm -f cv/*.aux cv/*.log cv/*.out
