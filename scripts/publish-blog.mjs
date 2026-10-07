@@ -24,6 +24,16 @@ const shortDate = (iso) => { const [y, m, d] = isoParts(iso); return `${MONTHS_S
 const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 const shortDateFr = (iso) => { const [y, m, d] = isoParts(iso); return `${d} ${MONTHS_FR[m - 1]} ${y}`; };
 
+// Structured data for a note. Google reads it for the rich result; the fields are the same ones
+// the page already shows, so there is nothing here that the prose does not say.
+const ldPosting = (p, title) => `  <script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title,
+  url: `https://bouallegui.me/posts/${p.slug}.html`, datePublished: p.date,
+  image: 'https://bouallegui.me/images/og.png', inLanguage: 'en',
+  author: { '@type': 'Person', name: 'Ahmed Taha Bouallegui', url: 'https://bouallegui.me/' },
+})}</script>
+`;
+
 const POSTS = [
   { file: '01-architecture.md', slug: 'one-file-one-capability', date: '2026-03-08', tags: ['flake-parts', 'import-tree'],
     desc: 'How the config is laid out. import-tree reads every file in modules/, so there is no import list to keep current, and one convention holds the rest together.',
@@ -195,13 +205,17 @@ const page = (p, title, body) => `<!DOCTYPE html>
   <meta property="og:url" content="https://bouallegui.me/posts/${p.slug}.html">
   <meta property="og:site_name" content="bouallegui.me">
   <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta property="article:published_time" content="${p.date}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
   <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="../css/output.css">
   <script src="../js/theme.js"></script>
-</head>
+${ldPosting(p, title)}</head>
 <body class="bg-surface text-ink">
   <nav data-part="nav" aria-label="Primary"></nav>
 

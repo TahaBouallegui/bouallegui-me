@@ -9,7 +9,9 @@
     3. Add a tile for it under images/projects/ (640x360) or reuse one.
     4. Add a card in blog.html (and index.html if it belongs on the front page).
     5. Add the absolute URL to sitemap.txt, then run make feed so feed.xml picks it up.
-    6. Delete the robots meta from the copy. It must not ship on a real post.
+    6. Run make partials. The nav, the footer and the skip link are stamped into the copy, not
+       written by hand.
+    7. Delete the robots meta from the copy. It must not ship on a real post.
 
   This file is excluded from the sitemap and carries robots="noindex" so it can never
   compete with a real article in search results.
@@ -34,12 +36,17 @@
   <meta property="og:url" content="https://bouallegui.me/posts/{{slug}}.html">
   <meta property="og:site_name" content="bouallegui.me">
   <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta property="article:published_time" content="{{YYYY-MM-DD}}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
   <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="../css/output.css">
   <script src="../js/theme.js"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"{{Title}}","url":"https://bouallegui.me/posts/{{slug}}.html","datePublished":"{{YYYY-MM-DD}}","image":"https://bouallegui.me/images/og.png","inLanguage":"en","author":{"@type":"Person","name":"Ahmed Taha Bouallegui","url":"https://bouallegui.me/"}}</script>
 </head>
 <body class="bg-surface text-ink">
   <nav data-part="nav" aria-label="Primary"></nav>

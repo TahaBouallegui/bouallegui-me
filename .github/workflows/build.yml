@@ -74,6 +74,8 @@ jobs:
             images/
             js/
             cv/*.pdf
+            favicon.ico
+            apple-touch-icon.png
             feed.xml
             sitemap.txt
             robots.txt
