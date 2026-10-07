@@ -48,6 +48,14 @@ for (const page of pages) {
 
   const refs = [];
   for (const m of html.matchAll(/(?:href|src)="([^"]+)"/g)) refs.push([m[1], url]);
+  // srcset candidates are fetched by the browser too, so a typo in one is a broken image on
+  // the screens that ask for it, and nothing else would notice.
+  for (const m of html.matchAll(/srcset="([^"]+)"/g)) {
+    for (const part of m[1].split(',')) {
+      const cand = part.trim().split(/\s+/)[0];
+      if (cand) refs.push([cand, url]);
+    }
+  }
 
   for (const m of html.matchAll(/href="([^"]+\.css)"/g)) {
     const cssUrl = new URL(m[1], url).href;

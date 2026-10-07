@@ -80,7 +80,7 @@
     <section id="hero" class="relative flex min-h-screen items-center overflow-hidden bg-gradient-to-b from-[#0A1A2F] via-ocean-deep to-ocean-dark">
       <div id="hero-canvas" class="absolute inset-0 z-0" data-parallax="0.2"></div>
       <div class="container relative z-10 px-5 pb-32 pt-32 text-center md:px-8" data-parallax="0.1">
-        <img src="images/portrait.jpg" alt="Portrait of Ahmed Bouallegui against a white background" width="1215" height="1563" loading="eager" decoding="async" class="mx-auto mb-7 h-28 w-28 rounded-full object-cover object-top ring-2 ring-ocean-glow/60 sm:h-32 sm:w-32">
+        <img src="images/portrait.jpg" alt="Portrait of Ahmed Bouallegui against a white background" srcset="images/portrait-336.jpg 336w, images/portrait.jpg 1215w" sizes="(max-width: 639px) 112px, 128px" width="1215" height="1563" loading="eager" decoding="async" class="mx-auto mb-7 h-28 w-28 rounded-full object-cover object-top ring-2 ring-ocean-glow/60 sm:h-32 sm:w-32">
         <p class="eyebrow text-ocean-glow text-[0.68rem] tracking-[0.18em] sm:text-xs sm:tracking-[0.25em]">Cybersecurity &amp; systems done right</p>
         <h1 class="mt-4 text-4xl font-display font-bold leading-[1.05] text-white sm:text-6xl lg:text-7xl glow-text">Ahmed Taha Bouallegui</h1>
         <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-200/90">
@@ -282,7 +282,9 @@
 </footer>
 
   <script src="js/main.js"></script>
-  <!-- Bundled from src/hero.js plus three 0.186.1 (make hero). No third-party script is fetched at page load. -->
-  <script type="module" src="js/vendor/hero.bundle.js"></script>
+  <!-- js/hero-loader.js pulls the bundle (src/hero.js plus three 0.186.1, make hero) only when
+       the hero is on screen, motion is allowed and the browser can run it. Nothing third-party
+       is fetched at page load. -->
+  <script src="js/hero-loader.js"></script>
 </body>
 </html>
