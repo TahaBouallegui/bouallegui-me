@@ -148,7 +148,7 @@
      supported, with vh kept as the fallback. */
   #hero { min-height: 100vh; min-height: 100svh; }
   #hero-canvas { background: radial-gradient(circle at 50% 40%, rgba(0, 119, 182, 0.45), rgba(2, 62, 138, 0.65) 70%, rgba(10, 26, 47, 0.95)); }
-  /* Fade-ins are opt-in: the inline script in each <head> puts .js on <html>. Without JS (or
+  /* Fade-ins are opt-in: js/theme.js in each <head> puts .js on <html>. Without JS (or
      if main.js throws before the observer runs) content stays visible instead of opacity:0. */
   .js .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .js .fade-in.in { opacity: 1; transform: translateY(0); }
@@ -169,6 +169,17 @@
   #site-header.nav-solid > div .menu-toggle span { background-color: var(--ink-solid); }
   #mobile-menu a { color: var(--ink-solid); }
   #mobile-menu a:hover, #mobile-menu a:focus-visible { color: #0077B6; }
+
+  /* With scripting off the hamburger has nothing to toggle, so the panel is simply left open and
+     the button that would open it is hidden. The bar stops being fixed in the same case: an open
+     panel floating over the hero would cover it, and navSolid cannot run without scripts anyway.
+     js/theme.js puts .js on <html> before paint, so a page that can run scripts keeps the
+     collapsed behaviour. */
+  @media (max-width: 767px) {
+    html:not(.js) #mobile-menu { display: flex; }
+    html:not(.js) .menu-toggle { display: none; }
+    html:not(.js) #site-header { position: static; }
+  }
 
   /* Theme toggle. The sun offers "go back to light", the moon offers "go dark", and the
      header keeps the button legible whether it is floating over the hero or solid. */
