@@ -5,18 +5,19 @@
 
 NODE ?= node
 
-.PHONY: help dev build css fonts og hero feed cv cv-en cv-fr check clean
+.PHONY: help dev build css fonts og hero feed partials cv cv-en cv-fr check clean
 
 help:
 	@printf '%s\n' \
-	"make css     build css/output.css minified (commit the result)" \
-	"make dev     watch src/input.css while developing" \
-	"make fonts   re-download the latin font subsets into fonts/" \
-	"make og      regenerate images/og.png (needs ImageMagick + fontconfig)" \
-	"make hero    rebuild js/vendor/hero.bundle.js from src/hero.js (needs esbuild)" \
-	"make feed    rebuild feed.xml from the posts (commit the result)" \
-	"make cv      build both CV PDFs (needs texlive with moderncv and babel-french)" \
-	"make check   verify every local href/src/url() resolves and no href=\"#\" remains"
+	"make css       build css/output.css minified (commit the result)" \
+	"make dev       watch src/input.css while developing" \
+	"make fonts     re-download the latin font subsets into fonts/" \
+	"make og        regenerate images/og.png (needs ImageMagick + fontconfig)" \
+	"make hero      rebuild js/vendor/hero.bundle.js from src/hero.js (needs esbuild)" \
+	"make feed      rebuild feed.xml from the posts (commit the result)" \
+	"make partials  stamp nav, footer and skip link into every page (commit the result)" \
+	"make cv        build both CV PDFs (needs texlive with moderncv and babel-french)" \
+	"make check     verify every local href/src/url() resolves and no href=\"#\" remains"
 
 css:
 	npm run build
@@ -34,11 +35,16 @@ og:
 
 # The bundle is committed like css/output.css is: the site never fetches three from a CDN.
 hero:
-	$(NODE) run hero
+	npm run hero
 
 # feed.xml is generated from posts/*.html and committed like css/output.css is.
 feed:
 	$(NODE) scripts/build-feed.mjs
+
+# The nav, footer and skip link live in scripts/partials.mjs and are stamped into the pages,
+# so the menu is in the HTML before any script runs. Commit the rewritten pages.
+partials:
+	$(NODE) scripts/render-partials.mjs
 
 cv: cv-en cv-fr
 

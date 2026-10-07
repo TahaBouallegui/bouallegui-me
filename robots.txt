@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /pub/
 Sitemap: https://bouallegui.me/sitemap.txt
+Sitemap: https://bouallegui.me/feed.xml

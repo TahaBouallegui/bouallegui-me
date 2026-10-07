@@ -1,6 +1,6 @@
 /* Self-hosted latin subsets: Inter, Space Grotesk, JetBrains Mono.
    One woff2 per family (Google serves identical bytes across a variable family's
-   weights). Regenerate with: node .scratch/selfhost-fonts.mjs  */
+   weights). Regenerate with: node scripts/selfhost-fonts.mjs  */
 
 /* Inter 400 - latin */
 @font-face {
