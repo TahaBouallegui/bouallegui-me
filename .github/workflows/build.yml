@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install
@@ -33,8 +33,33 @@ jobs:
             exit 1
           fi
 
+      # The same rule for everything else that is generated and then committed: on a clean
+      # checkout each generator must be a no-op. If it writes anything, the committed copy is
+      # stale and the push is refused. render-partials goes last because publish-blog writes the
+      # post pages from scratch, nav and footer placeholders included.
+      - name: Generated pages, posts, feed and hero bundle are up to date
+        run: |
+          node scripts/publish-blog.mjs
+          npm run feed
+          npm run hero
+          node scripts/render-partials.mjs
+          if ! git diff --exit-code; then
+            git status --porcelain
+            echo "::error::generated files are stale. Run 'node scripts/publish-blog.mjs', 'npm run feed', 'npm run hero' and 'make partials', then commit the result."
+            exit 1
+          fi
+
+      - name: Sitemap lists every indexable page
+        run: node scripts/check-sitemap.mjs
+
+      - name: Feed is well formed
+        run: xmllint --noout feed.xml
+
       - name: Links and assets resolve
         run: sh scripts/check-links.sh
+
+      - name: Every reference loads over HTTP
+        run: node scripts/crawl.mjs
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
@@ -52,18 +77,27 @@ jobs:
             feed.xml
             sitemap.txt
             robots.txt
+            _headers
+            _redirects
             LICENSE
             README.md
           if-no-files-found: error
 
-  # Deploy target is a self-hosted box, so it stays explicit rather than guessed at here.
-  # Uncomment once the repo has a remote and the host has an SSH key in Secrets:
-  #
-  # deploy:
-  #   needs: build
-  #   if: github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/download-artifact@v4
-  #       with: { name: site, path: site }
-  #     - run: rsync -rlptz --delete site/ deploy@bouallegui.me:/srv/bouallegui.me/
+  # Cloudflare Pages, direct upload: the artifact above is the deployment, so the host never
+  # rebuilds anything. Stays off until the repo carries a Cloudflare API token in Secrets and
+  # a repository variable CF_DEPLOY set to "on" (Settings > Secrets and variables > Actions).
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.CF_DEPLOY == 'on'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=bouallegui-me
