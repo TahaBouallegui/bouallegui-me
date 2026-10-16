@@ -52,6 +52,11 @@ jobs:
       - name: Sitemap lists every indexable page
         run: node scripts/check-sitemap.mjs
 
+      # xmllint is not preinstalled on the runner image (actions/runner-images#423),
+      # so the feed check installs it instead of being skipped.
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+
       - name: Feed is well formed
         run: xmllint --noout feed.xml
 
