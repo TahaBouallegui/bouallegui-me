@@ -3,6 +3,9 @@ node_modules/
 npm-debug.log*
 *.log
 
+# Local state from `wrangler pages dev`.
+.wrangler/
+
 # Working notes, screenshots, and drafts that should never ship.
 .scratch/
 
