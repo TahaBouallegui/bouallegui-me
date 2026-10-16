@@ -35,8 +35,8 @@ src/input.css         the only CSS source
 src/hero.js           the 3D hero, written against the three API
 src/blog/*.md         the NixOS series drafts that posts/ is generated from
 src/blog/template.html  authoring skeleton for a hand-written note, not served
-cv/                   both CVs: the LaTeX source and the PDFs the site links
-cv/img/               the CV photo and the institution marks used by the French CV
+cv/                   the three CVs: the LaTeX sources and the PDFs the site links
+cv/img/               the CV photo and the institution marks used by the French and German CVs
 scripts/              feed, blog generator, nav/footer stamping, crawler, sitemap check, font
                       subsets, social card, dev server, link check
 ```
@@ -78,7 +78,8 @@ pages have a counterpart and stamps the switch to the matching one: `about.html`
 `fr/about.html`, `fr/about.html` back to `about.html`. A note has
 no translation, so on `posts/*` the switch goes to `fr/blog.html`, which says the notes are in
 English. Each pair cross-links with `hreflang` alternates and both URLs are in `sitemap.txt`.
-The CV follows the same split: `cv/bouallegui-cv-en.pdf` and `cv/bouallegui-cv-fr.pdf`.
+The CV follows the same split: `cv/bouallegui-cv-en.pdf` and `cv/bouallegui-cv-fr.pdf`, plus a
+German `cv/bouallegui-cv-de.pdf` that no page links yet (see Open items).
 
 One caveat when opening files directly: browsers block ES modules over `file://`, so the 3D hero
 stays a CSS gradient there. Everything else works. For the real thing, run `npm run serve`.
@@ -140,6 +141,14 @@ location ~* \.(woff2)$ { add_header Cache-Control "public, max-age=31536000, imm
   `make hero` after touching `src/hero.js` or bumping `three`. If the hero goes, delete
   `src/hero.js`, the bundle, `js/hero-loader.js`, and the script tag in `index.html` and
   `fr/index.html`; the CSS gradient underneath already covers the hero.
+- The CVs list Nextcloud on the home server, but it is not running yet, and the site pages (the
+  index cards, `portfolio.html`, `about.html`, and the alt text of `images/projects/vps.svg`) still
+  describe the stack as Immich, Jellyfin, Grocy, SearXNG and Samba. Once Nextcloud is up, update
+  those pages to match the CVs. A note about the setup is in the queue on `blog.html` and
+  `fr/blog.html`.
+- The German CV (`cv/bouallegui-cv-de.pdf`) is built and fits one page, but no page on the site
+  links it yet. Decide where it should be reachable from, and whether the resume pages get a
+  language switch of their own.
 
 ## Where the blog sources live
 
@@ -182,12 +191,12 @@ A few things here are not mine to license:
   assets are CC BY 4.0 by the NixOS Project and contributors ([NixOS/branding](https://github.com/NixOS/branding));
   the attribution is also in a comment inside that file.
 - `cv/img/`: the Polytech Lille, Université de Lille and Valeo marks that sit next to those
-  names in the French CV. They come from Wikimedia Commons (`File:Polytech Lille logo.gif` under
+  names in the French and German CVs. They come from Wikimedia Commons (`File:Polytech Lille logo.gif` under
   CC0, `File:Logotype Université de Lille 2022.svg` and `File:Valeo Logo.svg` tagged public domain
   as simple logos), cropped to their monograms with ImageMagick. They are the institutions'
   trademarks and are used only to identify where I studied and worked. `cv/img/portrait-cv.jpg`
-  is a crop of my own portrait, used as the CV photo; the French CV carries one because that is the
-  convention here, the English one does not.
+  is a crop of my own portrait, used as the CV photo; the French and German CVs carry one because
+  that is the convention there, the English one does not.
 
 Code quoted inside the notes stays under the terms of the project it came from. The wireless note
 quotes from a private university repository; the keyboard note quotes from the course repository,

@@ -67,7 +67,7 @@
 
 % ---------------------------------------------------------------------------
 \section{Profil technique}
-\cvitem[.05em]{}{Étudiant en ingénierie, spécialisé IoT et cybersécurité. Systèmes Linux, infrastructure déclarative avec Nix sur NixOS, dont un home lab qui fait tourner ses modèles en local. Je cherche un stage en administration systèmes ou en cybersécurité pour l'été 2027, 10 semaines à 4 mois.}
+\cvitem[.05em]{}{Étudiant en ingénierie, spécialisé IoT et cybersécurité. Systèmes Linux, infrastructure déclarative avec Nix sur NixOS, dont un home lab qui fait tourner ses modèles en local. Je cherche un stage en administration systèmes ou en cybersécurité de 10 semaines à 4 mois, disponible à tout moment entre le 19 avril et le 31 août 2027.}
 
 % ---------------------------------------------------------------------------
 \section{Formation}
@@ -83,19 +83,19 @@
 \cvitem[.05em]{Réseau \& sécurité}{Tailscale, ZeroTier, isolation IAM, AWS (EC2, IAM, security groups), CTF (RE, web / sûreté mémoire).}
 \cvitem[.05em]{Programmation}{Python, C/C++, C\#, Java, Rust, Bash, PostgreSQL, assembleur (AVR/ARM).}
 \cvitem[.05em]{Outils}{Git, KiCad, MATLAB/Simulink, Matplotlib.}
-\cvitem[.05em]{Langues}{anglais (C1), arabe (C2), français (C1), allemand (B1).}
+\cvitem[.05em]{Langues}{anglais (C1), arabe (C2), français (C1), allemand (B2).}
 
 % ---------------------------------------------------------------------------
 \section{Projets sélectionnés}
 \cventry[.05em]{Depuis août 2026}{Inférence LLM locale sur matériel grand public}{}{}{}{
 \begin{cvlist}
-  \item Modèles à poids ouverts sur trois machines avec \texttt{llama.cpp} : deux boîtiers RTX 3060 et un ThinkPad uniquement en CPU, atteignables seulement via un VPS.
-  \item Un mélange d'experts de 125 Md de paramètres sur une carte de 12 Go : experts répartis entre VRAM, RAM et une table SSD de 29 Go. 35 tok/s en décodage et 253 en préfill, contre 12 et 55 avant le changement de moteur.
+  \item Modèles à poids ouverts sur trois machines avec \texttt{llama.cpp}, en inférence sur GPU comme en CPU seul, atteignables seulement via un VPS.
+  \item Un mélange d'experts de 125 Md de paramètres sur une carte de 12 Go : experts répartis entre VRAM, RAM et une table SSD de 29 Go. 49 tok/s en décodage et 997 en préfill.
 \end{cvlist}}
 
 \cventry[.05em]{Depuis janv. 2026}{Infrastructure serveur Linux auto-hébergée}{}{}{}{
 \begin{cvlist}
-  \item Serveur headless : Immich, Jellyfin, Grocy, SearXNG et Samba. Commencé sous Debian en janvier 2026, reconstruit sous NixOS en février depuis un seul arbre de configuration.
+  \item Serveur headless : Nextcloud, Jellyfin, SearXNG et Samba. Commencé sous Debian en janvier 2026, reconstruit sous NixOS en février depuis un seul arbre de configuration.
   \item Rien n'écoute sur internet : les services sont atteignables uniquement via un VPS, et les secrets du dépôt sont chiffrés avec sops.
 \end{cvlist}}
 
@@ -107,13 +107,13 @@
 \cventry[.05em]{Juin à juil. 2026}{Stage de recherche, CRIStAL \textbf{(équipe 2XS)}}{\cvlogo[13pt]{univ-lille-mark.png}IRCICA \textbullet Université de Lille}{Lille, France}{}{
 \begin{cvlist}
   \item Retiré chaque fork and exec de \texttt{iw} et \texttt{ip} du module wifi d'une sonde Linux de détection d'objets connectés au profit d'appels directs \texttt{nl80211} et rtnetlink, avec découverte automatique des interfaces.
-  \item Contribué aux travaux de l'équipe 2XS sur l'empreinte mémoire, l'efficacité énergétique et la sécurité du logiciel embarqué.
+  \item Contribué aux travaux de l'équipe 2XS sur l'empreinte mémoire, l'efficacité énergétique et la sécurité du logiciel embarqué, ainsi qu'au débogage du noyau.
 \end{cvlist}}
 
 \cventry[.05em]{Avr. 2025 à ce jour}{Fabmanager \textbf{(FabLab Fabricarium)}}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, France}{}{
 \begin{cvlist}
   \item Exploitation et maintenance du FabLab de l'école : imprimantes 3D, découpeuses laser, CNC et postes d'électronique.
-  \item Accompagnement des étudiants qui prototypent du matériel et des projets IoT ; réservations, sécurité et sessions ouvertes.
+  \item Accompagnement des étudiants et chercheurs qui prototypent du matériel et des projets IoT ; réservations, sécurité et sessions ouvertes.
 \end{cvlist}}
 
 \cventry[.05em]{Juil. à août 2023}{Stage en ingénierie de l'automatisation}{\cvlogo[10pt]{valeo.png}Valeo}{Tunis, Tunisie}{}{

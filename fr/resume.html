@@ -99,7 +99,7 @@
             <div class="card mb-12">
               <p class="eyebrow">Profil technique</p>
               <p class="text-slate-700 leading-relaxed">
-                Étudiant en ingénierie spécialisé en IoT et cybersécurité, avec une expérience pratique en administration de systèmes Linux, en conteneurisation et en infrastructure as code. Je contribue activement à des environnements auto-hébergés utilisant NixOS, Docker et Debian, dont un home lab qui fait tourner ses propres modèles en local. Je cherche un stage en administration systèmes ou en cybersécurité pour l'été 2027, 10 semaines à 4 mois.
+                Étudiant en ingénierie spécialisé en IoT et cybersécurité, avec une expérience pratique en administration de systèmes Linux, en conteneurisation et en infrastructure as code. Je contribue activement à des environnements auto-hébergés utilisant NixOS, Docker et Debian, dont un home lab qui fait tourner ses propres modèles en local. Je cherche un stage en administration systèmes ou en cybersécurité de 10 semaines à 4 mois, disponible à tout moment entre le 19 avril et le 31 août 2027.
               </p>
             </div>
 
@@ -143,8 +143,8 @@
                 <h3 class="font-display font-semibold text-ocean-dark">Inférence LLM locale sur matériel grand public</h3>
                 <p class="text-sm text-slate-500 mb-2">Depuis août 2026</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
-                  <li>Modèles à poids ouverts sur trois machines avec <code class="font-mono text-sm text-ocean-dark">llama.cpp</code> : deux boîtiers RTX 3060 et un ThinkPad uniquement en CPU, atteignables seulement via un VPS.</li>
-                  <li>Un mélange d'experts de 125 Md de paramètres sur une carte de 12 Go : experts répartis entre VRAM, RAM et une table de recherche SSD de 29 Go. 35 tok/s en décodage et 253 tok/s en préfill, contre 12 et 55 sur la même carte avant le changement de moteur.</li>
+                  <li>Modèles à poids ouverts sur trois machines avec <code class="font-mono text-sm text-ocean-dark">llama.cpp</code>, en inférence sur GPU comme en CPU seul, atteignables seulement via un VPS.</li>
+                  <li>Un mélange d'experts de 125 Md de paramètres sur une carte de 12 Go : experts répartis entre VRAM, RAM et une table de recherche SSD de 29 Go. 49 tok/s en décodage et 997 tok/s en préfill.</li>
                   <li>Un seul patch sur l'arbre de configuration qui construit toutes mes machines branche l'endpoint sur trois harnesses d'agents, donc les prompts, les configs et les poids ne quittent pas les machines.</li>
                 </ul>
               </li>
@@ -153,7 +153,7 @@
                 <h3 class="font-display font-semibold text-ocean-dark">Infrastructure serveur Linux auto-hébergée</h3>
                 <p class="text-sm text-slate-500 mb-2">Depuis janvier 2026</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
-                  <li>Un serveur headless : Immich, Jellyfin, Grocy, SearXNG et Samba, avec une isolation stricte par utilisateur. Commencé sous Debian en janvier 2026, reconstruit sous NixOS en février depuis le même arbre de configuration.</li>
+                  <li>Un serveur headless : Nextcloud, Jellyfin, SearXNG et Samba, avec une isolation stricte par utilisateur. Commencé sous Debian en janvier 2026, reconstruit sous NixOS en février depuis le même arbre de configuration.</li>
                   <li>Aucun écouteur public : les services sont atteignables via un VPS uniquement, le firewall restant fermé sur le WAN.</li>
                   <li>Secrets commités dans le dépôt chiffrés avec sops.</li>
                 </ul>
@@ -263,7 +263,7 @@
 
             <div class="card">
               <h3 class="mb-3 font-display text-lg font-semibold text-ocean-dark">Ce que je cherche</h3>
-              <p class="text-sm text-slate-600 leading-relaxed">Un stage en administration systèmes ou en cybersécurité, été 2027, 10 semaines à 4 mois.</p>
+              <p class="text-sm text-slate-600 leading-relaxed">Un stage en administration systèmes ou en cybersécurité, de 10 semaines à 4 mois, disponible à tout moment entre le 19 avril et le 31 août 2027.</p>
             </div>
           </aside>
 

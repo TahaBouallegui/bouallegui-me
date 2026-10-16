@@ -99,7 +99,7 @@
             <div class="card mb-12">
               <p class="eyebrow">Technical summary</p>
               <p class="text-slate-700 leading-relaxed">
-                Computer Engineering student specializing in IoT and Cybersecurity, with practical experience in Linux system administration, containerization, and infrastructure as code. Active contributor to self-hosted environments using NixOS, Docker, and Debian, including a home lab that runs its own models locally. Looking for an internship in systems administration or cybersecurity in summer 2027, 10 weeks to 4 months.
+                Computer Engineering student specializing in IoT and Cybersecurity, with practical experience in Linux system administration, containerization, and infrastructure as code. Active contributor to self-hosted environments using NixOS, Docker, and Debian, including a home lab that runs its own models locally. Looking for an internship in systems administration or cybersecurity, 10 weeks to 4 months, available anywhere between 19 April and 31 August 2027.
               </p>
             </div>
 
@@ -143,8 +143,8 @@
                 <h3 class="font-display font-semibold text-ocean-dark">Local LLM Inference on Consumer Hardware</h3>
                 <p class="text-sm text-slate-500 mb-2">Since Aug 2026</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
-                  <li>Run open-weight models on three machines with <code class="font-mono text-sm text-ocean-dark">llama.cpp</code>: two RTX 3060 boxes and one ThinkPad on CPU only, reachable only through a VPS.</li>
-                  <li>A 125B mixture-of-experts model on a 12 GB card: experts split across VRAM, RAM and a 29 GB SSD lookup table. 35 tok/s decode and 253 tok/s prefill, against 12 and 55 on the same card before the engine change.</li>
+                  <li>Run open-weight models on three machines with <code class="font-mono text-sm text-ocean-dark">llama.cpp</code>, running inference on GPU and on CPU only, reachable only through a VPS.</li>
+                  <li>A 125B mixture-of-experts model on a 12 GB card: experts split across VRAM, RAM and a 29 GB SSD lookup table. 49 tok/s decode and 997 tok/s prefill.</li>
                   <li>One patch on the config tree that builds all my machines wires the endpoint into three agent harnesses, so prompts, configs and weights never leave the machines.</li>
                 </ul>
               </li>
@@ -153,7 +153,7 @@
                 <h3 class="font-display font-semibold text-ocean-dark">Self-Hosted Linux Server Infrastructure</h3>
                 <p class="text-sm text-slate-500 mb-2">Since Jan 2026</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
-                  <li>Runs a headless server: Immich, Jellyfin, Grocy, SearXNG and Samba, with strict per-user isolation. Started on Debian in January 2026, rebuilt on NixOS in February from the same config tree.</li>
+                  <li>Runs a headless server: Nextcloud, Jellyfin, SearXNG and Samba, with strict per-user isolation. Started on Debian in January 2026, rebuilt on NixOS in February from the same config tree.</li>
                   <li>No public listeners: services are reachable through a VPS only, with the firewall left closed to the WAN.</li>
                   <li>Secrets committed to the repository encrypted with sops.</li>
                 </ul>
@@ -263,7 +263,7 @@
 
             <div class="card">
               <h3 class="mb-3 font-display text-lg font-semibold text-ocean-dark">Looking for</h3>
-              <p class="text-sm text-slate-600 leading-relaxed">An internship in systems administration or cybersecurity, summer 2027, 10 weeks to 4 months.</p>
+              <p class="text-sm text-slate-600 leading-relaxed">An internship in systems administration or cybersecurity, 10 weeks to 4 months, available anywhere between 19 April and 31 August 2027.</p>
             </div>
           </aside>
 

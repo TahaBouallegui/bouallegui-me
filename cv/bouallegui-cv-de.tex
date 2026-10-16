@@ -1,0 +1,145 @@
+% Copyright (c) 2026 Ahmed Taha Bouallegui
+% SPDX-License-Identifier: GPL-3.0-or-later
+
+% =============================================================================
+%  Ahmed Taha Bouallegui -- Lebenslauf (deutsche Version)
+%  Style : moderncv "classic" (dasselbe Banner-Layout wie die anderen beiden)
+%  Color : blue (matches personal branding)
+%  Compile: pdflatex bouallegui-cv-de.tex   (or xelatex), from this directory
+%  Der Inhalt folgt bouallegui-cv-en.tex: gleiche Projekte, gleiche Daten,
+%  gleiche Zahlen. Das Layout folgt bouallegui-cv-fr.tex (Foto und Logos), weil
+%  ein Bewerbungsfoto im deutschen Lebenslauf weiterhin ueblich ist.
+%  Deutsche Konventionen gegenueber den anderen beiden Versionen:
+%   - Abschnittsreihenfolge: Ausbildung, dann Berufserfahrung, dann Projekte,
+%     dann Kenntnisse; der Kompetenzteil steht im deutschen Lebenslauf unten.
+%   - Ort, Datum und Unterschrift beschliessen den Lebenslauf (unten).
+%   - Sprachkenntnisse: Deutsch zuerst, weil sich der Lebenslauf an deutsche
+%     Leser richtet.
+% =============================================================================
+\documentclass[a4paper,11pt]{moderncv}
+\moderncvstyle{classic}
+\moderncvcolor{blue}
+% Vrais glyphes pour les coordonnees et les deux adresses de profil, au lieu des
+% abbreviations "in" / "gh" que le style classic utilise par defaut.
+\moderncvicons{awesome}
+% Le bloc des coordonnées est un peu plus serré que la taille par défaut : il partage
+% la ligne d'en-tête avec le nom et la photo, et à 10pt l'icône de l'e-mail touchait
+% la dernière lettre du nom.
+\renewcommand*{\addressfont}{\fontsize{9}{11}\selectfont\mdseries\slshape}
+
+% Fonts / encoding
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}   % scalable Type1 fonts; microtype refuses to run with bitmap ones
+\usepackage{graphicx}
+% Alle Bilder liegen neben der Quelle, in img/.
+\graphicspath{{img/}}
+\usepackage[ngerman]{babel}
+
+% Puces: babel redefiniert itemize nach tweaklist von moderncv. Ein environment
+% "list" ohne Umwege haelt Symbol und linker Rand identisch zu den anderen Versionen.
+\newenvironment{cvlist}
+  {\begin{list}{\strut\textcolor{color1}{\large\rmfamily\textbullet}}{\setlength{\leftmargin}{13pt}\setlength{\labelsep}{6pt}\setlength{\itemsep}{0pt}\setlength{\topsep}{1pt}\setlength{\parsep}{0pt}\setlength{\partopsep}{0pt}}}
+  {\end{list}}
+
+% Tighten geometry so everything fits on one page
+\usepackage[top=7mm,bottom=5mm,left=12mm,right=12mm]{geometry}
+\setlength{\parskip}{0pt}\setlength{\itemsep}{0pt}\setlength{\partopsep}{0pt}
+% Etwas breiteres Datumsfenster wie in der französischen Version: deutsche
+% Monatsnamen und "bis" brauchen den Platz, damit die Daten einzeilig bleiben.
+\setlength{\hintscolumnwidth}{0.195\textwidth}
+
+% Contact details
+\name{Ahmed Taha}{Bouallegui}
+\phone{+33 6 68 51 84 86}
+\email{ahmedtbou@tutamail.com}
+\address{Villeneuve d'Ascq, Frankreich}
+% Geburtsdatum, Geburtsort und Staatsangehoerigkeit stehen in deutschen
+% Lebenslaeufen meist in den "Persoenlichen Daten", sind seit dem AGG aber
+% optional. Die Angaben fehlen, weil sie nicht vorliegen; wenn Ahmed sie
+% wuenscht, hier ergaenzen und den Kopfzeilenblock anpassen.
+
+% Das Bewerbungsfoto ist in Deutschland weiterhin ueblich, auch wenn es rechtlich
+% nicht mehr verlangt werden darf. Groesse wie in der französischen Version:
+% 54pt, damit das Namensbanner, die Koordinaten und das Foto sich die Kopfzeile
+% teilen, ohne dass sich etwas beruehrt.
+\photo[54pt][0.4pt]{portrait-cv.jpg}
+
+% Logo der Schule oder der Firma, vor dem Institutionsnamen.
+\newcommand{\cvlogo}[2][11pt]{\raisebox{-0.3em}{\includegraphics[height=#1]{#2}}\hspace{4pt}}
+
+\begin{document}
+\makecvtitle
+% Sur papier il n'y a pas d'hypertexte, donc les deux adresses de profil sont imprimees
+% en entier. Elles passent sous le filet du titre : l'adresse LinkedIn complete fait
+% 246pt de large, et dans l'en-tete elle ne tiendrait a cote du nom et de la photo que
+% si le nom descendait a 22pt.
+\vspace{-14pt}
+\begingroup\small\color{color2}\centering
+\linkedinsocialsymbol www.linkedin.com/in/ahmed-taha-bouallegui-474215306\hspace{2.5em}\githubsocialsymbol github.com/TahaBouallegui\par
+\endgroup
+\footnotesize
+
+% ---------------------------------------------------------------------------
+\section{Kurzprofil}
+\cvitem[.05em]{}{Ingenieurstudent mit Schwerpunkt IoT und Cybersicherheit. Linux-Systemadministration, Infrastruktur als Code, selbst gehostete Umgebungen mit Nix auf NixOS, darunter ein Home Lab, das eigene Modelle lokal betreibt. Ich suche ein Praktikum in den Bereichen Systemadministration oder Cybersicherheit, von 10 Wochen bis zu 4 Monaten, verfügbar jederzeit zwischen dem 19. April und dem 31. August 2027.}
+
+% ---------------------------------------------------------------------------
+\section{Ausbildung}
+\cventry[.05em]{2023 bis 2028}{M.Eng. Internet of Things and Cybersecurity}{\cvlogo[13pt]{polytech-mark.png}École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, Frankreich}{}{}
+\cventry[.05em]{2023 bis 2025}{Cycle préparatoire (MPCSI)}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, Frankreich}{}{Mit höchster Auszeichnung abgeschlossen, Jahrgangsbester 2023/2024}
+\cventry[.05em]{2023}{Baccalauréat}{Frankreich}{}{}{Mit höchster Auszeichnung (mention très bien)}
+
+% ---------------------------------------------------------------------------
+\section{Berufserfahrung}
+\cventry[.05em]{Juni bis Juli 2026}{Forschungspraktikum, CRIStAL \textbf{(Team 2XS)}}{\cvlogo[13pt]{univ-lille-mark.png}IRCICA \textbullet Université de Lille}{Lille, Frankreich}{}{
+\begin{cvlist}
+  \item Sämtliche Fork- und Exec-Aufrufe von \texttt{iw} und \texttt{ip} im WLAN-Modul einer Linux-Sonde zur Erkennung vernetzter Geräte entfernt, ersetzt durch direkte \texttt{nl80211}- und rtnetlink-Aufrufe samt automatischer Interface-Erkennung.
+  \item Beitrag zur Embedded-Entwicklung des Teams 2XS (Speicherbedarf, Energieeffizienz, Sicherheit) sowie zum Kernel-Debugging.
+\end{cvlist}}
+
+\cventry[.05em]{seit April 2025}{Fabmanager \textbf{(FabLab Fabricarium)}}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, Frankreich}{}{
+\begin{cvlist}
+  \item Betrieb und Wartung des FabLabs der Schule: 3D-Drucker, Laserschneider, CNC und Elektronik-Arbeitsplätze.
+  \item Studierende und Forschende beim Bau von Hardware- und IoT-Prototypen begleitet; Buchungen, Sicherheit und offene Werkstatttermine koordiniert.
+\end{cvlist}}
+
+\cventry[.05em]{Juli bis August 2023}{Praktikum Automatisierungstechnik \textbf{(Valeo)}}{\cvlogo[10pt]{valeo.png}Valeo}{Tunis, Tunesien}{}{
+\begin{cvlist}
+  \item Klangbasierte Qualitätsprüfung an einer Lenkrad-Fertigungslinie automatisiert, mit Python und Librosa.
+\end{cvlist}}
+
+% ---------------------------------------------------------------------------
+\section{Ausgewählte Projekte}
+\cventry[.05em]{seit August 2026}{Lokale LLM-Inferenz auf Consumer-Hardware}{}{}{}{
+\begin{cvlist}
+  \item Modelle mit offenen Gewichten auf drei Maschinen mit \texttt{llama.cpp}, Inferenz auf GPU wie auf reiner CPU, erreichbar nur über einen VPS.
+  \item Ein Mixture-of-Experts-Modell mit 125 Mrd. Parametern auf einer 12-GB-Karte: die Experten verteilt auf VRAM, RAM und eine 29 GB große SSD-Nachschlagtabelle. 49 tok/s beim Decodieren und 997 tok/s beim Prefill.
+\end{cvlist}}
+
+\cventry[.05em]{seit Januar 2026}{Selbst gehostete Linux-Server-Infrastruktur}{}{}{}{
+\begin{cvlist}
+  \item Headless-Server: Nextcloud, Jellyfin, SearXNG und Samba. Im Januar 2026 unter Debian gestartet, im Februar aus einem einzigen Konfigurationsbaum unter NixOS neu aufgebaut.
+  \item Nichts lauscht im öffentlichen Internet: Die Dienste sind nur über einen VPS erreichbar, und die Secrets im Repository sind mit sops verschlüsselt.
+\end{cvlist}}
+
+\cventry[.05em]{Januar bis Juni 2026}{Ergonomische Split-Tastatur \textbf{(Studienprojekt)}}{}{}{}{Schaltplan und zweilagige PCB in KiCad gezeichnet, Firmware in C geschrieben.}
+
+
+% ---------------------------------------------------------------------------
+\section{Technische Kenntnisse}
+\cvitem[.05em]{Systeme \& Infrastruktur}{Linux (NixOS, Debian, Arch, Ubuntu), KVM/QEMU, Docker, microVMs, systemd.}
+\cvitem[.05em]{Deklarative Konfiguration}{Nix/NixOS, sops, reproduzierbare Builds, Umgebungsmanagement.}
+\cvitem[.05em]{Lokale KI}{llama.cpp, vLLM.}
+\cvitem[.05em]{Netzwerk \& Sicherheit}{Tailscale, ZeroTier, IAM-Isolation, AWS (EC2, IAM, Security Groups), CTF (Reverse Engineering, Web/Speichersicherheit).}
+\cvitem[.05em]{Programmierung}{Python, C/C++, C\#, Java, Rust, Bash, PostgreSQL, Assembler (AVR/ARM).}
+\cvitem[.05em]{Werkzeuge}{Git, KiCad, MATLAB/Simulink, Matplotlib.}
+\cvitem[.05em]{Sprachkenntnisse}{Deutsch (B2), Englisch (C1), Arabisch (Muttersprache), Französisch (C1).}
+
+% ---------------------------------------------------------------------------
+% Ort, Datum und Unterschrift beschliessen in Deutschland den Lebenslauf. Das
+% Datum setzt babel bei jedem Build neu; auf einem heruntergeladenen PDF fehlt
+% die Unterschrift naturgemaess, der Name steht schon im Banner.
+\vspace{8pt}
+\hfill Villeneuve d'Ascq, \today\par
+
+\end{document}

@@ -5,7 +5,7 @@
 
 NODE ?= node
 
-.PHONY: help dev build css fonts og hero feed partials crawl sitemap cv cv-en cv-fr check clean
+.PHONY: help dev build css fonts og hero feed partials crawl sitemap cv cv-en cv-fr cv-de check clean
 
 help:
 	@printf '%s\n' \
@@ -16,7 +16,7 @@ help:
 	"make hero      rebuild js/vendor/hero.bundle.js from src/hero.js (needs esbuild)" \
 	"make feed      rebuild feed.xml from the posts (commit the result)" \
 	"make partials  stamp nav, footer and skip link into every page (commit the result)" \
-	"make cv        build both CV PDFs (needs texlive with moderncv and babel-french)" \
+	"make cv        build all three CV PDFs (needs texlive with moderncv, babel-french and babel-german)" \
 	"make crawl     serve the repo and fetch every reference the way a browser does" \
 	"make sitemap   report pages missing from sitemap.txt, or listed with no page behind them" \
 	"make check     links, every reference fetched over HTTP, and the sitemap"
@@ -48,16 +48,19 @@ feed:
 partials:
 	$(NODE) scripts/render-partials.mjs
 
-cv: cv-en cv-fr
+cv: cv-en cv-fr cv-de
 
-# Each CV is compiled twice so the page breaks settle: both have to stay on one page.
+# Each CV is compiled twice so the page breaks settle: all three have to stay on one page.
 # Without a system texlive, the Nix shell that carries the right packages is:
-#   nix shell --impure --expr '(with import <nixpkgs> {}; texlive.combine { inherit (texlive) scheme-medium moderncv babel-french; })'
+#   nix shell --impure --expr '(with import <nixpkgs> {}; texlive.combine { inherit (texlive) scheme-medium moderncv babel-french babel-german; })'
 cv-en:
 	cd cv && pdflatex -interaction=nonstopmode bouallegui-cv-en.tex && pdflatex -interaction=nonstopmode bouallegui-cv-en.tex && rm -f bouallegui-cv-en.aux bouallegui-cv-en.log bouallegui-cv-en.out
 
 cv-fr:
 	cd cv && pdflatex -interaction=nonstopmode bouallegui-cv-fr.tex && pdflatex -interaction=nonstopmode bouallegui-cv-fr.tex && rm -f bouallegui-cv-fr.aux bouallegui-cv-fr.log bouallegui-cv-fr.out
+
+cv-de:
+	cd cv && pdflatex -interaction=nonstopmode bouallegui-cv-de.tex && pdflatex -interaction=nonstopmode bouallegui-cv-de.tex && rm -f bouallegui-cv-de.aux bouallegui-cv-de.log bouallegui-cv-de.out
 
 # check-links.sh proves every written reference points at a file. crawl.mjs goes further: it
 # serves the repo and requests each reference from the page's own URL, so a relative path that is

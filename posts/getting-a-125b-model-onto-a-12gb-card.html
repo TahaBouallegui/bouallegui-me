@@ -119,11 +119,11 @@
               <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">amal</td><td class="py-2 pr-4">ik_llama.cpp, CPU only</td><td class="py-2 pr-4">Ornith 1.5 35B Q4_K_M, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">10 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">not measured</td></tr>
               <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel</td><td class="py-2 pr-4">llama.cpp</td><td class="py-2 pr-4">Cyber-Tiel-Coder 35B A3B with MTP, Q4_K_M, 1M context</td><td class="py-2 pr-4 whitespace-nowrap">20 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">154 tok/s</td></tr>
               <tr class="border-b border-slate-100"><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel2, before</td><td class="py-2 pr-4">llama.cpp</td><td class="py-2 pr-4">Qwen3.8-Flash-Next, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">12 down to 6 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">55 tok/s</td></tr>
-              <tr><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel2, now</td><td class="py-2 pr-4">Strata</td><td class="py-2 pr-4">Qwen3.8-Flash-Next IQ3_S, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">35 down to 28 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">253 tok/s</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-xs whitespace-nowrap">gimel2, now</td><td class="py-2 pr-4">Strata</td><td class="py-2 pr-4">Qwen3.8-Flash-Next IQ3_S, 256k context</td><td class="py-2 pr-4 whitespace-nowrap">49 down to 45 tok/s</td><td class="py-2 pr-4 whitespace-nowrap">997 tok/s</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="leading-relaxed">Every row runs its cache at q8_0. The last two rows are the same machine, the same card and the same model at the same 256k context, with only the engine changed. Decode went from 12 tokens per second to 35, and from 6 with that context nearly full to 28. Prefill went from 55 to 253. That is the whole argument for the rest of this post. gimel is next on the list.</p>
+        <p class="leading-relaxed">Every row runs its cache at q8_0. The last two rows are the same machine, the same card and the same model at the same 256k context, with only the engine changed. Decode went from 12 tokens per second to 49, and from 6 with that context nearly full to 45. Prefill went from 55 to 997. That is the whole argument for the rest of this post. gimel is next on the list.</p>
 
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">How a 125B model fits on a 3060</h2>
         <p class="leading-relaxed">Qwen3.8-Flash-Next is a mixture of experts: 24,576 of them, and a single token only routes through about 10. That is what makes the model cheap per token and expensive to store. <a href="https://github.com/Niko1221/Strata" class="font-semibold text-link hover:text-ocean-dark">Strata</a> is an MIT licensed inference engine built around that shape, and the way it makes the model fit is a placement decision rather than a smaller model:</p>
@@ -144,7 +144,7 @@
         <p class="leading-relaxed">Two rules came out of that, and both are configuration rather than modelling:</p>
         <ul class="space-y-2 pl-5 list-disc marker:text-link">
           <li class="leading-relaxed">The context a harness declares must match the context the server was started with. If the harness thinks it has more room than the server allocated, the middle of the prompt is dropped silently.</li>
-          <li class="leading-relaxed">Prefill is what an agent pays for, so a fast prefill changes what is pleasant to use before it changes what the model can reason about. That is the number that moved most when I changed engine: 55 to 253 tokens per second.</li>
+          <li class="leading-relaxed">Prefill is what an agent pays for, so a fast prefill changes what is pleasant to use before it changes what the model can reason about. That is the number that moved most when I changed engine: 55 to 997 tokens per second.</li>
         </ul>
 
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">A Robotech formation from the same material</h2>
