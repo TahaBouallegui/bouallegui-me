@@ -98,6 +98,11 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.CF_DEPLOY == 'on'
     runs-on: ubuntu-latest
     steps:
+      # The checkout is not needed for the assets (they come from the artifact): wrangler
+      # picks up the Pages Functions in ./functions from the working directory, so the
+      # repo has to be present next to site/.
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           name: site
