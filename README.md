@@ -21,6 +21,7 @@ sitemap.txt           every URL the site wants indexed
 robots.txt            allow all, plus the two Sitemap lines
 _headers              response headers served by the host (CSP, HSTS, cache, noindex on previews)
 _redirects            the two index files onto their canonical directory forms
+functions/[[path]].js  Pages Function catch-all, keeps the .html URLs at 200 (see Deploy)
 favicon.ico           16/32/48 px, rasterized from images/favicon.svg
 apple-touch-icon.png  180 px, same source
 css/output.css        generated - do not hand-edit
@@ -113,7 +114,12 @@ upload: CI builds and checks the site, then `wrangler` uploads the artifact, so 
 rebuilds anything. The deploy job is gated on the repository variable `CF_DEPLOY` (currently
 `on`); flip it off to stop deploys without touching the token. `_headers` plus `_redirects` at
 the repo root are what the host serves, and `_headers` marks the per-deploy hash subdomains
-`noindex` so they cannot compete with the project domain.
+`noindex` so they cannot compete with the project domain. Pages' built-in pretty links answer
+every `.html` URL with a 308 to the extensionless form, which fights the `.html` canonicals, so
+`functions/[[path]].js` catches every request and answers `.html` paths by asking `ASSETS.fetch`
+for the extensionless asset, which it serves at 200. The deploy job checks the repo out even
+though the artifact carries the site, because wrangler picks up `functions/` from the working
+directory.
 
 Self-hosting instead means a server block, since `_headers` is Pages-specific. On Nginx:
 
