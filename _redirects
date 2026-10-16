@@ -6,3 +6,8 @@
 # names, so the file names have to collapse onto the canonical URLs instead of duplicating them.
 /index.html  /  301
 /fr/index.html  /fr/  301
+
+# Test: Pages rewrites /portfolio.html to /portfolio with a 308 before the asset is ever
+# served, which fights the .html canonicals. Checking whether a _redirects rule that targets
+# the same path wins over that built-in rewrite.
+/portfolio.html  /portfolio.html  200
