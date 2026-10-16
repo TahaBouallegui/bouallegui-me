@@ -14,9 +14,9 @@
 # Cross-Origin-Resource-Policy. It is deliberately not set: social crawlers fetch the image
 # as a top-level navigation, and a same-origin policy here would break link previews.
 
-# A Pages deployment is reachable on <project>.pages.dev as well as on the domain. Those
-# preview URLs must never be indexed next to the canonical ones.
-https://:project.pages.dev/*
+# The production origin is the project domain itself. Every deploy also gets a per-deploy
+# hash subdomain, and those previews must never be indexed next to the canonical URLs.
+https://*.bouallegui.pages.dev/*
   X-Robots-Tag: noindex
 
 # Fonts are latin subsets that change a couple of times a year, and the images are content,

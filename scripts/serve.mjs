@@ -47,6 +47,6 @@ createServer((req, res) => {
   });
   createReadStream(file).pipe(res);
 }).listen(PORT, () => {
-  console.log(`bouallegui.me - http://localhost:${PORT}/   (Ctrl-C to stop)`);
+  console.log(`bouallegui.pages.dev - http://localhost:${PORT}/   (Ctrl-C to stop)`);
   console.log(`serving ${ROOT}`);
 });

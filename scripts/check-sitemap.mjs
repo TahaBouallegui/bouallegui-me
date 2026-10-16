@@ -15,7 +15,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const ROOT = resolve(process.argv[2] ?? new URL('.', import.meta.url).pathname.replace(/scripts\/$/, ''));
-const ORIGIN = 'https://bouallegui.me';
+const ORIGIN = 'https://bouallegui.pages.dev';
 const NOINDEX = new Set(['404.html', 'fr/404.html']);
 
 const pages = [

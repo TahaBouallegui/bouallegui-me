@@ -28,9 +28,9 @@ const shortDateFr = (iso) => { const [y, m, d] = isoParts(iso); return `${d} ${M
 // the page already shows, so there is nothing here that the prose does not say.
 const ldPosting = (p, title) => `  <script type="application/ld+json">${JSON.stringify({
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title,
-  url: `https://bouallegui.me/posts/${p.slug}.html`, datePublished: p.date,
-  image: 'https://bouallegui.me/images/og.png', inLanguage: 'en',
-  author: { '@type': 'Person', name: 'Ahmed Taha Bouallegui', url: 'https://bouallegui.me/' },
+  url: `https://bouallegui.pages.dev/posts/${p.slug}.html`, datePublished: p.date,
+  image: 'https://bouallegui.pages.dev/images/og.png', inLanguage: 'en',
+  author: { '@type': 'Person', name: 'Ahmed Taha Bouallegui', url: 'https://bouallegui.pages.dev/' },
 })}</script>
 `;
 
@@ -200,17 +200,17 @@ const page = (p, title, body) => `<!DOCTYPE html>
   <link rel="preload" href="../fonts/files/Inter.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../fonts/files/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../fonts/fonts.css">
-  <link rel="canonical" href="https://bouallegui.me/posts/${p.slug}.html">
+  <link rel="canonical" href="https://bouallegui.pages.dev/posts/${p.slug}.html">
   <link rel="alternate" type="application/rss+xml" title="Field notes (RSS)" href="../feed.xml">
-  <meta property="og:url" content="https://bouallegui.me/posts/${p.slug}.html">
-  <meta property="og:site_name" content="bouallegui.me">
-  <meta property="og:image" content="https://bouallegui.me/images/og.png">
+  <meta property="og:url" content="https://bouallegui.pages.dev/posts/${p.slug}.html">
+  <meta property="og:site_name" content="Ahmed Taha Bouallegui">
+  <meta property="og:image" content="https://bouallegui.pages.dev/images/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="bouallegui.me: cybersecurity and systems done right">
+  <meta property="og:image:alt" content="Ahmed Taha Bouallegui: cybersecurity and systems done right">
   <meta property="article:published_time" content="${p.date}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://bouallegui.me/images/og.png">
+  <meta name="twitter:image" content="https://bouallegui.pages.dev/images/og.png">
   <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="../css/output.css">
@@ -354,17 +354,17 @@ for (const [file, lang] of [['blog.html', 'en'], ['fr/blog.html', 'fr']]) {
 // Post URLs are pruned when their part is dropped, so a deleted post cannot linger in
 // the sitemap. Hand-written posts are listed explicitly.
 const MANUAL_POST_URLS = [
-  'https://bouallegui.me/posts/nl80211-wireless-detection.html',
-  'https://bouallegui.me/posts/a-keyboard-that-took-out-its-own-mcu.html',
-  'https://bouallegui.me/posts/an-aws-account-from-the-inside.html',
-  'https://bouallegui.me/posts/what-a-harness-is-learned-the-slow-way.html',
-  'https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html',
+  'https://bouallegui.pages.dev/posts/nl80211-wireless-detection.html',
+  'https://bouallegui.pages.dev/posts/a-keyboard-that-took-out-its-own-mcu.html',
+  'https://bouallegui.pages.dev/posts/an-aws-account-from-the-inside.html',
+  'https://bouallegui.pages.dev/posts/what-a-harness-is-learned-the-slow-way.html',
+  'https://bouallegui.pages.dev/posts/getting-a-125b-model-onto-a-12gb-card.html',
 ];
-const knownPosts = new Set([...POSTS.map((p) => `https://bouallegui.me/posts/${p.slug}.html`), ...MANUAL_POST_URLS]);
+const knownPosts = new Set([...POSTS.map((p) => `https://bouallegui.pages.dev/posts/${p.slug}.html`), ...MANUAL_POST_URLS]);
 const sitemap = readFileSync('sitemap.txt', 'utf8')
   .split('\n').filter((l) => l && (!l.includes('/posts/') || knownPosts.has(l)));
 for (const p of POSTS) {
-  const url = `https://bouallegui.me/posts/${p.slug}.html`;
+  const url = `https://bouallegui.pages.dev/posts/${p.slug}.html`;
   if (!sitemap.includes(url)) sitemap.push(url);
 }
 // Hand-written posts are not in POSTS, so they have to be appended as well or a fresh
@@ -375,7 +375,7 @@ for (const url of MANUAL_POST_URLS) {
 // The French pages are hand-written translations of the six index pages, not generated,
 // so they are listed here to stay in the sitemap.
 for (const page of ['fr/', 'fr/portfolio.html', 'fr/blog.html', 'fr/about.html', 'fr/resume.html', 'fr/contact.html']) {
-  const url = `https://bouallegui.me/${page}`;
+  const url = `https://bouallegui.pages.dev/${page}`;
   if (!sitemap.includes(url)) sitemap.push(url);
 }
 writeFileSync('sitemap.txt', sitemap.join('\n') + '\n');

@@ -14,7 +14,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const SITE = "https://bouallegui.me";
+const SITE = "https://bouallegui.pages.dev";
 const POSTS_DIR = "posts";
 const OUT = "feed.xml";
 

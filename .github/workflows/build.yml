@@ -91,8 +91,8 @@ jobs:
           if-no-files-found: error
 
   # Cloudflare Pages, direct upload: the artifact above is the deployment, so the host never
-  # rebuilds anything. Stays off until the repo carries a Cloudflare API token in Secrets and
-  # a repository variable CF_DEPLOY set to "on" (Settings > Secrets and variables > Actions).
+  # rebuilds anything. Gated on the repository variable CF_DEPLOY (currently on): flip it off
+  # to stop deploys without touching the token.
   deploy:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.CF_DEPLOY == 'on'
@@ -107,4 +107,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy site --project-name=bouallegui-me
+          command: pages deploy site --project-name=bouallegui

@@ -1,7 +1,8 @@
-# bouallegui.me
+# bouallegui.pages.dev
 
 Portfolio and field notes for Ahmed Bouallegui - M.Eng student in Internet of Things and
-Cybersecurity at Polytech Lille. Static HTML, Tailwind, three.js on the hero only.
+Cybersecurity at Polytech Lille. Live at `https://bouallegui.pages.dev`, deployed by CI. Static
+HTML, Tailwind, three.js on the hero only.
 
 ## Layout
 
@@ -19,7 +20,7 @@ feed.xml              RSS 2.0 of every note, generated from posts/*.html - do no
 sitemap.txt           every URL the site wants indexed
 robots.txt            allow all, plus the two Sitemap lines
 _headers              response headers served by the host (CSP, HSTS, cache, noindex on previews)
-_redirects            www to apex, and the two index files onto their canonical directory forms
+_redirects            the two index files onto their canonical directory forms
 favicon.ico           16/32/48 px, rasterized from images/favicon.svg
 apple-touch-icon.png  180 px, same source
 css/output.css        generated - do not hand-edit
@@ -29,7 +30,7 @@ js/contact-form.js    the mailto composer on the contact page
 js/hero-loader.js     pulls the hero bundle only when the hero is on screen and motion is allowed
 js/vendor/hero.bundle.js  generated from src/hero.js + three - do not hand-edit
 fonts/                self-hosted latin subsets + fonts.css
-images/               favicon, social card, portrait (and a 336 px variant for the hero)
+images/               favicon, social card, portrait (and a 336 px variant for the about page)
 images/projects/      hand-drawn SVG diagrams (640x360), no stock photography
 src/input.css         the only CSS source
 src/hero.js           the 3D hero, written against the three API
@@ -102,17 +103,17 @@ stays a CSS gradient there. Everything else works. For the real thing, run `npm 
 - **Fonts are self-hosted** (latin subset, three families, one woff2 each). No third-party
   requests on any page. Regenerate with `make fonts`.
 - **Images carry `width`, `height`, and a `srcset` when the displayed box is much smaller than the
-  file.** The hero portrait is displayed at 128 px, so it ships a 336 px variant (15 KB) next to
-  the 1215 px original (187 KB).
+  file.** The about-page portrait is displayed at 80 px, so it ships a 336 px variant (15 KB) next
+  to the 1215 px original (187 KB).
 
 ## Deploy
 
-The repository is set up for Cloudflare Pages: the CI artifact is uploaded with `wrangler`, and
-`_headers` plus `_redirects` at the repo root are what the host serves. The deploy job stays off
-until the repository has a Cloudflare API token and account id in Secrets and a repository
-variable `CF_DEPLOY` set to `on` (Settings, Secrets and variables, Actions). Pages gives a project
-a free `<project>.pages.dev` URL, and `_headers` marks those preview URLs `noindex` so they cannot
-compete with the real domain.
+The site lives at `https://bouallegui.pages.dev`, a Cloudflare Pages project fed by direct
+upload: CI builds and checks the site, then `wrangler` uploads the artifact, so the host never
+rebuilds anything. The deploy job is gated on the repository variable `CF_DEPLOY` (currently
+`on`); flip it off to stop deploys without touching the token. `_headers` plus `_redirects` at
+the repo root are what the host serves, and `_headers` marks the per-deploy hash subdomains
+`noindex` so they cannot compete with the project domain.
 
 Self-hosting instead means a server block, since `_headers` is Pages-specific. On Nginx:
 
@@ -125,14 +126,15 @@ location ~* \.(woff2)$ { add_header Cache-Control "public, max-age=31536000, imm
 
 ## Open items
 
-- Nothing is deployed yet, and `bouallegui.me` is not registered, so canonical URLs, `og:url` and
-  `sitemap.txt` all point at a domain that does not resolve. If the origin changes, it has to
-  change in `scripts/build-feed.mjs` (`SITE`), `scripts/publish-blog.mjs`, `scripts/check-sitemap.mjs`,
-  `robots.txt`, `sitemap.txt`, `_redirects` and the canonical and `og` tags on the 27 pages.
-- The repository has no remote, so CI has never run. Pushing publishes the code excerpts quoted in
-  the wireless note (labelled not public on the page) and the institution marks in `cv/img/`.
-- GitHub (`github.com/TahaBouallegui`) currently has no public repositories. Until the mirrors
-  land, project cards point at writeups or at the contact page rather than at a repo.
+- The site is live at `https://bouallegui.pages.dev` and every canonical, `og:url`, `sitemap.txt`
+  and feed link points there. If a custom domain is ever attached, the origin has to change in
+  `scripts/build-feed.mjs` (`SITE`), `scripts/publish-blog.mjs`, `scripts/check-sitemap.mjs`,
+  `robots.txt`, `sitemap.txt`, the noindex pattern in `_headers` and the canonical and `og` tags
+  on the 27 pages.
+- The project repositories are still not public on GitHub, so project cards point at writeups or
+  at the contact page rather than at a repo. The website repository itself went public with the
+  deploy, which also published the code excerpts quoted in the wireless note (labelled not public
+  on the page) and the institution marks in `cv/img/`.
 - Consider a domain-shaped email (`ahmed@bouallegui.me` forwarded from the VPS) in place of the
   Gmail address once the domain is live.
 - The hero bundles three 0.186.1 into `js/vendor/hero.bundle.js` (539,701 bytes, 135 KB gzipped)

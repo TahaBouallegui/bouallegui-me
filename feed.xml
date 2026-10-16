@@ -5,33 +5,33 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Ahmed Bouallegui: field notes</title>
-    <link>https://bouallegui.me/blog.html</link>
+    <link>https://bouallegui.pages.dev/blog.html</link>
     <description>Notes from the lab and from my own machines: a NixOS config shared by three machines, wireless detection over nl80211, self-hosted services, and running models locally.</description>
     <language>en</language>
     <copyright>Copyright 2026 Ahmed Taha Bouallegui, GPL-3.0-or-later</copyright>
     <lastBuildDate>Sun, 04 Oct 2026 12:00:00 GMT</lastBuildDate>
     <generator>scripts/build-feed.mjs</generator>
-    <atom:link href="https://bouallegui.me/feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://bouallegui.pages.dev/feed.xml" rel="self" type="application/rss+xml"/>
     <image>
-      <url>https://bouallegui.me/images/feed.png</url>
+      <url>https://bouallegui.pages.dev/images/feed.png</url>
       <title>Ahmed Bouallegui: field notes</title>
-      <link>https://bouallegui.me/blog.html</link>
+      <link>https://bouallegui.pages.dev/blog.html</link>
       <width>144</width>
       <height>144</height>
     </image>
     <item>
       <title>What a harness is, learned the slow way</title>
-      <link>https://bouallegui.me/posts/what-a-harness-is-learned-the-slow-way.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/what-a-harness-is-learned-the-slow-way.html</guid>
+      <link>https://bouallegui.pages.dev/posts/what-a-harness-is-learned-the-slow-way.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/what-a-harness-is-learned-the-slow-way.html</guid>
       <pubDate>Sun, 04 Oct 2026 12:00:00 GMT</pubDate>
       <description>pi, OpenCode and DeepSeek Harness, all pointed at the same OpenAI-compatible endpoint on my own hardware. What each one taught me about the layer between me and the model.</description>
       <content:encoded><![CDATA[<figure class="container mt-10 px-5 md:px-8">
-        <img src="https://bouallegui.me/images/projects/harnesses.svg" alt="Diagram: three harnesses, pi, opencode and dsh, each with an arrow labelled openai-completions pointing into a dashed boundary marked my own hardware only. Inside are three endpoints: amal on port 8901 with ik_llama.cpp, gimel on port 8080 with llama.cpp, and gimel2 on port 8080 with Strata. Below the boundary an arrow to someone else's inference endpoint with a slash through it." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <img src="https://bouallegui.pages.dev/images/projects/harnesses.svg" alt="Diagram: three harnesses, pi, opencode and dsh, each with an arrow labelled openai-completions pointing into a dashed boundary marked my own hardware only. Inside are three endpoints: amal on port 8901 with ik_llama.cpp, gimel on port 8080 with llama.cpp, and gimel2 on port 8080 with Strata. Below the boundary an arrow to someone else's inference endpoint with a slash through it." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
         <figcaption class="mt-2 text-center text-sm text-slate-500">Three harnesses, one decision. The dashed line is the interesting part.</figcaption>
       </figure>
 
       <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
-        <p class="leading-relaxed">I run my own model, and <a href="https://bouallegui.me/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">part 6 of this series</a> covers that side for the laptop: llama.cpp, a quantized GGUF file, an OpenAI-compatible API on a port. The two boxes on my tailnet run a different engine for a much larger model. This post is about the layer above both of them, the program you actually type into. That layer is the one I understood last, and it is the one I ended up configuring hardest.</p>
+        <p class="leading-relaxed">I run my own model, and <a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">part 6 of this series</a> covers that side for the laptop: llama.cpp, a quantized GGUF file, an OpenAI-compatible API on a port. The two boxes on my tailnet run a different engine for a much larger model. This post is about the layer above both of them, the program you actually type into. That layer is the one I understood last, and it is the one I ended up configuring hardest.</p>
         <p class="leading-relaxed">Three harnesses went through the machine. Each left a config file and a directory of session logs, so everything below is something I can point at on disk rather than remember. The hostnames are my own names for my machines, and the config excerpts use them too.</p>
 
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">What a harness decides</h2>
@@ -94,7 +94,7 @@
         <p class="leading-relaxed">Three syntaxes, one decision. That is why changing harnesses cost me an afternoon each time instead of a rebuild of how I work.</p>
 
         <p class="leading-relaxed">Strata uses parts of llama.cpp and ggml, so the engine on gimel2 and the engine on the laptop share ancestry, and both end at the same kind of URL. The hardware is uneven, and the API is what makes it one thing to configure against.</p>
-        <p class="leading-relaxed">Which engine sits behind each of those URLs, which quantization it is served at, and what that costs in tokens per second on the three machines involved is a post of its own: <a href="https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Getting a 125B model onto a 12 GB card</a>. From the harness side the endpoints differ in speed, not in protocol, and that is the only part that matters there.</p>
+        <p class="leading-relaxed">Which engine sits behind each of those URLs, which quantization it is served at, and what that costs in tokens per second on the three machines involved is a post of its own: <a href="https://bouallegui.pages.dev/posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Getting a 125B model onto a 12 GB card</a>. From the harness side the endpoints differ in speed, not in protocol, and that is the only part that matters there.</p>
 
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Pi: one provider block and two packages</h2>
         <p class="leading-relaxed"><a href="https://pi.dev/" class="font-semibold text-link hover:text-ocean-dark">Pi</a> (<a href="https://github.com/earendil-works/pi" class="font-semibold text-link hover:text-ocean-dark">source</a>, MIT) is deliberately minimal. No sub-agents, no plan mode, no permission popups, no background bash in the core; those are things you build or install as packages. What it gives you instead is control of the context: a small system prompt, <code class="font-mono text-sm text-ocean-dark">AGENTS.md</code> loaded from its own config directory and the directory tree, and sessions stored as a tree in one file so you can branch back to any earlier point.</p>
@@ -187,8 +187,8 @@
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
-            <li><a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
           </ul>
           <p class="mt-3 text-sm text-slate-500">The numbers come from the session directories and databases each harness keeps, plus the flake module that configures the current one, all on the machine they happened on.</p>
         </div>
@@ -196,17 +196,17 @@
     </item>
     <item>
       <title>Getting a 125B model onto a 12 GB card</title>
-      <link>https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html</guid>
+      <link>https://bouallegui.pages.dev/posts/getting-a-125b-model-onto-a-12gb-card.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/getting-a-125b-model-onto-a-12gb-card.html</guid>
       <pubDate>Sun, 27 Sep 2026 12:00:00 GMT</pubDate>
       <description>Which engine, which quantization and which context on three specific machines, with the tokens per second each one gives. Plus the Robotech formation I wrote from the same material.</description>
       <content:encoded><![CDATA[<figure class="container mt-10 px-5 md:px-8">
-        <img src="https://bouallegui.me/images/projects/moe-split.svg" alt="Diagram: a grid of experts on the left, with a few highlighted as the ones a single token uses. On the right, three stacked boxes: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them, and an NVMe SSD holding a 29 GB lookup table. A note says the processor works on the rest at the same time, and a draft model guesses the next words while the big model checks them in one pass." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <img src="https://bouallegui.pages.dev/images/projects/moe-split.svg" alt="Diagram: a grid of experts on the left, with a few highlighted as the ones a single token uses. On the right, three stacked boxes: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them, and an NVMe SSD holding a 29 GB lookup table. A note says the processor works on the rest at the same time, and a draft model guesses the next words while the big model checks them in one pass." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
         <figcaption class="mt-2 text-center text-sm text-slate-500">The model is bigger than the card. The question is where the rest of it lives.</figcaption>
       </figure>
 
       <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
-        <p class="leading-relaxed"><a href="https://bouallegui.me/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Part 6 of the NixOS series</a> covers how the model is wired into my system: the build, the service, the OpenAI-compatible API. It does not cover the part I actually spend time on, which is choosing the engine, the quantization and the context length for a specific piece of hardware. That choice is where the speed comes from, and it is the part I can now show you numbers for.</p>
+        <p class="leading-relaxed"><a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Part 6 of the NixOS series</a> covers how the model is wired into my system: the build, the service, the OpenAI-compatible API. It does not cover the part I actually spend time on, which is choosing the engine, the quantization and the context length for a specific piece of hardware. That choice is where the speed comes from, and it is the part I can now show you numbers for.</p>
 
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Weights plus KV cache</h2>
         <p class="leading-relaxed">One line decides whether a model runs at all:</p>
@@ -282,8 +282,8 @@
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
-            <li><a href="https://bouallegui.me/posts/what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">What a harness is, learned the slow way</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/what-a-harness-is-learned-the-slow-way.html" class="font-semibold text-link hover:text-ocean-dark">What a harness is, learned the slow way</a></li>
           </ul>
           <p class="mt-3 text-sm text-slate-500">The throughput figures are my own readings from daily use on the machines named in the table. The 1.6 to 1.8x draft figure and the RTX 5070 numbers are Strata's published measurements.</p>
         </div>
@@ -291,8 +291,8 @@
     </item>
     <item>
       <title>Running the model myself</title>
-      <link>https://bouallegui.me/posts/running-the-model-myself.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/running-the-model-myself.html</guid>
+      <link>https://bouallegui.pages.dev/posts/running-the-model-myself.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/running-the-model-myself.html</guid>
       <pubDate>Sun, 13 Sep 2026 12:00:00 GMT</pubDate>
       <description>ik_llama.cpp built with CPU flags for the hardware I actually have, serving an OpenAI-compatible API to a chat interface.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -308,18 +308,18 @@
   });</code></pre>
         <p class="leading-relaxed">On a machine where the CPU is the bottleneck, that is the difference between a model that runs and a model that runs as fast as this particular CPU allows.</p>
         <p class="leading-relaxed">The reason it is cheap to experiment with is that the build is declarative. Change the flags, rebuild, compare tokens per second, keep the faster result. There is no manual compile step to remember and redo later.</p>
-        <p class="leading-relaxed">Which engine to run, which quantization, and what each of my machines delivers in tokens per second is a separate note: <a href="https://bouallegui.me/posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Getting a 125B model onto a 12 GB card</a>.</p>
+        <p class="leading-relaxed">Which engine to run, which quantization, and what each of my machines delivers in tokens per second is a separate note: <a href="https://bouallegui.pages.dev/posts/getting-a-125b-model-onto-a-12gb-card.html" class="font-semibold text-link hover:text-ocean-dark">Getting a 125B model onto a 12 GB card</a>.</p>
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">An OpenAI-compatible API and a chat UI</h2>
         <p class="leading-relaxed">The model serves an OpenAI-compatible API locally, so it plugs into a normal chat interface instead of living inside a curl command or a bare prompt: conversation history, more than one provider side by side, the same interface you would use with a hosted model, pointed at a local machine.</p>
         <p class="leading-relaxed">If you set this up, keep the API OpenAI-compatible and let the chat UI be a separate program. Then changing the engine and changing the interface stay two different edits.</p>
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Why bother when hosted models are better</h2>
         <p class="leading-relaxed">Mine is not as capable as a large hosted model, and I am not trying to replace that. What I get is something that works with no connection, that answers to nobody else's rate limits, and that does not change because an upstream decided to. It is the same reason as the rest of this config: I would rather understand and keep a piece of my own workflow than depend on a server I do not control, when a machine I already own can do the job.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/an-editor-built-up-from-nothing.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/an-editor-built-up-from-nothing.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 5</span>
             <span class="mt-1 block font-display font-semibold leading-snug">An editor built up from nothing, on purpose</span>
           </a>
-          <a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 7</span>
             <span class="mt-1 block font-display font-semibold leading-snug">One flake, three machines that barely resemble each other</span>
           </a>
@@ -328,23 +328,23 @@
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
-            <li><a href="https://bouallegui.me/posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 6 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 6 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a> · <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a> · <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>The wifi module stopped shelling out to iw</title>
-      <link>https://bouallegui.me/posts/nl80211-wireless-detection.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/nl80211-wireless-detection.html</guid>
+      <link>https://bouallegui.pages.dev/posts/nl80211-wireless-detection.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/nl80211-wireless-detection.html</guid>
       <pubDate>Fri, 21 Aug 2026 12:00:00 GMT</pubDate>
       <description>Two commits in the lili wifi module: interface discovery over an nl80211 dump, then replacing every fork and exec of iw and ip with genl and rtnetlink calls.</description>
       <content:encoded><![CDATA[<figure class="container mt-10 px-5 md:px-8">
-        <img src="https://bouallegui.me/images/projects/wireless.svg" alt="Diagram: on the left the wifi module forks and execs iw and ip before reaching the kernel; on the right it sends nl80211 and rtnetlink messages over one socket" width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <img src="https://bouallegui.pages.dev/images/projects/wireless.svg" alt="Diagram: on the left the wifi module forks and execs iw and ip before reaching the kernel; on the right it sends nl80211 and rtnetlink messages over one socket" width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
         <figcaption class="mt-2 text-center text-sm text-slate-500">Before: the module asks two other programs to change the radio. After: it sends the messages itself.</figcaption>
       </figure>
 
@@ -603,19 +603,19 @@ nla_put_failure:
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">A keyboard that took out its own MCU</a></li>
-            <li><a href="https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/a-keyboard-that-took-out-its-own-mcu.html" class="font-semibold text-link hover:text-ocean-dark">A keyboard that took out its own MCU</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">The config those machines run is written up in <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a> (eight parts).</p>
+          <p class="mt-3 text-sm text-slate-500">The config those machines run is written up in <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a> (eight parts).</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this fits: <a href="https://bouallegui.me/portfolio.html#wireless" class="font-semibold text-link hover:text-ocean-dark">Wireless detection over nl80211</a> in the portfolio.</p>
+        <p class="text-sm text-slate-500">Where this fits: <a href="https://bouallegui.pages.dev/portfolio.html#wireless" class="font-semibold text-link hover:text-ocean-dark">Wireless detection over nl80211</a> in the portfolio.</p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>My shell is a package</title>
-      <link>https://bouallegui.me/posts/my-shell-is-a-package.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/my-shell-is-a-package.html</guid>
+      <link>https://bouallegui.pages.dev/posts/my-shell-is-a-package.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/my-shell-is-a-package.html</guid>
       <pubDate>Sun, 12 Jul 2026 12:00:00 GMT</pubDate>
       <description>The shell as a derivation: one wrapped package that every entry point resolves to, with git identity set at build time.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -658,11 +658,11 @@ users.users.&lt;user&gt;.shell = self.packages.${pkgs.system}.environment;</code
         <p class="leading-relaxed">The practical effect shows up when you set up a new machine. There is no dotfile to copy, and no window where commits go out with the wrong address because the config had not been written yet. The <code class="font-mono text-sm text-ocean-dark">git</code> on <code class="font-mono text-sm text-ocean-dark">PATH</code> already knows who is using it.</p>
         <p class="leading-relaxed">One caveat. Environment variables baked into a wrapper do not appear in <code class="font-mono text-sm text-ocean-dark">git config --list</code>, so if you ever debug a wrong commit author, look at the wrapper before you look at your gitconfig.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 7</span>
             <span class="mt-1 block font-display font-semibold leading-snug">One flake, three machines that barely resemble each other</span>
           </a>
-          <a href="https://bouallegui.me/blog.html" class="card card-link p-5 text-right">
+          <a href="https://bouallegui.pages.dev/blog.html" class="card card-link p-5 text-right">
             <span class="eyebrow block">The series</span>
             <span class="mt-1 block font-display font-semibold leading-snug">All eight parts</span>
           </a>
@@ -671,23 +671,23 @@ users.users.&lt;user&gt;.shell = self.packages.${pkgs.system}.environment;</code
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/an-editor-built-up-from-nothing.html" class="font-semibold text-link hover:text-ocean-dark">An editor built up from nothing, on purpose</a></li>
-            <li><a href="https://bouallegui.me/posts/a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">A desktop that scrolls instead of stacking</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/an-editor-built-up-from-nothing.html" class="font-semibold text-link hover:text-ocean-dark">An editor built up from nothing, on purpose</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">A desktop that scrolls instead of stacking</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 8 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 8 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>A split keyboard that took out its own microcontroller</title>
-      <link>https://bouallegui.me/posts/a-keyboard-that-took-out-its-own-mcu.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/a-keyboard-that-took-out-its-own-mcu.html</guid>
+      <link>https://bouallegui.pages.dev/posts/a-keyboard-that-took-out-its-own-mcu.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/a-keyboard-that-took-out-its-own-mcu.html</guid>
       <pubDate>Sun, 05 Jul 2026 12:00:00 GMT</pubDate>
       <description>Coursework build log: one half of a 30-key split keyboard on two copper layers, ATmega32U4 with LUFA HID, 16 RGB LEDs on two cascaded TLC5947 drivers, and the backlight current that killed the MCU.</description>
       <content:encoded><![CDATA[<figure class="container mt-10 px-5 md:px-8">
-        <img src="https://bouallegui.me/images/projects/keyboard.jpg" alt="The built keyboard half on green solder mask, partially populated with mechanical switches in hot-swap sockets, with a USB plug soldered to the board edge" width="868" height="1156" loading="lazy" decoding="async" class="w-full max-w-md rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <img src="https://bouallegui.pages.dev/images/projects/keyboard.jpg" alt="The built keyboard half on green solder mask, partially populated with mechanical switches in hot-swap sockets, with a USB plug soldered to the board edge" width="868" height="1156" loading="lazy" decoding="async" class="w-full max-w-md rounded-xl shadow-soft mx-auto" data-lightbox="img">
         <figcaption class="mt-2 text-center text-sm text-slate-500">One half, part-populated. The USB-A plug is on the board itself, so it goes straight into a port.</figcaption>
       </figure>
 
@@ -713,7 +713,7 @@ users.users.&lt;user&gt;.shell = self.packages.${pkgs.system}.environment;</code
         </div>
 
         <figure>
-          <img src="https://bouallegui.me/images/projects/keyboard.svg" alt="Diagram: a 5 by 6 key matrix and 16 RGB LEDs feeding an ATmega32U4 through eleven pins, with 576 bits going out to two cascaded TLC5947 drivers, USB to the host, and a dashed UART line to the other half" width="640" height="360" loading="lazy" decoding="async" class="w-full rounded-xl shadow-soft" data-lightbox="img">
+          <img src="https://bouallegui.pages.dev/images/projects/keyboard.svg" alt="Diagram: a 5 by 6 key matrix and 16 RGB LEDs feeding an ATmega32U4 through eleven pins, with 576 bits going out to two cascaded TLC5947 drivers, USB to the host, and a dashed UART line to the other half" width="640" height="360" loading="lazy" decoding="async" class="w-full rounded-xl shadow-soft" data-lightbox="img">
           <figcaption class="mt-2 text-center text-sm text-slate-500">The signal path. Eleven pins carry the matrix in, 576 bits carry the backlight out.</figcaption>
         </figure>
 
@@ -820,19 +820,19 @@ _delay_us(2);</code></pre>
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">The wifi module stopped shelling out to iw</a></li>
-            <li><a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/nl80211-wireless-detection.html" class="font-semibold text-link hover:text-ocean-dark">The wifi module stopped shelling out to iw</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines</a></li>
           </ul>
           <p class="mt-3 text-sm text-slate-500">The code for this board is coursework and stays private. The wiki page above is the public record of it.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this fits: <a href="https://bouallegui.me/portfolio.html#keyboard" class="font-semibold text-link hover:text-ocean-dark">A split mechanical keyboard, designed and built</a> in the portfolio.</p>
+        <p class="text-sm text-slate-500">Where this fits: <a href="https://bouallegui.pages.dev/portfolio.html#keyboard" class="font-semibold text-link hover:text-ocean-dark">A split mechanical keyboard, designed and built</a> in the portfolio.</p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>One flake, three machines that barely resemble each other</title>
-      <link>https://bouallegui.me/posts/one-flake-three-machines.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/one-flake-three-machines.html</guid>
+      <link>https://bouallegui.pages.dev/posts/one-flake-three-machines.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/one-flake-three-machines.html</guid>
       <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
       <description>Three machines that share almost nothing except the flake. What stays common, what stays per-host, and how to stop them drifting apart.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -854,11 +854,11 @@ imports = [ self.nixosModules.desktop ... ];</code></pre>
         <p class="leading-relaxed">1. A feature module never refers to a host by name. It does not know which    hosts import it. 2. A host config never edits another host's file to get something done.</p>
         <p class="leading-relaxed">With those two in place, adding a capability to the laptop means writing one module and importing it in one place. The server's config is not involved, so a change meant for one machine cannot quietly land on another.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/running-the-model-myself.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 6</span>
             <span class="mt-1 block font-display font-semibold leading-snug">Running the model myself</span>
           </a>
-          <a href="https://bouallegui.me/posts/my-shell-is-a-package.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/my-shell-is-a-package.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 8</span>
             <span class="mt-1 block font-display font-semibold leading-snug">My shell is a package</span>
           </a>
@@ -867,19 +867,19 @@ imports = [ self.nixosModules.desktop ... ];</code></pre>
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a></li>
-            <li><a href="https://bouallegui.me/posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 7 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 7 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>An editor built up from nothing, on purpose</title>
-      <link>https://bouallegui.me/posts/an-editor-built-up-from-nothing.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/an-editor-built-up-from-nothing.html</guid>
+      <link>https://bouallegui.pages.dev/posts/an-editor-built-up-from-nothing.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/an-editor-built-up-from-nothing.html</guid>
       <pubDate>Sun, 31 May 2026 12:00:00 GMT</pubDate>
       <description>Building Neovim from an empty init.lua: lazy loading, a colourscheme, a tree-sitter grammar for my own file formats, and nixd pointed at the flake.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -905,11 +905,11 @@ return {
         <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">options.nixos.expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.amal.options'</code></pre>
         <p class="leading-relaxed">Swap <code class="font-mono text-sm text-ocean-dark">amal</code> for your own <code class="font-mono text-sm text-ocean-dark">nixosConfigurations</code> name. Once that line is correct, writing Nix inside Neovim gives you completions for your own custom modules, which is the main reason I keep the editor config in the same repo as the system config.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/a-private-cloud-with-a-guest-list.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 4</span>
             <span class="mt-1 block font-display font-semibold leading-snug">A private cloud, sized for the people who actually use it</span>
           </a>
-          <a href="https://bouallegui.me/posts/running-the-model-myself.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 6</span>
             <span class="mt-1 block font-display font-semibold leading-snug">Running the model myself</span>
           </a>
@@ -918,19 +918,19 @@ return {
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
-            <li><a href="https://bouallegui.me/posts/a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">A desktop that scrolls instead of stacking</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/a-desktop-that-scrolls.html" class="font-semibold text-link hover:text-ocean-dark">A desktop that scrolls instead of stacking</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 5 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 5 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>A private cloud, sized for the people who actually use it</title>
-      <link>https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html</guid>
+      <link>https://bouallegui.pages.dev/posts/a-private-cloud-with-a-guest-list.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/a-private-cloud-with-a-guest-list.html</guid>
       <pubDate>Sun, 10 May 2026 12:00:00 GMT</pubDate>
       <description>Immich, Jellyfin, Grocy and SearXNG on a home server, with nothing reachable from the internet. How the tailnet-only setup is put together.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -950,11 +950,11 @@ return {
         <p class="leading-relaxed">If you are starting from a fresh NixOS install, three steps in this order save some time.</p>
         <p class="leading-relaxed">1. Bring up Tailscale first and prove the tailnet works before configuring    any service. <code class="font-mono text-sm text-ocean-dark">networking.firewall.trustedInterfaces = [ "tailscale0" ];</code>    is what makes services listening on that interface reachable. Without it    every service looks broken and the firewall is the reason. 2. Leave <code class="font-mono text-sm text-ocean-dark">openFirewall = false</code> on everything. If a service is unreachable    from inside the tailnet too, then the service is the problem, and that is    a much shorter debug than ruling out the firewall. 3. Only add a domain and ACME when you genuinely need a public hostname. One    of my services runs with <code class="font-mono text-sm text-ocean-dark">enableSSL = false</code> because its configured    hostname does not resolve publicly, and the certificate request fails in    a way that is confusing until you read the error properly.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/secrets-with-keys-i-already-had.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 3</span>
             <span class="mt-1 block font-display font-semibold leading-snug">Secrets, kept with keys I already had</span>
           </a>
-          <a href="https://bouallegui.me/posts/an-editor-built-up-from-nothing.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/an-editor-built-up-from-nothing.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 5</span>
             <span class="mt-1 block font-display font-semibold leading-snug">An editor built up from nothing, on purpose</span>
           </a>
@@ -963,19 +963,19 @@ return {
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
-            <li><a href="https://bouallegui.me/posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-file-one-capability.html" class="font-semibold text-link hover:text-ocean-dark">One file, one capability: how I stopped maintaining an import list</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 4 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 4 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>Secrets, kept with keys I already had</title>
-      <link>https://bouallegui.me/posts/secrets-with-keys-i-already-had.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/secrets-with-keys-i-already-had.html</guid>
+      <link>https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html</guid>
       <pubDate>Sun, 19 Apr 2026 12:00:00 GMT</pubDate>
       <description>Committing secrets in the open, encrypted with age, using keys derived by ssh-to-age from SSH keys you already have.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -1002,11 +1002,11 @@ sops:
         <p class="leading-relaxed"><code class="font-mono text-sm text-ocean-dark">nix eval</code> on that template prints the literal string <code class="font-mono text-sm text-ocean-dark">&lt;SOPS:...:PLACEHOLDER&gt;</code>, never the value. The secret appears decrypted only at activation, directly into <code class="font-mono text-sm text-ocean-dark">/run/secrets/</code>. It does not go into the Nix store, it is not baked into a build artifact, and it does not show up in <code class="font-mono text-sm text-ocean-dark">nix derivation show</code>.</p>
         <p class="leading-relaxed">Two things to settle before relying on any of this. Keep your own age private key somewhere you can still read it after a machine is gone, because losing that key means losing the secrets with it. And remember that <code class="font-mono text-sm text-ocean-dark">.sops.yaml</code> is only as trustworthy as the public keys inside it, so removing a retired machine's key is part of retiring the machine.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/a-desktop-that-scrolls.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/a-desktop-that-scrolls.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 2</span>
             <span class="mt-1 block font-display font-semibold leading-snug">A desktop that scrolls instead of stacking</span>
           </a>
-          <a href="https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/a-private-cloud-with-a-guest-list.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 4</span>
             <span class="mt-1 block font-display font-semibold leading-snug">A private cloud, sized for the people who actually use it</span>
           </a>
@@ -1015,19 +1015,19 @@ sops:
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
-            <li><a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/running-the-model-myself.html" class="font-semibold text-link hover:text-ocean-dark">Running the model myself</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 3 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 3 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a> · <a href="https://bouallegui.me/portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a> · <a href="https://bouallegui.pages.dev/portfolio.html#self-hosted" class="font-semibold text-link hover:text-ocean-dark">Self-hosted server infrastructure</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>A desktop that scrolls instead of stacking</title>
-      <link>https://bouallegui.me/posts/a-desktop-that-scrolls.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/a-desktop-that-scrolls.html</guid>
+      <link>https://bouallegui.pages.dev/posts/a-desktop-that-scrolls.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/a-desktop-that-scrolls.html</guid>
       <pubDate>Sun, 29 Mar 2026 12:00:00 GMT</pubDate>
       <description>niri with noctalia and a colourscheme, packaged so the whole desktop builds as one thing, and menus that show the keybinds instead of asking you to remember them.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -1046,11 +1046,11 @@ sops:
         <p class="leading-relaxed">A keybind-driven setup only works if you can remember the keybinds, and I could not. What fixed it for me was the <code class="font-mono text-sm text-ocean-dark">which-key.nvim</code> pattern: press the leader, pause, and a menu lists the available continuations with their descriptions, taken from the <code class="font-mono text-sm text-ocean-dark">desc</code> strings the real keybinds already carry. There is no cheat sheet to maintain, because the menu is generated from the bindings themselves.</p>
         <p class="leading-relaxed">On the niri side I do the same with a small launcher (<code class="font-mono text-sm text-ocean-dark">self.mkWhichKeyExe</code>) bound to <code class="font-mono text-sm text-ocean-dark">Mod+G</code>: Bluetooth, Wi-Fi, a browser, Discord, a volume mixer. If you are setting up niri, add that lookup early. It decides whether the setup is usable by someone who has not read your config, or only by you.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/posts/one-file-one-capability.html" class="card card-link p-5" aria-label="Previous part">
+          <a href="https://bouallegui.pages.dev/posts/one-file-one-capability.html" class="card card-link p-5" aria-label="Previous part">
             <span class="eyebrow block">Part 1</span>
             <span class="mt-1 block font-display font-semibold leading-snug">One file, one capability: how I stopped maintaining an import list</span>
           </a>
-          <a href="https://bouallegui.me/posts/secrets-with-keys-i-already-had.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 3</span>
             <span class="mt-1 block font-display font-semibold leading-snug">Secrets, kept with keys I already had</span>
           </a>
@@ -1059,19 +1059,19 @@ sops:
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
-            <li><a href="https://bouallegui.me/posts/an-editor-built-up-from-nothing.html" class="font-semibold text-link hover:text-ocean-dark">An editor built up from nothing, on purpose</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/my-shell-is-a-package.html" class="font-semibold text-link hover:text-ocean-dark">My shell is a package</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/an-editor-built-up-from-nothing.html" class="font-semibold text-link hover:text-ocean-dark">An editor built up from nothing, on purpose</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 2 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 2 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>One file, one capability: how I stopped maintaining an import list</title>
-      <link>https://bouallegui.me/posts/one-file-one-capability.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/one-file-one-capability.html</guid>
+      <link>https://bouallegui.pages.dev/posts/one-file-one-capability.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/one-file-one-capability.html</guid>
       <pubDate>Sun, 08 Mar 2026 12:00:00 GMT</pubDate>
       <description>How the config is laid out. import-tree reads every file in modules/, so there is no import list to keep current, and one convention holds the rest together.</description>
       <content:encoded><![CDATA[<div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
@@ -1105,11 +1105,11 @@ sops:
         <p class="leading-relaxed">Three machines share almost all of <code class="font-mono text-sm text-ocean-dark">features/</code>: a laptop, an older laptop I keep for conservation, and a headless server. They differ where the hardware or the role forces it, and nowhere else.</p>
         <p class="leading-relaxed">If you are setting something like this up, the split I would fix early is <code class="font-mono text-sm text-ocean-dark">base</code> / <code class="font-mono text-sm text-ocean-dark">features</code> / <code class="font-mono text-sm text-ocean-dark">hosts</code>. The rest of the tree gets reorganised a few times anyway, and this part is annoying to change once six files depend on how it is named.</p>
         <nav class="mt-10 grid gap-4 sm:grid-cols-2" aria-label="More from this series">
-          <a href="https://bouallegui.me/blog.html" class="card card-link p-5 text-right">
+          <a href="https://bouallegui.pages.dev/blog.html" class="card card-link p-5 text-right">
             <span class="eyebrow block">The series</span>
             <span class="mt-1 block font-display font-semibold leading-snug">All eight parts</span>
           </a>
-          <a href="https://bouallegui.me/posts/a-desktop-that-scrolls.html" class="card card-link p-5 text-right" aria-label="Next part">
+          <a href="https://bouallegui.pages.dev/posts/a-desktop-that-scrolls.html" class="card card-link p-5 text-right" aria-label="Next part">
             <span class="eyebrow block">Part 2</span>
             <span class="mt-1 block font-display font-semibold leading-snug">A desktop that scrolls instead of stacking</span>
           </a>
@@ -1118,23 +1118,23 @@ sops:
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
-            <li><a href="https://bouallegui.me/posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/secrets-with-keys-i-already-had.html" class="font-semibold text-link hover:text-ocean-dark">Secrets, kept with keys I already had</a></li>
           </ul>
-          <p class="mt-3 text-sm text-slate-500">Part 1 of 8 of <a href="https://bouallegui.me/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
+          <p class="mt-3 text-sm text-slate-500">Part 1 of 8 of <a href="https://bouallegui.pages.dev/blog.html" class="font-semibold text-link hover:text-ocean-dark">NixOS, in pieces</a>.</p>
         </div>
 
-        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.me/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
+        <p class="text-sm text-slate-500">Where this lives: <a href="https://bouallegui.pages.dev/portfolio.html#nix-monorepo" class="font-semibold text-link hover:text-ocean-dark">One flake for every machine I run</a></p>
       </div>]]></content:encoded>
     </item>
     <item>
       <title>What an AWS account looks like from the inside</title>
-      <link>https://bouallegui.me/posts/an-aws-account-from-the-inside.html</link>
-      <guid isPermaLink="true">https://bouallegui.me/posts/an-aws-account-from-the-inside.html</guid>
+      <link>https://bouallegui.pages.dev/posts/an-aws-account-from-the-inside.html</link>
+      <guid isPermaLink="true">https://bouallegui.pages.dev/posts/an-aws-account-from-the-inside.html</guid>
       <pubDate>Sun, 16 Nov 2025 12:00:00 GMT</pubDate>
       <description>Everything I run lives on hardware I own, so I spent time in an AWS account to see how the same jobs look when someone else owns the machine: security groups, key pairs, instance roles, and what keeps billing after you stop the instance.</description>
       <content:encoded><![CDATA[<figure class="container mt-10 px-5 md:px-8">
-        <img src="https://bouallegui.me/images/projects/aws.svg" alt="Diagram: on top, a path from a laptop through a security group to an EC2 instance running nginx on port 80 in eu-west-3, the Paris region. Below, three tiles for what keeps existing after the instance is stopped: the EBS volume, the public IPv4 address, and the instance itself, which is the only one of the three that stops being billed." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
+        <img src="https://bouallegui.pages.dev/images/projects/aws.svg" alt="Diagram: on top, a path from a laptop through a security group to an EC2 instance running nginx on port 80 in eu-west-3, the Paris region. Below, three tiles for what keeps existing after the instance is stopped: the EBS volume, the public IPv4 address, and the instance itself, which is the only one of the three that stops being billed." width="640" height="360" loading="lazy" decoding="async" class="w-full max-w-3xl rounded-xl shadow-soft mx-auto" data-lightbox="img">
         <figcaption class="mt-2 text-center text-sm text-slate-500">The part of the setup that stuck in my head, and the part that keeps costing after you stop the machine.</figcaption>
       </figure>
 
@@ -1215,8 +1215,8 @@ sops:
         <div class="mt-6 rounded-card border border-ocean/20 bg-ocean/5 p-5">
           <p class="font-semibold text-ocean-dark mb-2">Keep reading</p>
           <ul class="space-y-1 text-sm text-slate-600">
-            <li><a href="https://bouallegui.me/posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a></li>
-            <li><a href="https://bouallegui.me/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/a-private-cloud-with-a-guest-list.html" class="font-semibold text-link hover:text-ocean-dark">A private cloud, sized for the people who actually use it</a></li>
+            <li><a href="https://bouallegui.pages.dev/posts/one-flake-three-machines.html" class="font-semibold text-link hover:text-ocean-dark">One flake, three machines that barely resemble each other</a></li>
           </ul>
           <p class="mt-3 text-sm text-slate-500">No repository behind this one. The instance was a learning exercise, and it is terminated.</p>
         </div>
