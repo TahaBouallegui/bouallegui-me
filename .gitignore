@@ -16,3 +16,6 @@ npm-debug.log*
 
 # css/output.css is deliberately tracked: it is the built stylesheet the site serves,
 # and CI fails if a push contains a stylesheet that does not match `npm run build`.
+
+# Agent instructions, kept local: the repository is public.
+AGENTS.md
