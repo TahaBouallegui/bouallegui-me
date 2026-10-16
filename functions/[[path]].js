@@ -21,7 +21,6 @@ export async function onRequest(context) {
     const bare = new URL(url.pathname.slice(0, -5), url);
     const served = await context.env.ASSETS.fetch(new Request(bare, context.request));
     if (served.status === 200) {
-      served.headers.set("x-function", "html-passthrough");
       return served;
     }
   }
