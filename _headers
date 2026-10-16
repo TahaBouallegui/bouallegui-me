@@ -16,7 +16,9 @@
 
 # The production origin is the project domain itself. Every deploy also gets a per-deploy
 # hash subdomain, and those previews must never be indexed next to the canonical URLs.
-https://*.bouallegui.pages.dev/*
+# A host placeholder matches one label, so this hits the hash subdomains but not the
+# production apex; two wildcards in one rule would be rejected and silently skipped.
+https://:subdomain.bouallegui.pages.dev/*
   X-Robots-Tag: noindex
 
 # Fonts are latin subsets that change a couple of times a year, and the images are content,
