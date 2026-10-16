@@ -108,7 +108,7 @@ export function footerHtml({ root = '', lang = 'en', year = 2026 }) {
   return `<footer data-part="footer" class="mt-24 border-t border-slate-200 bg-slate-50/80">
   <div class="container flex flex-wrap items-center justify-between gap-4 py-7 text-sm text-slate-600">
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-      <p class="font-display text-slate-700">&copy; <span id="current-year">${year}</span> Bouallegui.me - ${t.tagline}</p>
+      <p class="font-display text-slate-700">&copy; <span id="current-year">${year}</span> Ahmed Taha Bouallegui - ${t.tagline}</p>
       <p>${t.license} <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="license" class="text-link transition hover:underline">GPL-3.0-or-later</a></p>
     </div>
     <ul class="flex items-center gap-6">

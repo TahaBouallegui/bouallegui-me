@@ -1,7 +1,7 @@
 {
-  "name": "bouallegui-me",
+  "name": "bouallegui",
   "version": "1.0.0",
-  "description": "Bouallegui.me - Cybersecurity and systems done right. Portfolio + blog static site.",
+  "description": "Ahmed Taha Bouallegui - Cybersecurity and systems done right. Portfolio + blog static site.",
   "private": true,
   "scripts": {
     "dev": "tailwindcss -i src/input.css -o css/output.css --watch",

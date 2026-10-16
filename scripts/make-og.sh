@@ -31,7 +31,7 @@ magick -size 1200x630 gradient:#01324F-#0A1A2F \
   -draw "$(seq 0 60 1200 | awk '{printf "line %s,0 %s,630 ", $1, $1}')" \
   -draw "$(seq 0 60 630  | awk '{printf "line 0,%s 1200,%s ", $1, $1}')" \
   "$TMP/portrait-circle.png" -geometry +800+145 -compose over -composite \
-  -stroke none -fill '#FFFFFF' -font "$BOLD" -pointsize 84 -annotate +80+280 'bouallegui.me' \
+  -stroke none -fill '#FFFFFF' -font "$BOLD" -pointsize 84 -annotate +80+280 'bouallegui' \
   -fill '#0096C7' -font "$REG"  -pointsize 34 -annotate +80+345 'Cybersecurity and systems done right' \
   -fill '#94A3B8' -font "$REG"  -pointsize 22 -annotate +80+405 'Ahmed Bouallegui  -  M.Eng IoT and Cybersecurity, Polytech Lille' \
   -depth 8 -strip images/og.png

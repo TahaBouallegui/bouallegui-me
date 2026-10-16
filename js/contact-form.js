@@ -11,7 +11,7 @@
     var d = new FormData(form);
     var from = String(d.get("name") || "").trim();
     var reply = String(d.get("email") || "").trim();
-    var subject = String(d.get("subject") || "").trim() || "Message from bouallegui.me";
+    var subject = String(d.get("subject") || "").trim() || "Message from bouallegui.pages.dev";
     var body = String(d.get("message") || "").trim() + "\n\n - \n" + from + " <" + reply + ">";
     window.location.href = "mailto:ahmedtbou@tutamail.com"
       + "?subject=" + encodeURIComponent(subject)

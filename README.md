@@ -124,7 +124,7 @@ directory.
 Self-hosting instead means a server block, since `_headers` is Pages-specific. On Nginx:
 
 ```nginx
-root /srv/bouallegui.me;
+root /srv/bouallegui;
 index index.html;
 error_page 404 /404.html;          # otherwise the pretty 404 never shows
 location ~* \.(woff2)$ { add_header Cache-Control "public, max-age=31536000, immutable"; }
@@ -141,8 +141,8 @@ location ~* \.(woff2)$ { add_header Cache-Control "public, max-age=31536000, imm
   at the contact page rather than at a repo. The website repository itself went public with the
   deploy, which also published the code excerpts quoted in the wireless note (labelled not public
   on the page) and the institution marks in `cv/img/`.
-- Consider a domain-shaped email (`ahmed@bouallegui.me` forwarded from the VPS) in place of the
-  Gmail address once the domain is live.
+- A domain-shaped email (forwarded from the VPS) in place of the Gmail address. Deferred: the
+  domain purchase is on hold, the `bouallegui.pages.dev` name is fine for now.
 - The hero bundles three 0.186.1 into `js/vendor/hero.bundle.js` (539,701 bytes, 135 KB gzipped)
   instead of pulling it from unpkg, so no third-party script is fetched at page load. `js/hero-loader.js`
   only asks for it when the hero is on screen and motion is allowed. Rebuild the bundle with
