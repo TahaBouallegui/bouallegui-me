@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Diagram: a grid of experts on the left with a handful highlighted as the ones a single token routes through. On the right, three stacked boxes: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them while the CPU works the ones off the card, and an NVMe SSD holding a 29 GB lookup table read on demand. Below, a note that a draft model guesses the next words and the big model checks them in one pass for 1.6 to 1.8 times the speed, and my measured figures of 12 to 49 tokens per second decode and 55 to 997 tokens per second prefill">
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Diagram: a grid of experts on the left with a handful highlighted as the ones a single token routes through. On the right, three stacked boxes: an RTX 3060 with 12 GB holding the few thousand hottest experts, 64 GB of RAM holding all of them while the CPU works the ones off the card, and an NVMe SSD holding a 29 GB lookup table read on demand. Below, a note that a draft model guesses the next words and the big model checks them in one pass for 1.6 to 1.8 times the speed, and my measured figures of 12 to 50 tokens per second decode and 55 to 1,020 tokens per second prefill">
 
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -60,7 +60,7 @@
       <path d="M40 244 H 600"/>
     </g>
     <text x="40" y="266" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4CC9E8" fill-opacity="0.75">a draft model guesses the next words, the big model checks them in one pass: 1.6 to 1.8x</text>
-    <text x="40" y="286" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0096C7" fill-opacity="0.65">same card, same model, engine only: 12 to 49 tok/s decode, 55 to 997 tok/s prefill</text>
+    <text x="40" y="286" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0096C7" fill-opacity="0.65">same card, same model, engine only: 12 to 50 tok/s decode, 55 to 1,020 tok/s prefill</text>
     <text x="40" y="306" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.4">the card is the fast part, not the whole budget</text>
   </g>
 </svg>
