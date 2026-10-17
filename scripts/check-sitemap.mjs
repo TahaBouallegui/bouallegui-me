@@ -18,6 +18,10 @@ const ROOT = resolve(process.argv[2] ?? new URL('.', import.meta.url).pathname.r
 const ORIGIN = 'https://bouallegui.pages.dev';
 const NOINDEX = new Set(['404.html', 'fr/404.html']);
 
+// Not pages at all: the Google Search Console ownership token. It must be served at exactly the
+// path Google asks for, but it is a credential file, not content, and never belongs in a sitemap.
+const NOT_PAGES = new Set(['google503700bb534eb553.html']);
+
 const pages = [
   ...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
   ...readdirSync(ROOT + '/fr').filter((f) => f.endsWith('.html')).map((f) => 'fr/' + f),
@@ -29,7 +33,7 @@ const pages = [
 // those, so the clean form is the only one that ends up in a search index.
 const urlOf = (p) => (p === 'index.html' ? `${ORIGIN}/` : p === 'fr/index.html' ? `${ORIGIN}/fr/` : `${ORIGIN}/${p}`);
 
-const expected = pages.filter((p) => !NOINDEX.has(p)).map(urlOf).sort();
+const expected = pages.filter((p) => !NOINDEX.has(p) && !NOT_PAGES.has(p)).map(urlOf).sort();
 const listed = readFileSync(ROOT + '/sitemap.txt', 'utf8').split('\n').map((l) => l.trim()).filter(Boolean).sort();
 
 const missing = expected.filter((u) => !listed.includes(u));
