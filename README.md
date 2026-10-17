@@ -21,7 +21,7 @@ sitemap.txt           every URL the site wants indexed
 robots.txt            allow all, plus the two Sitemap lines
 _headers              response headers served by the host (CSP, HSTS, cache, noindex on previews)
 _redirects            the two index files onto their canonical directory forms
-functions/[[path]].js  Pages Function catch-all, keeps the .html URLs at 200 (see Deploy)
+functions/[[path]].js  Pages Function catch-all, keeps the .html URLs at 200 and gates scraper UAs (see Deploy)
 favicon.ico           16/32/48 px, rasterized from images/favicon.svg
 apple-touch-icon.png  180 px, same source
 css/output.css        generated - do not hand-edit
@@ -117,7 +117,10 @@ the repo root are what the host serves, and `_headers` marks the per-deploy hash
 `noindex` so they cannot compete with the project domain. Pages' built-in pretty links answer
 every `.html` URL with a 308 to the extensionless form, which fights the `.html` canonicals, so
 `functions/[[path]].js` catches every request and answers `.html` paths by asking `ASSETS.fetch`
-for the extensionless asset, which it serves at 200. The deploy job checks the repo out even
+for the extensionless asset, which it serves at 200. The same Function answers obvious scraper
+User-Agents (HTTP client libraries, headless browsers, no UA at all) with a 403 before serving
+anything: a speed bump for the lazy majority, not a wall, and feed readers, search engines and
+link preview bots pass it. The deploy job checks the repo out even
 though the artifact carries the site, because wrangler picks up `functions/` from the working
 directory.
 
