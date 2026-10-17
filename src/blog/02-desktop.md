@@ -7,7 +7,7 @@ move along the strip instead of arranging a grid. It took me about a week to
 stop reaching for the old habits. After that, a stacking window manager felt
 slower to me, mostly because I kept losing track of where the windows went.
 
-## The desktop is one package
+## One derivation for the whole desktop
 
 niri, the bar, the launcher and the colours are assembled through
 [`nix-wrapper-modules`](https://github.com/BirdeeHub/nix-wrapper-modules)

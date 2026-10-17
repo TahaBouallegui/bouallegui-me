@@ -90,7 +90,7 @@
     <article class="pb-24">
       <div class="container mx-auto mt-10 grid max-w-3xl gap-8 px-5 text-slate-700 md:px-8">
         <p class="leading-relaxed">Most desktops ask you to manage windows: resize them, tile them, alt-tab through a stack of them. <a href="https://github.com/YaLTeR/niri" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark">niri</a> does not have a stack. Windows sit in columns on a strip that scrolls sideways, and you move along the strip instead of arranging a grid. It took me about a week to stop reaching for the old habits. After that, a stacking window manager felt slower to me, mostly because I kept losing track of where the windows went.</p>
-        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The desktop is one package</h2>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">One derivation for the whole desktop</h2>
         <p class="leading-relaxed">niri, the bar, the launcher and the colours are assembled through <a href="https://github.com/BirdeeHub/nix-wrapper-modules" target="_blank" rel="noopener noreferrer" class="font-semibold text-link hover:text-ocean-dark"><code class="font-mono text-sm text-ocean-dark">nix-wrapper-modules</code></a> into a single derivation:</p>
         <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">packages.desktop = inputs.wrapper-modules.wrappers.niri.wrap {
   inherit pkgs;

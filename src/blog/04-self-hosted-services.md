@@ -45,7 +45,7 @@ running on hardware one of us owns and maintains. The way a new person gets
 in is to ask to be added, which is about the right amount of friction for
 something shared more like a house than like a service.
 
-## The order I would do it in
+## What I would bring up first
 
 If you are starting from a fresh NixOS install, three steps in this order
 save some time.

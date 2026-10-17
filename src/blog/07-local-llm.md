@@ -5,7 +5,7 @@ accepting their uptime, and accepting that the model can change without
 telling you. Running one yourself removes those three things, and costs you
 the hardware plus some patience. This is how mine is set up.
 
-## The engine, built for this hardware
+## An engine built for this hardware
 
 Inference runs through
 [ik_llama.cpp](https://github.com/ikawrakow/ik_llama.cpp), a

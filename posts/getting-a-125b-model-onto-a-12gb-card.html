@@ -136,7 +136,7 @@
         </div>
         <p class="leading-relaxed">Every row runs its cache at q8_0. The last two rows are the same machine, the same card and the same model at the same 256k context, with only the engine changed. Decode went from 12 tokens per second to 50, prefill from 55 to 1,020. That is the whole argument for the rest of this post. gimel is next on the list.</p>
 
-        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The first run, and what llama.cpp was doing</h2>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">First run on llama.cpp, and a GPU idling under 30%</h2>
         <p class="leading-relaxed">The setup for that llama.cpp row, as the model's page suggests it. The weights were <a href="https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF" class="font-semibold text-link hover:text-ocean-dark">ISTA-DASLab's GSQ-RCO quantization</a>, an aggressive 3-bit scheme that retains about 93% of the original model's quality on the tasks it evaluates. I passed <code class="font-mono text-sm text-ocean-dark">--load-mode mmap</code> as llama.cpp's own page instructs, and <code class="font-mono text-sm text-ocean-dark">--cpu-moe</code> to put the experts on the CPU side. The context went to 256k tokens with the cache at <code class="font-mono text-sm text-ocean-dark">q8_0</code>, to match the window the model was trained on.</p>
         <p class="leading-relaxed">The server came up, and the disappointment was immediate. Twelve tokens per second of decode, falling to six once the context was well filled, and prefill at an agonizing 55. The utilization on the monitor made no sense either: the card under 30% at peak, the CPU lower. It made sense once I read what <code class="font-mono text-sm text-ocean-dark">--cpu-moe</code> actually does: it leaves every expert in system RAM and has the processor compute them, alone, every token. The GPU, which was the idle one, had room left over after the active parameters and the cache. So the question wrote itself: why not cache the experts that are actually hot in that free VRAM?</p>
 
@@ -150,13 +150,14 @@
           <li class="leading-relaxed">From 64k contexts the key-value cache streams: only its most-read part stays in VRAM, the rest is served from RAM, and that room goes straight back to the expert cache.</li>
         </ul>
         <p class="leading-relaxed">The published figures are for an RTX 5070: 53 tokens per second of decode and 1,620 per second reading a prompt at <code class="font-mono text-sm text-ocean-dark">IQ3_S</code>. My card is a 3060 with 12 GB, and the table above is what that actually gives. The CPU matters more than it looks in that number, because the processor is not just orchestrating, it is holding and computing part of the model.</p>
-        <p class="leading-relaxed">My setup was two commands:</p>
+        <p class="leading-relaxed">My setup was three commands:</p>
         <pre class="rounded-card border border-slate-200 bg-slate-50 p-5 text-sm overflow-x-auto"><code class="font-mono text-xs leading-relaxed">git clone https://github.com/Niko1221/Strata
+cd Strata
 ./setup.sh --vision cpu --kv-streaming on</code></pre>
         <p class="leading-relaxed">The first flag moves the vision encoder off the GPU, which frees its VRAM for more experts, and the second turns on the streaming cache. Same card, same model, same 256k context, only the engine changed: decode at 50 tokens per second, prefill at 1,020. That is a model in the class of Opus 4.8 running inside my own computer, for free. In my use, I want to be precise, not on any benchmark.</p>
         <p class="leading-relaxed">The same arithmetic is why a dense 35B model at Q4_K_M, around 21 GB with a 32k context, does not fit in 12 GB of VRAM either and gets split across card and RAM or run entirely on a CPU, which is what the amal row shows. A dense model has no experts to place selectively, so there is nothing to choose and the split costs more.</p>
 
-        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">The laptop throttles</h2>
+        <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">10 tok/s, and the ceiling is heat</h2>
         <p class="leading-relaxed">10 tokens per second out of a CPU-only 35B is what an i7-8650U gives, and the ceiling there is heat rather than compute. The AVX2 load throttles the chip, so the rate you see is a sustained thermal number, not the one a short benchmark prints. That is why the laptop runs the small model and answers quickly about small things, and anything that needs a large context goes to a box with a card in it.</p>
 
         <h2 class="mt-8 text-2xl font-display font-semibold text-ocean-dark">Context length has to match on both sides</h2>
