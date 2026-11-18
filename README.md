@@ -22,6 +22,8 @@ robots.txt            allow all, plus the two Sitemap lines
 _headers              response headers served by the host (CSP, HSTS, cache, noindex on previews)
 _redirects            the two index files onto their canonical directory forms
 functions/[[path]].js  Pages Function catch-all, keeps the .html URLs at 200 and gates scraper UAs (see Deploy)
+degoogle/index.html   the de-google talk deck, self-contained and deliberately unlinked: no nav,
+                      no sitemap entry, noindex - reachable only by direct URL (see _headers)
 favicon.ico           16/32/48 px, rasterized from images/favicon.svg
 apple-touch-icon.png  180 px, same source
 css/output.css        generated - do not hand-edit

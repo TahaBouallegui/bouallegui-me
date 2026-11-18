@@ -1,0 +1,2466 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dé-google-iser — reprendre le contrôle de son numérique</title>
+<meta name="description" content="Présentation de sensibilisation : comprendre pourquoi se détacher de Google et comment le faire concrètement, service par service.">
+<script>document.documentElement.className="js";</script>
+<style>
+/* ============================================================
+   DÉ-GOOGLE-ISER — design system
+   Base encre bleu-nuit · multicolore Google en accents ponctuels ·
+   vert « libre » pour les alternatives · ambre pour les limites.
+   ============================================================ */
+:root{
+  --bg:#07080f; --card:#12152a; --card-2:#171b33;
+  --line:#2e3763; --line-soft:#2a3159;
+  --ink:#eceef8; --ink-soft:#c2c7de; --ink-mute:#a3a9c7;
+
+  --g-blue:#4285f4; --g-red:#ea4335; --g-yellow:#fbbc04; --g-green:#34a853;
+  --g-grad:linear-gradient(100deg,#4285f4 0%,#ea4335 34%,#fbbc04 66%,#34a853 100%);
+
+  --libre:#2fd6a4; --libre-ink:#9ff2d6;
+  --warn:#fbbf24; --violet:#a78bfa;
+  --focus:#89a7ff;
+
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,ui-serif,serif;
+  --font-sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+
+  --fs-hero:clamp(2.9rem,9.2vw,6.8rem);
+  --fs-h1:clamp(2rem,4.6vw,3.6rem);
+  --fs-h2:clamp(1.6rem,3.4vw,2.7rem);
+  --fs-h3:clamp(1rem,1.25vw,1.16rem);
+  --fs-lead:clamp(1.02rem,1.55vw,1.28rem);
+  --fs-body:clamp(0.88rem,1.05vw,0.98rem);
+  --fs-small:clamp(0.78rem,0.95vw,0.87rem);
+  --fs-micro:0.68rem;
+
+  --pad-x:clamp(1.1rem,4.5vw,5rem);
+  --pad-y:clamp(1rem,3.5vh,2.2rem);
+  --hud-h:4.25rem;
+  --r-sm:10px; --r-md:16px; --r-lg:22px;
+  --ease:cubic-bezier(.22,.61,.21,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:var(--font-sans); font-size:var(--fs-body); line-height:1.55;
+  color:var(--ink); overflow:hidden;
+  background:
+    radial-gradient(1200px 800px at 82% -12%,rgba(66,133,244,.10),transparent 60%),
+    radial-gradient(1000px 720px at -12% 112%,rgba(47,214,164,.07),transparent 60%),
+    radial-gradient(700px 500px at 50% 120%,rgba(120,80,220,.06),transparent 65%),
+    var(--bg);
+}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:radial-gradient(rgba(255,255,255,.033) 1px,transparent 1px);background-size:3px 3px}
+h1,h2,h3{font-family:var(--font-display);font-weight:650;line-height:1.08;margin:0;letter-spacing:-.015em}
+p{margin:0}
+b,strong{color:var(--ink)}
+::selection{background:rgba(66,133,244,.35)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:6px}
+
+.kicker{font-family:var(--font-mono);font-size:var(--fs-micro);font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--ink-mute);display:flex;align-items:center;gap:.6rem}
+.kicker::before{content:"";width:1.6rem;height:2px;background:var(--g-grad);border-radius:2px;flex:none}
+.grad-text{background:var(--g-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.libre-text{color:var(--libre)}
+
+/* ---------- deck & transitions ---------- */
+.deck{position:relative;height:100vh;height:100dvh}
+.slide{position:absolute;inset:0;width:100%;display:flex;flex-direction:column;justify-content:center;
+  padding:calc(var(--pad-y) + .4rem) var(--pad-x) calc(var(--pad-y) + var(--hud-h));
+  overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;outline:none}
+.slide.is-active{opacity:1;visibility:visible;z-index:3}
+.slide.is-leaving{visibility:hidden;z-index:2}
+@media (prefers-reduced-motion:no-preference){
+  .slide.is-active{animation:slide-in .5s var(--ease) both}
+  .slide.is-leaving{animation:slide-out .45s var(--ease) both}
+}
+@keyframes slide-in{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes slide-out{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+/* ---------- perf : ne faire tourner que la slide active ---------- */
+/* (pas de content-visibility ici : combiné au lazy-load, il empêche
+   les images des slides cachées de charger — tuiles blanches) */
+.slide:not(.is-active) *{animation-play-state:paused !important}
+.slide-inner{width:100%;max-width:1240px;margin-inline:auto}
+.slide-head{margin-bottom:clamp(1rem,2.6vh,1.8rem)}
+.slide-head h2{font-size:var(--fs-h2);margin-top:.45rem}
+
+/* ---------- HUD / progression ---------- */
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;background:rgba(255,255,255,.06)}
+.progress__bar{height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:var(--g-grad);
+  transition:transform .45s var(--ease)}
+.hud{position:fixed;right:clamp(.75rem,2vw,1.6rem);bottom:clamp(.75rem,2.2vh,1.4rem);
+  display:flex;align-items:center;gap:.6rem;z-index:55}
+.counter{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.12em;color:var(--ink-soft);
+  background:#0d101fcc;border:1px solid var(--line-soft);border-radius:999px;padding:.45rem .85rem;
+  backdrop-filter:blur(8px);white-space:nowrap}
+.btn{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:999px;
+  border:1px solid var(--line);background:#12152ecc;color:var(--ink);cursor:pointer;backdrop-filter:blur(8px);
+  transition:transform .2s var(--ease),border-color .2s,background .2s}
+.btn:hover{transform:translateY(-2px);border-color:var(--g-blue);background:#181d3acc}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn svg{width:1.05rem;height:1.05rem}
+.hud__hint{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+@media (max-width:640px){.hud__hint{display:none}}
+kbd{font-family:var(--font-mono);font-size:.66rem;border:1px solid var(--line);border-bottom-width:2px;
+  border-radius:5px;padding:.08rem .35rem;color:var(--ink-soft);background:#0e1120}
+
+/* ---------- vue d'ensemble ---------- */
+.overview{position:fixed;inset:0;z-index:70;display:none;overflow-y:auto;background:#05060bee;
+  backdrop-filter:blur(14px);padding:clamp(1.2rem,4vh,3rem) var(--pad-x)}
+.overview[hidden]{display:none}
+.overview.is-open{display:block}
+.overview h2{font-size:clamp(1.3rem,2.4vw,1.9rem);margin-bottom:.35rem}
+.overview > p{color:var(--ink-mute);font-size:var(--fs-small);margin-bottom:1.2rem}
+.ov__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:.6rem;max-width:1240px}
+.ov__item{display:flex;align-items:baseline;gap:.65rem;text-align:left;border:1px solid var(--line-soft);
+  background:var(--card);color:var(--ink-soft);border-radius:var(--r-sm);padding:.65rem .8rem;cursor:pointer;
+  font:inherit;min-width:0;transition:border-color .2s,transform .2s var(--ease),color .2s}
+.ov__item:hover{border-color:var(--g-blue);transform:translateY(-2px);color:var(--ink)}
+.ov__item.is-current{border-color:var(--libre);color:var(--ink);background:var(--card-2)}
+.ov__num{font-family:var(--font-mono);font-size:.68rem;color:var(--ink-mute);flex:none}
+.ov__t{min-width:0}
+.ov__grp{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);display:block;margin-top:.15rem}
+
+/* ---------- hero ---------- */
+.hero .slide-inner{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:clamp(1.5rem,4vw,4rem);align-items:center}
+.hero__title{font-size:var(--fs-hero);line-height:.98;letter-spacing:-.028em;margin:1.1rem 0 0}
+.hero__sub{font-size:var(--fs-lead);color:var(--ink-soft);max-width:52ch;margin-top:1.15rem;line-height:1.6}
+.hero__meta{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.4rem}
+.pill{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--line);border-radius:999px;padding:.34rem .7rem;color:var(--ink-soft)}
+.hero__go{margin-top:2rem;display:inline-flex;align-items:center;gap:.55rem;color:var(--libre);
+  font-family:var(--font-mono);font-size:.8rem;letter-spacing:.1em}
+.hero__go .arrow{display:inline-block;animation:nudge 1.6s var(--ease) infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
+.hero__logos{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(.6rem,1.4vw,1.1rem)}
+.lt{aspect-ratio:1;border-radius:var(--r-md);background:#f4f5fb;display:grid;place-items:center;
+  box-shadow:0 12px 34px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.6)}
+.lt img{width:62%;height:62%;object-fit:contain}
+.hero__blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;z-index:-1;pointer-events:none}
+.hero__blob--a{width:46vmax;height:46vmax;right:0;top:0;
+  background:radial-gradient(circle,#1c3f8f 0%,transparent 65%);animation:drift 22s ease-in-out infinite alternate}
+.hero__blob--b{width:36vmax;height:36vmax;left:0;bottom:0;
+  background:radial-gradient(circle,#0c5c47 0%,transparent 65%);animation:drift 26s ease-in-out -8s infinite alternate-reverse}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-4vw,2vh,0) scale(1.08)}}
+
+/* ---------- sommaire ---------- */
+.toc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.6rem,1.6vw,1.1rem);margin-top:.4rem}
+.toc__item{display:flex;gap:1rem;align-items:baseline;padding:clamp(.8rem,1.8vh,1.2rem) clamp(1rem,2vw,1.4rem);
+  border:1px solid var(--line-soft);border-radius:var(--r-md);background:linear-gradient(180deg,var(--card),#0f1223);
+  transition:transform .25s var(--ease),border-color .25s}
+.toc__item:hover{transform:translateY(-3px);border-color:#2c3560}
+.toc__num{font-family:var(--font-mono);font-size:clamp(.95rem,1.6vw,1.3rem);color:var(--ink-mute);letter-spacing:.05em}
+.toc__item h3{font-size:var(--fs-h3);margin-bottom:.2rem}
+.toc__item p{color:var(--ink-mute);font-size:var(--fs-small);line-height:1.45}
+.toc__item:nth-child(1) .toc__num{color:var(--g-blue)}
+.toc__item:nth-child(2) .toc__num{color:var(--g-red)}
+.toc__item:nth-child(3) .toc__num{color:var(--g-yellow)}
+.toc__item:nth-child(4) .toc__num{color:var(--g-green)}
+.toc__item:nth-child(5) .toc__num{color:var(--libre)}
+.toc__item:nth-child(6) .toc__num{color:var(--violet)}
+
+/* ---------- écosystème ---------- */
+.eco-lead{font-size:var(--fs-lead);color:var(--ink-soft);max-width:68ch;line-height:1.65}
+.domain-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.3rem}
+.eco-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.55rem,1.3vw,.95rem)}
+.eco-grid--dense{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tile{display:flex;gap:.75rem;align-items:flex-start;min-width:0;margin:0;
+  border:1px solid var(--line-soft);border-radius:var(--r-md);padding:clamp(.65rem,1.4vw,.95rem);
+  background:linear-gradient(180deg,var(--card),#0e1120);transition:transform .25s var(--ease),border-color .25s}
+.tile:hover{transform:translateY(-3px);border-color:#2c3560}
+.tile__logo{flex:none;width:clamp(34px,3.2vw,42px);height:clamp(34px,3.2vw,42px);border-radius:10px;
+  background:#f4f5fb;display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.tile__logo img{width:72%;height:72%;object-fit:contain}
+.tile h3{font-size:clamp(.9rem,1.15vw,1.04rem);font-family:var(--font-sans);font-weight:700;letter-spacing:.01em}
+.tile p{color:var(--ink-mute);font-size:clamp(.68rem,.85vw,.77rem);line-height:1.5;margin-top:.18rem;overflow-wrap:anywhere}
+
+.callout{margin-top:clamp(.8rem,2vh,1.3rem);border:1px solid #2a3f38;border-left:3px solid var(--libre);
+  background:linear-gradient(90deg,rgba(47,214,164,.08),rgba(47,214,164,.02));border-radius:var(--r-sm);
+  padding:clamp(.7rem,1.6vw,1rem) clamp(.9rem,2vw,1.3rem);color:var(--ink-soft);font-size:var(--fs-body);line-height:1.6}
+.callout--blue{border-color:#26365e;border-left-color:var(--g-blue);
+  background:linear-gradient(90deg,rgba(66,133,244,.09),rgba(66,133,244,.02))}
+.callout .lead{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--libre);display:block;margin-bottom:.3rem}
+.callout--blue .lead{color:#93b2ff}
+
+/* ---------- pourquoi ---------- */
+.reasons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.6rem,1.4vw,1rem)}
+.reason{position:relative;border:1px solid var(--line-soft);border-radius:var(--r-md);
+  padding:clamp(.9rem,1.8vw,1.25rem);background:linear-gradient(180deg,var(--card),#0e1120);
+  transition:transform .25s var(--ease),border-color .25s;overflow:hidden}
+.reason:hover{transform:translateY(-4px);border-color:#2c3560}
+.reason::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--dot,var(--g-grad));opacity:.8}
+.reason__num{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.2em;color:var(--ink-mute)}
+.reason h3{font-size:var(--fs-h3);margin:.45rem 0 .4rem}
+.reason p{color:var(--ink-soft);font-size:var(--fs-small);line-height:1.55}
+.reason:nth-child(1){--dot:linear-gradient(90deg,var(--g-blue),transparent)}
+.reason:nth-child(2){--dot:linear-gradient(90deg,var(--g-red),transparent)}
+.reason:nth-child(3){--dot:linear-gradient(90deg,var(--g-yellow),transparent)}
+.reason:nth-child(4){--dot:linear-gradient(90deg,var(--g-green),transparent)}
+.reason:nth-child(5){--dot:linear-gradient(90deg,var(--violet),transparent)}
+.reason:nth-child(6){--dot:linear-gradient(90deg,var(--libre),transparent)}
+
+/* ---------- transition « alternatives » ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1.4rem,4vw,3.5rem);align-items:center}
+.bignum{font-family:var(--font-display);font-size:clamp(4rem,10vw,8.5rem);line-height:.9;opacity:.16}
+.legend{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card);padding:clamp(1rem,2.4vw,1.7rem)}
+.legend h3{font-size:var(--fs-h3);font-family:var(--font-sans);margin-bottom:.9rem}
+.legend__row{display:flex;gap:.8rem;align-items:flex-start;padding:.55rem 0;border-top:1px dashed var(--line-soft)}
+.legend__row:first-of-type{border-top:0;padding-top:0}
+.legend__row p{font-size:var(--fs-small);color:var(--ink-soft)}
+.legend__row p b{display:block;font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;
+  font-family:var(--font-mono);margin-bottom:.12rem}
+.ic{display:inline-block;vertical-align:middle;flex:none;width:1.1rem;height:1.1rem}
+.ic--lg{width:1.35rem;height:1.35rem}
+
+/* ---------- cartes alternatives ---------- */
+.replaces{display:inline-flex;align-items:center;gap:.5rem;margin-top:.7rem;border:1px solid var(--line);
+  border-radius:999px;padding:.3rem .8rem .3rem .35rem;background:#0e1120}
+.replaces .mini{width:26px;height:26px;border-radius:7px;background:#f4f5fb;display:grid;place-items:center;flex:none}
+.replaces .mini img{width:74%;height:74%;object-fit:contain}
+.replaces .lbl{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute)}
+.replaces .name{font-size:.85rem;color:var(--ink-soft)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.6rem,1.3vw,1rem)}
+.cards--two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:1151px){.cards--five > :nth-child(4){grid-column:span 2}}
+.card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line-soft);border-radius:var(--r-md);
+  background:linear-gradient(180deg,var(--card),#0e1120);padding:clamp(.8rem,1.6vw,1.1rem);
+  transition:transform .25s var(--ease),border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(47,214,164,.45);box-shadow:0 16px 36px -18px rgba(0,0,0,.75)}
+.card__top{display:flex;align-items:center;gap:.7rem}
+.mono{flex:none;display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:12px;
+  font-family:var(--font-mono);font-weight:700;font-size:.85rem;
+  background:linear-gradient(150deg,hsl(var(--mh,158) 42% 22%),hsl(var(--mh,158) 55% 11%));
+  color:hsl(var(--mh,158) 82% 72%);border:1px solid hsl(var(--mh,158) 55% 32%)}
+/* logos réels des alternatives (downloaded_images/alt/) + repli monogramme si absent */
+.altlogo{position:relative;flex:none;width:2.55rem;height:2.55rem;border-radius:12px;background:#f4f5fb;
+  display:grid;place-items:center;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.altlogo img{width:76%;height:76%;object-fit:contain}
+.altlogo .mono{display:none;width:100%;height:100%;border-radius:12px}
+.altlogo.is-fallback img{display:none}
+.altlogo.is-fallback .mono{display:grid}
+.card__top h3{font-size:var(--fs-h3);font-family:var(--font-sans);font-weight:750;overflow-wrap:anywhere}
+.card__desc{color:var(--ink-mute);font-size:var(--fs-small);margin-top:.55rem;line-height:1.5}
+.pm{display:flex;gap:.55rem;margin-top:.65rem;font-size:var(--fs-small);line-height:1.5}
+.pm .ic{margin-top:.2rem}
+.pm span{color:var(--ink-soft)}
+.pm b{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;
+  font-weight:600;margin-right:.35rem}
+.pm--pro .ic,.pm--pro b{color:var(--libre)}
+.pm--con .ic,.pm--con b{color:var(--warn)}
+
+/* ---------- autres services ---------- */
+.duo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.7rem,1.6vw,1.1rem)}
+.bigcard{border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  background:linear-gradient(180deg,var(--card-2),#0e1120);padding:clamp(1rem,2.2vw,1.6rem);
+  display:flex;flex-direction:column;transition:transform .25s var(--ease),border-color .25s}
+.bigcard:hover{transform:translateY(-4px);border-color:#2c3560}
+.bigcard__from{display:flex;align-items:center;gap:.6rem;color:var(--ink-mute);font-size:.85rem;
+  font-family:var(--font-mono);letter-spacing:.08em}
+.bigcard .swap{color:var(--libre);margin:.5rem 0 .2rem;font-size:1.05rem}
+.bigcard h3{font-size:clamp(1.25rem,2vw,1.55rem)}
+.bigcard p{color:var(--ink-soft);font-size:var(--fs-small);margin-top:.6rem;line-height:1.6}
+.bigcard ul{margin:.6rem 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.bigcard li{font-size:var(--fs-small);color:var(--ink-soft);line-height:1.5;padding-left:1.05rem;position:relative}
+.bigcard li::before{content:"→";position:absolute;left:0;color:var(--libre)}
+.bigcard .limite{margin-top:auto;padding-top:.9rem;display:flex;gap:.55rem;align-items:flex-start}
+.bigcard .limite .ic{margin-top:.2rem;color:var(--warn)}
+.bigcard .limite span{font-size:var(--fs-small);color:var(--ink-soft)}
+.bigcard .limite b{color:var(--warn);font-family:var(--font-mono);font-size:var(--fs-micro);
+  letter-spacing:.16em;text-transform:uppercase}
+
+/* ---------- calendrier ---------- */
+.principle{font-family:var(--font-mono);font-size:clamp(.72rem,1vw,.84rem);letter-spacing:.06em;
+  color:var(--libre);margin-top:.65rem;max-width:88ch}
+.timeline{position:relative;margin-top:.5rem;padding-left:clamp(1.5rem,3vw,2.2rem)}
+.timeline::before{content:"";position:absolute;left:clamp(.42rem,.9vw,.65rem);top:.4rem;bottom:.4rem;width:2px;
+  background:linear-gradient(180deg,var(--g-blue),var(--g-red),var(--g-yellow),var(--g-green),var(--libre));border-radius:2px}
+.step{position:relative;display:grid;grid-template-columns:clamp(5.2rem,10vw,8.5rem) minmax(0,1fr) minmax(0,1.5fr);
+  gap:clamp(.5rem,1.6vw,1.4rem);align-items:baseline;padding:clamp(.26rem,.85vh,.5rem) 0}
+.step::before{content:"";position:absolute;left:calc(-1 * clamp(1.5rem,3vw,2.2rem) + clamp(.3rem,.9vw,.53rem));
+  top:.62em;width:9px;height:9px;border-radius:50%;background:var(--bg);border:2px solid var(--libre)}
+.step__w{font-family:var(--font-mono);font-size:clamp(.68rem,.9vw,.79rem);letter-spacing:.08em;
+  color:var(--libre);white-space:nowrap}
+.step h3{font-size:clamp(.87rem,1.1vw,1rem);font-family:var(--font-sans);font-weight:750}
+.step h3 span{display:block;font-weight:400;color:var(--ink-mute);font-size:.77rem;margin-top:.05rem}
+.step p{color:var(--ink-soft);font-size:clamp(.73rem,.92vw,.85rem);line-height:1.5;overflow-wrap:anywhere}
+.step--end::before{border-color:var(--g-yellow)}
+.step--end .step__w{color:var(--g-yellow)}
+
+/* ---------- conclusion ---------- */
+.concl{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(1.4rem,4vw,3.5rem);align-items:center}
+.takeaways{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(.7rem,1.8vh,1.1rem)}
+.takeaways li{display:flex;gap:.9rem;align-items:flex-start;color:var(--ink-soft);font-size:var(--fs-lead);line-height:1.45}
+.takeaways .ic{color:var(--libre);margin-top:.4rem;flex:none;width:1.15rem;height:1.15rem}
+.takeaways b{color:var(--ink)}
+.nextstep{border:1px dashed rgba(47,214,164,.5);border-radius:var(--r-lg);
+  background:linear-gradient(180deg,rgba(47,214,164,.09),rgba(47,214,164,.02));padding:clamp(1rem,2.4vw,1.7rem)}
+.nextstep h3{font-family:var(--font-mono);font-weight:600;font-size:.74rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--libre);margin-bottom:.6rem}
+.nextstep p{font-size:var(--fs-lead);color:var(--ink);line-height:1.5}
+.final{margin-top:clamp(1.1rem,3.4vh,2rem);border-top:1px solid var(--line-soft);padding-top:clamp(.9rem,2.4vh,1.3rem)}
+.final p{font-family:var(--font-display);font-size:clamp(1.3rem,2.8vw,2.1rem);line-height:1.3;max-width:30ch}
+.final .q{color:var(--ink-mute);font-size:.72em;display:block;margin-bottom:.35rem}
+
+/* ---------- annexe ---------- */
+.res-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.6rem,1.5vw,1rem)}
+.res{border:1px solid var(--line-soft);border-radius:var(--r-md);
+  background:linear-gradient(180deg,var(--card),#0e1120);padding:clamp(.85rem,1.8vw,1.2rem);
+  transition:transform .25s var(--ease),border-color .25s}
+.res:hover{transform:translateY(-3px);border-color:#2c3560}
+.res h3{font-family:var(--font-mono);font-weight:600;font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--g-yellow);margin-bottom:.55rem;display:flex;align-items:center;gap:.5rem}
+.res p{color:var(--ink-soft);font-size:var(--fs-small);line-height:1.75}
+.res code{font-family:var(--font-mono);font-size:.82em;background:#0c0f1d;border:1px solid var(--line-soft);
+  border-radius:6px;padding:.08em .45em;color:var(--ink)}
+
+/* ---------- journée type (hook narratif) ---------- */
+.day{display:flex;flex-wrap:wrap;gap:clamp(.5rem,1.05vw,.8rem);margin-top:.3rem}
+.day__item{flex:1 1 calc(25% - .65rem);min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);
+  grid-template-rows:auto auto;gap:.3rem .7rem;align-items:center;
+  border:1px solid var(--line-soft);border-radius:var(--r-md);padding:clamp(.65rem,1.3vw,.95rem);
+  background:linear-gradient(180deg,var(--card),#0e1120);transition:transform .25s var(--ease),border-color .25s}
+.day__item:hover{transform:translateY(-3px);border-color:#2c3560}
+.day__time{grid-column:1/-1;font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.14em;
+  color:var(--g-yellow)}
+.day__logo{grid-row:2;width:clamp(30px,2.9vw,38px);height:clamp(30px,2.9vw,38px);border-radius:9px;
+  background:#f4f5fb;display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.day__logo img{width:74%;height:74%;object-fit:contain}
+.day__txt{grid-row:2;min-width:0}
+.day__txt b{display:block;font-size:clamp(.84rem,1.02vw,.96rem);font-weight:750;letter-spacing:.01em}
+.day__txt span{display:block;color:var(--ink-mute);font-size:clamp(.68rem,.86vw,.78rem);line-height:1.45;margin-top:.12rem}
+.day__punch{margin-top:clamp(1.1rem,3.2vh,2rem);font-family:var(--font-display);
+  font-size:clamp(1.35rem,2.9vw,2.15rem);line-height:1.25;max-width:26ch}
+.day__punch .soft{color:var(--ink-mute);display:block;font-size:.55em;margin-bottom:.3rem;letter-spacing:.01em}
+
+/* ---------- google en chiffres ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.65rem,1.4vw,1.05rem)}
+.stat{position:relative;overflow:hidden;border:1px solid var(--line-soft);border-radius:var(--r-md);
+  padding:clamp(.9rem,1.8vw,1.3rem);background:linear-gradient(180deg,var(--card),#0e1120);
+  transition:transform .25s var(--ease),border-color .25s}
+.stat:hover{transform:translateY(-3px);border-color:#2c3560}
+.stat::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--g-grad);opacity:.5}
+.stat__approx{display:block;font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-mute);margin-bottom:.5rem}
+.stat__num{font-family:var(--font-mono);font-weight:700;font-size:clamp(1.7rem,4.1vw,3.1rem);line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat__lbl{color:var(--ink-soft);font-size:var(--fs-small);margin-top:.55rem;line-height:1.5}
+
+/* ---------- ce que vous allez apprendre ---------- */
+.promise{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(.65rem,1.5vw,1.1rem)}
+.promise__item{position:relative;border:1px solid var(--line-soft);border-radius:var(--r-md);
+  padding:clamp(1rem,2vw,1.5rem);background:linear-gradient(180deg,var(--card),#0f1223);
+  transition:transform .25s var(--ease),border-color .25s}
+.promise__item:hover{transform:translateY(-4px);border-color:#2c3560}
+.promise__n{font-family:var(--font-display);font-size:clamp(2.2rem,4.4vw,3.4rem);line-height:1;display:block}
+.promise__item:nth-child(1) .promise__n{color:var(--g-blue)}
+.promise__item:nth-child(2) .promise__n{color:var(--g-red)}
+.promise__item:nth-child(3) .promise__n{color:var(--g-yellow)}
+.promise__item:nth-child(4) .promise__n{color:var(--libre)}
+.promise__item h3{font-size:var(--fs-h3);font-family:var(--font-sans);font-weight:750;margin:.75rem 0 .4rem}
+.promise__item p{color:var(--ink-mute);font-size:var(--fs-small);line-height:1.55}
+
+/* ---------- catalogue animé (satire en boucle) ---------- */
+:root{
+  --an-cyan:#22d3ee; --an-rose:#ec4899; --an-amber:#fbbf24; --an-green:#2fd6a4; --an-blue:#4285f4;
+  --an-ink:var(--ink); --an-mute:var(--ink-mute); --an-card:#101527; --an-line:#2a3552; --an-stage:#060810;
+}
+.anim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.7rem,1.55vw,1.15rem)}
+.anim-grid--single{grid-template-columns:minmax(0,780px);justify-content:center}
+.animcard{display:flex;flex-direction:column;gap:.55rem;min-width:0;margin:0;
+  border:1px solid var(--line-soft);border-radius:var(--r-md);padding:clamp(.8rem,1.5vw,1.05rem);
+  background:linear-gradient(180deg,var(--card),#0e1120);transition:transform .25s var(--ease),border-color .25s}
+.animcard:hover{transform:translateY(-3px);border-color:#2c3560}
+.animcard__head{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.animcard__head h3{font-family:var(--font-sans);font-size:var(--fs-h3);font-weight:750}
+.animcard__id{font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--an-cyan)}
+.animcard__tag{margin-left:auto;font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-mute)}
+/* scène : espace profond en couches + trame de points, le svg se couche en dessous */
+.anim-stage{position:relative;aspect-ratio:14/9;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 40px -24px rgba(0,0,0,.85);
+  background:
+    radial-gradient(120% 130% at 50% -10%,rgba(66,133,244,.16),transparent 52%),
+    radial-gradient(120% 130% at 50% 120%,rgba(47,214,164,.14),transparent 52%),
+    linear-gradient(180deg,#070a15,var(--an-stage))}
+.anim-stage::after{content:"";position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.075) 1px,transparent 1.4px);background-size:20px 20px;
+  mask-image:radial-gradient(90% 90% at 50% 40%,#000,transparent 78%);pointer-events:none}
+.anim-stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.anim-cap{color:var(--ink-mute);font-size:clamp(.68rem,.85vw,.77rem);line-height:1.5}
+/* ---------- récit d'événement (intégration des satires au propos) ---------- */
+.story-lead{font-size:var(--fs-body);color:var(--ink-soft);line-height:1.65;max-width:110ch;margin:0 0 .4rem}
+.story-lead b{color:var(--ink)}
+.story-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(.6rem,1.5vw,1.1rem);margin-bottom:clamp(.6rem,1.6vh,1rem)}
+.story-cols p{font-size:var(--fs-small);color:var(--ink-soft);line-height:1.6;margin:0}
+.story-cols p b{color:var(--ink)}
+.story-cols .evt{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--libre);display:block;margin-bottom:.25rem}
+@media (max-width:1150px){.story-cols{grid-template-columns:1fr}}
+@media (max-width:900px){.anim-grid{grid-template-columns:1fr}}
+/* ---------- projecteurs : épaissir les traits fins des scènes ---------- */
+.anim-stage svg [stroke-width="1.5"]{stroke-width:2.5}
+.anim-stage svg [stroke-width="2"]{stroke-width:2.5}
+/* ---------- récit côte à côte : texte à gauche, animation à droite ---------- */
+.slide.has-anim > .slide-inner,
+.slide:has(.anim-grid--single) > .slide-inner{
+  display:grid;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  grid-template-areas:"head head" "lead anim" "cols anim";
+  column-gap:clamp(1.2rem,3vw,2.8rem);
+  row-gap:clamp(.6rem,1.6vh,1rem);
+  align-items:center;
+}
+.slide.has-anim > .slide-inner > .slide-head,
+.slide:has(.anim-grid--single) > .slide-inner > .slide-head{grid-area:head;margin-bottom:clamp(.4rem,1.4vh,.9rem)}
+.slide.has-anim > .slide-inner > .story-lead,
+.slide:has(.anim-grid--single) > .slide-inner > .story-lead{grid-area:lead;align-self:end;margin:0}
+.slide.has-anim > .slide-inner > .story-cols,
+.slide:has(.anim-grid--single) > .slide-inner > .story-cols{grid-area:cols;grid-template-columns:minmax(0,1fr);align-self:start;margin:0}
+.slide.has-anim > .slide-inner > .anim-grid--single,
+.slide:has(.anim-grid--single) > .slide-inner > .anim-grid--single{grid-area:anim;grid-template-columns:minmax(0,1fr);justify-content:stretch;min-width:0;margin:0;align-self:center}
+/* Cas solo : slide animée sans .story-cols (ex. #20, #29) — texte centré verticalement */
+.slide.has-anim-solo > .slide-inner,
+.slide:has(.anim-grid--single):not(:has(.story-cols)) > .slide-inner{
+  grid-template-areas:"head head" "lead anim";
+}
+.slide.has-anim-solo > .slide-inner > .story-lead,
+.slide:has(.anim-grid--single):not(:has(.story-cols)) > .slide-inner > .story-lead{align-self:center}
+@media (max-width:1150px){
+  .slide.has-anim > .slide-inner,
+  .slide:has(.anim-grid--single) > .slide-inner{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"head" "lead" "cols" "anim";
+    align-content:center;
+  }
+  .slide.has-anim-solo > .slide-inner,
+  .slide:has(.anim-grid--single):not(:has(.story-cols)) > .slide-inner{
+    grid-template-areas:"head" "lead" "anim";
+  }
+}
+
+/* ---------- équilibre vertical (QA) ---------- */
+.slide-head{margin-bottom:clamp(1.15rem,3.1vh,2.15rem)}
+.eco-grid,.eco-grid--dense{gap:clamp(.7rem,1.7vw,1.2rem)}
+.cards,.cards--two,.reasons{gap:clamp(.7rem,1.55vw,1.15rem)}
+.tile{padding:clamp(.75rem,1.6vw,1.1rem)}
+.card{padding:clamp(.9rem,1.7vw,1.2rem)}
+
+/* ---------- eye-candy : révélations échelonnées ---------- */
+/* Les cibles sont marquées en JS (--rv). Sans JS, tout reste visible. */
+@media (prefers-reduced-motion:no-preference){
+  .js .slide.is-active .rv{animation:rv-in .5s var(--ease) both;
+    animation-delay:calc(var(--rv,0) * 70ms)}
+  @keyframes rv-in{from{opacity:0;translate:0 14px}to{opacity:1;translate:0 0}}
+
+  /* balayé du dégradé Google (titre, chiffres, punchline) */
+  .grad-text{background-size:220% 100%;animation:hue-sweep 8s linear infinite}
+  @keyframes hue-sweep{from{background-position:0% 0}to{background-position:220% 0}}
+
+  /* hero : la grille respire comme un seul bloc — les alignements sont préservés
+     (une animation par conteneur, pas par tuile, sinon les lignes dérivent) */
+  .hero__logos{animation:grid-breathe 9s ease-in-out infinite alternate}
+  @keyframes grid-breathe{from{translate:0 0}to{translate:0 -8px}}
+
+  /* calendrier : la ligne se dessine de haut en bas */
+  .timeline::before{transform-origin:top;transform:scaleY(0)}
+  .js .slide.is-active .timeline::before{animation:tl-draw .85s var(--ease) .1s both}
+  @keyframes tl-draw{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+  /* monogrammes : éclat au survol */
+  .card:hover .mono{animation:shimmer 1.15s var(--ease)}
+  @keyframes shimmer{0%{filter:brightness(1)}45%{filter:brightness(1.55)}100%{filter:brightness(1)}}
+
+  /* grands chiffres fantômes des transitions */
+  .bignum{animation:ghost 10s ease-in-out infinite alternate}
+  @keyframes ghost{from{translate:0 0;opacity:.16}to{translate:0 -12px;opacity:.1}}
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:1150px){
+  .day__item{flex-basis:calc(33.333% - .6rem)}
+  .promise{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero .slide-inner{grid-template-columns:1fr}
+  .hero__logos{max-width:430px}
+  .cards,.cards--two,.reasons,.duo,.eco-grid,.eco-grid--dense{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split,.concl{grid-template-columns:1fr}
+  .step{grid-template-columns:clamp(4.6rem,16vw,7rem) minmax(0,1fr)}
+  .step p{grid-column:2}
+}
+@media (min-width:721px) and (max-width:1150px){
+  .cards--five > :nth-child(5){grid-column:span 2}
+}
+@media (max-width:720px){
+  .cards,.cards--two,.reasons,.duo,.eco-grid,.eco-grid--dense,.toc,.res-grid,.stats,.promise{grid-template-columns:1fr}
+  .day__item{flex-basis:100%}
+  .stat__num{font-size:2.3rem}
+  .step{grid-template-columns:minmax(0,1fr);gap:.15rem;padding:.5rem 0}
+  .step p{grid-column:auto}
+  .slide{justify-content:flex-start}
+  .hero__logos{display:none}
+}
+
+/* ---------- mouvement réduit ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;scroll-behavior:auto !important}
+  .slide{transform:none !important}
+  .rv{opacity:1 !important;translate:none !important}
+  .timeline::before{transform:none !important}
+}
+
+/* ---------- impression ---------- */
+@page{size:A4 landscape;margin:0}
+@media print{
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  html,body{overflow:visible;height:auto;background:#0a0c16}
+  body::after,.hud,.progress,.overview,.hero__go{display:none !important}
+  .deck{height:auto}
+  .slide{position:static;opacity:1 !important;visibility:visible !important;transform:none !important;
+    animation:none !important;height:auto;min-height:209mm;max-height:none;overflow:visible;
+    page-break-after:always;break-after:page;padding:12mm 14mm}
+  .rv{opacity:1 !important;translate:none !important;transform:none !important}
+  .timeline::before{transform:none !important}
+  .grad-text{background-size:100% 100% !important;background-position:0 0 !important}
+  .card,.tile,.reason,.bigcard,.res,.toc__item,.legend,.step,.stat,.day__item,.promise__item,.animcard,.story-cols{break-inside:avoid}
+  .slide-head{margin-bottom:.55rem}
+  .hero__title{font-size:3.8rem}
+  .hero__sub{font-size:1rem;margin-top:.7rem}
+  .hero__logos{max-width:300px}
+  .hero .slide-inner{gap:1.6rem}
+  .timeline .step{padding:.2rem 0}
+  .step p{font-size:.72rem;line-height:1.4}
+  .principle{font-size:.7rem}
+}
+</style>
+</head>
+<body>
+
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="i-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="bar"></div></div>
+
+<!-- catalogue animé : définitions partagées (dégradés + lueurs) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="anGrad-cyan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#38e0ef"/><stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="anGrad-rose" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f97fb0"/><stop offset="1" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="anGrad-amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffc94d"/><stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="anGrad-green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#47e0a8"/><stop offset="1" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="anGrad-google" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4285f4"/><stop offset=".34" stop-color="#ea4335"/>
+      <stop offset=".66" stop-color="#fbbc04"/><stop offset="1" stop-color="#34a853"/>
+    </linearGradient>
+    <linearGradient id="anGlass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#171d36"/><stop offset="1" stop-color="#0c1020"/>
+    </linearGradient>
+    <radialGradient id="anFocal" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="anGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<main class="deck" id="deck">
+
+  <!-- 01 · TITRE -->
+  <section class="slide hero" tabindex="-1" aria-roledescription="diapositive" aria-label="Titre — Dé-google-iser" data-title="Dé-google-iser" data-group="Ouverture">
+    <span class="hero__blob hero__blob--a" aria-hidden="true"></span>
+    <span class="hero__blob hero__blob--b" aria-hidden="true"></span>
+    <div class="slide-inner">
+      <div>
+        <p class="kicker">Formation · Sensibilisation</p>
+        <h1 class="hero__title">Dé-<span class="grad-text">google</span>-iser</h1>
+        <p class="hero__sub">Reprendre le contrôle de son numérique : comprendre <b>pourquoi</b> se détacher de Google, et comment le faire <b>concrètement</b>, service par service.</p>
+        <div class="hero__meta">
+          <span class="pill">Confidentialité</span><span class="pill">Souveraineté</span>
+          <span class="pill">Libre</span><span class="pill">Auto-hébergement</span>
+        </div>
+        <p class="hero__go"><span class="arrow" aria-hidden="true">→</span> pour commencer</p>
+      </div>
+      <div class="hero__logos" aria-hidden="true">
+        <span class="lt"><img src="downloaded_images/logo-gmail-2026-color-2x-web-64dp.webp" alt=""></span>
+        <span class="lt"><img src="downloaded_images/youtube.png" alt=""></span>
+        <span class="lt"><img src="downloaded_images/logo-maps-2025-color-2x-web-96dp.webp" alt=""></span>
+        <span class="lt"><img src="downloaded_images/logo-drive-2026-color-2x-web-64dp.webp" alt=""></span>
+        <span class="lt"><img src="downloaded_images/chrome.png" alt=""></span>
+        <span class="lt"><img src="downloaded_images/logo-photos-2025-color-2x-web-64dp.webp" alt=""></span>
+        <span class="lt"><img src="downloaded_images/logo-calendar-2026-color-2x-web-64dp.webp" alt=""></span>
+        <span class="lt"><img src="downloaded_images/android.png" alt=""></span>
+        <span class="lt"><img src="downloaded_images/logo-googleg-gradient-color-2x-web-96dp.webp" alt=""></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · UNE JOURNÉE TYPE (HOOK) -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Votre journée déjà sous Google" data-title="Votre journée déjà sous Google" data-group="Ouverture">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">Ouverture · Mise en situation</p>
+        <h2>Votre journée déjà sous Google</h2>
+      </header>
+      <div class="day">
+        <div class="day__item"><span class="day__time">06 h 40</span><span class="day__logo"><img src="downloaded_images/logo-home-app-color-2x-web-64dp.webp" alt=""></span><span class="day__txt"><b>Réveil</b><span>L'enceinte allume la lumière et lit l'agenda.</span></span></div>
+        <div class="day__item"><span class="day__time">07 h 05</span><span class="day__logo"><img src="downloaded_images/android.png" alt=""></span><span class="day__txt"><b>Premier regard</b><span>Le téléphone connaît déjà votre position.</span></span></div>
+        <div class="day__item"><span class="day__time">07 h 40</span><span class="day__logo"><img src="downloaded_images/gboard.png" alt=""></span><span class="day__txt"><b>Premier message</b><span>La saisie prédictive apprend de vos frappes.</span></span></div>
+        <div class="day__item"><span class="day__time">08 h 30</span><span class="day__logo"><img src="downloaded_images/logo-maps-2025-color-2x-web-64dp.webp" alt=""></span><span class="day__txt"><b>Trajet</b><span>Itinéraire et historique de localisation consignés.</span></span></div>
+        <div class="day__item"><span class="day__time">09 h 15</span><span class="day__logo"><img src="downloaded_images/logo-gmail-2026-color-2x-web-64dp.webp" alt=""></span><span class="day__txt"><b>Boîte mail</b><span>Contenu analysé pour filtrer, classer et profiler.</span></span></div>
+        <div class="day__item"><span class="day__time">11 h 00</span><span class="day__logo"><img src="downloaded_images/logo-meet-2026-color-2x-web-64dp.webp" alt=""></span><span class="day__txt"><b>Réunion</b><span>La visio peut être transcrite automatiquement.</span></span></div>
+        <div class="day__item"><span class="day__time">13 h 10</span><span class="day__logo"><img src="downloaded_images/youtube.png" alt=""></span><span class="day__txt"><b>Pause vidéo</b><span>Un algorithme décide de ce que vous verrez ensuite.</span></span></div>
+        <div class="day__item"><span class="day__time">22 h 20</span><span class="day__logo"><img src="downloaded_images/logo-googleg-gradient-color-2x-web-96dp.webp" alt=""></span><span class="day__txt"><b>Recherche du soir</b><span>Une question intime, enregistrée puis monétisée.</span></span></div>
+      </div>
+      <p class="day__punch"><span class="soft">À 22 h 20, vous n'avez rien installé de particulier.</span><span class="grad-text">Vous êtes installé.</span></p>
+    </div>
+  </section>
+
+  <!-- 03 · GOOGLE EN CHIFFRES -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Google en chiffres" data-title="Google en chiffres" data-group="Ouverture">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">Ouverture · L'échelle du phénomène</p>
+        <h2>Google en chiffres</h2>
+      </header>
+      <div class="stats">
+        <article class="stat"><span class="stat__approx">environ</span><span class="stat__num grad-text" data-count="90" data-suffix=" %">90 %</span><p class="stat__lbl">de parts de marché sur la recherche d'information en ligne.</p></article>
+        <article class="stat"><span class="stat__approx">environ</span><span class="stat__num grad-text" data-count="8.5" data-dec="1" data-suffix=" Md">8,5 Md</span><p class="stat__lbl">de recherches traitées chaque jour dans le monde.</p></article>
+        <article class="stat"><span class="stat__approx">environ</span><span class="stat__num grad-text" data-count="1.8" data-dec="1" data-suffix=" Md">1,8 Md</span><p class="stat__lbl">d'utilisateurs consultent Gmail chaque mois.</p></article>
+        <article class="stat"><span class="stat__approx">plus de</span><span class="stat__num grad-text" data-count="3" data-suffix=" Md">3 Md</span><p class="stat__lbl">d'appareils Android actifs dans le monde.</p></article>
+        <article class="stat"><span class="stat__approx">plus de</span><span class="stat__num grad-text" data-count="2.5" data-dec="1" data-suffix=" Md">2,5 Md</span><p class="stat__lbl">d'utilisateurs mensuels sur YouTube.</p></article>
+        <article class="stat"><span class="stat__approx">environ</span><span class="stat__num grad-text" data-count="2000" data-suffix=" Md$">2 000 Md$</span><p class="stat__lbl">de capitalisation pour Alphabet, la maison mère.</p></article>
+      </div>
+      <div class="callout callout--blue">
+        <span class="lead">Ce que ces chiffres racontent</span>
+        Une telle échelle ne vient pas de la qualité seule : elle vient de <b>la position de passage obligé</b> que Google occupe entre vous et l'information.
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · CE QUE VOUS ALLEZ APPRENDRE -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Ce que vous allez apprendre" data-title="Ce que vous allez apprendre" data-group="Ouverture">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">Ouverture · Notre promesse</p>
+        <h2>Ce que vous allez apprendre</h2>
+      </header>
+      <div class="promise">
+        <div class="promise__item"><span class="promise__n">1</span><h3>Comprendre pourquoi</h3><p>Le modèle économique derrière la gratuité, et ce qu'il vous coûte vraiment.</p></div>
+        <div class="promise__item"><span class="promise__n">2</span><h3>Choisir des alternatives</h3><p>Pour chaque service, une option libre ou fiable — avec ses forces et ses limites.</p></div>
+        <div class="promise__item"><span class="promise__n">3</span><h3>Migrer sans rien casser</h3><p>Un calendrier progressif : sauvegarder, installer, basculer, nettoyer.</p></div>
+        <div class="promise__item"><span class="promise__n">4</span><h3>Tenir dans la durée</h3><p>Faire de la souveraineté numérique une habitude, pas un coup d'éclat.</p></div>
+      </div>
+      <div class="callout">
+        <span class="lead">Notre parti pris</span>
+        Pas de prosélytisme : <b>on informe, on ne juge pas</b>. Chaque choix dépend de votre contexte, de votre temps et de votre tolérance à la technique.
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · SOMMAIRE -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Sommaire" data-title="Sommaire" data-group="Ouverture">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">Sommaire</p>
+        <h2>Le parcours en six étapes</h2>
+      </header>
+      <div class="toc">
+        <div class="toc__item"><span class="toc__num">01</span><div><h3>Introduction</h3><p>Qu'est-ce que Google ? Un écosystème vertical, brique par brique.</p></div></div>
+        <div class="toc__item"><span class="toc__num">02</span><div><h3>Pourquoi quitter Google&nbsp;?</h3><p>Modèle publicitaire, lock-in, CLOUD Act, résilience, monopole.</p></div></div>
+        <div class="toc__item"><span class="toc__num">03</span><div><h3>Les alternatives</h3><p>20 catégories, avantages et limites, service par service.</p></div></div>
+        <div class="toc__item"><span class="toc__num">04</span><div><h3>Autres services non-Google</h3><p>Netflix, iOS, Microsoft — la logique s'élargit.</p></div></div>
+        <div class="toc__item"><span class="toc__num">05</span><div><h3>Calendrier de migration</h3><p>8 semaines + l'entretien : sauvegarder, installer, basculer, nettoyer.</p></div></div>
+        <div class="toc__item"><span class="toc__num">06</span><div><h3>Conclusion &amp; ressources</h3><p>Les idées clés, la prochaine étape, où continuer.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · QU'EST-CE QUE GOOGLE -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Qu'est-ce que Google" data-title="Qu'est-ce que Google ?" data-group="Introduction">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">01 · Introduction</p>
+        <h2>Qu'est-ce que Google&nbsp;?</h2>
+      </header>
+      <p class="eco-lead">Google n'est plus un moteur de recherche : c'est un <b>écosystème vertical</b> qui touche le matériel, le système d'exploitation, l'identité, la communication, les médias et l'intelligence artificielle. <span class="libre-text">Chaque brique génère des données qui nourrissent les autres.</span></p>
+      <div class="domain-chips">
+        <span class="pill">Matériel</span><span class="pill">Système d'exploitation</span>
+        <span class="pill">Identité</span><span class="pill">Communication</span>
+        <span class="pill">Médias</span><span class="pill">Intelligence artificielle</span>
+      </div>
+      <div class="callout callout--blue">
+        <span class="lead">Le point clé</span>
+        Plus on empile de services Google, plus le coût de sortie est élevé (verrouillage / <i>lock-in</i>) et plus le profil constitué est précis.
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · CONSTELLATION 1/2 -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="L'écosystême Google (1/2)" data-title="L'écosystême Google (1/2)" data-group="Introduction">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">01 · Introduction</p>
+        <h2>L'écosystême Google (1/2)</h2>
+      </header>
+      <div class="eco-grid">
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/tv.png" alt=""></span><figcaption><h3>Matériel</h3><p>Nest · Google TV Streamer · Pixel · Pixel Buds · Pixel Tablet · Pixel Watch</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/android.png" alt=""></span><figcaption><h3>Plateformes</h3><p>Android · Android Auto · Android TV · Voitures avec Google intégré · Chromebook / ChromeOS · Google TV · Wear OS</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/gemini-update.png" alt=""></span><figcaption><h3>Intelligence</h3><p>Gemini · NotebookLM · Google Assistant · Lens</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/logo-drive-2026-color-2x-web-64dp.webp" alt=""></span><figcaption><h3>Productivité</h3><p>Calendar · Docs · Drive · Forms · Keep · Sheets · Sites · Slides · Tasks · Workspace</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/logo-gmail-2026-color-2x-web-64dp.webp" alt=""></span><figcaption><h3>Communication</h3><p>Contacts · Gmail · Chat · Fi Wireless · Meet · Messages · Voice</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/logo-maps-2025-color-2x-web-96dp.webp" alt=""></span><figcaption><h3>Navigation</h3><p>Earth · Maps · Street View · Waze</p></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · CONSTELLATION 2/2 -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="L'écosystême Google (2/2)" data-title="L'écosystême Google (2/2)" data-group="Introduction">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">01 · Introduction</p>
+        <h2>L'écosystême Google (2/2)</h2>
+      </header>
+      <div class="eco-grid eco-grid--dense">
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/youtube.png" alt=""></span><figcaption><h3>Divertissement</h3><p>Cast · Photos · Play Store · Play Books · Play Games · Play Pass · YouTube · YouTube Kids · YouTube Music · YouTube TV</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/logo-googleg-gradient-color-2x-web-96dp.webp" alt=""></span><figcaption><h3>Information</h3><p>Chrome · Flights · News · Trends · Search · Shopping · Travel</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/logo-wallet-color-2x-web-64dp.webp" alt=""></span><figcaption><h3>Finance</h3><p>Finance · Pay · Wallet</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/authenticator.png" alt=""></span><figcaption><h3>Sécurité</h3><p>Find Hub · Authenticator · Family Link · Play Protect</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/fitbit.png" alt=""></span><figcaption><h3>Santé</h3><p>Fitbit · Fit</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/classroom.png" alt=""></span><figcaption><h3>Éducation</h3><p>Arts &amp; Culture · Classroom · Scholar</p></figcaption></figure>
+        <figure class="tile"><span class="tile__logo"><img src="downloaded_images/gboard.png" alt=""></span><figcaption><h3>Utilitaires</h3><p>Digital Wellbeing · Files · Gboard · Fonts · Home · One · Translate</p></figcaption></figure>
+        <figure class="tile" style="border-style:dashed;align-items:center"><figcaption><h3 style="color:var(--ink-soft)">Cloud · Ads · Firebase · Flutter · TensorFlow · Blogger…</h3><p>La face « entreprise » du même écosystème.</p></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · POURQUOI QUITTER GOOGLE -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Pourquoi quitter Google" data-title="Pourquoi quitter Google ?" data-group="Pourquoi partir">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">02 · Pourquoi partir</p>
+        <h2>Pourquoi quitter Google&nbsp;?</h2>
+      </header>
+      <div class="reasons">
+        <article class="reason"><span class="reason__num">01</span><h3>Confidentialité — le modèle économique</h3><p>« Si c'est gratuit, c'est toi le produit. » L'essentiel des revenus vient de la <b>publicité ciblée</b> : <b>collecte et recoupement</b> de données — recherche, localisation, vidéos, e-mails scannés, achats, agenda, voice.</p></article>
+        <article class="reason"><span class="reason__num">02</span><h3>Vie privée par design</h3><p>Le profil ne se limite pas à ce que vous partagez : historiques de localisation persistants, profils « fantômes » de non-utilisateurs, recoupements entre Gmail, Maps, YouTube et Chrome.</p></article>
+        <article class="reason"><span class="reason__num">03</span><h3>Verrouillage (<i>lock-in</i>)</h3><p>Formats propriétaires, stockage captif, dépendance aux GApps, intégration profonde Android : partir devient de plus en plus cher en temps et en données.</p></article>
+        <article class="reason"><span class="reason__num">04</span><h3>Souveraineté &amp; juridiction</h3><p>Les données dorment sur des serveurs soumis au droit américain (<b>CLOUD Act</b>) : une autorité US peut y accéder, quel que soit votre pays.</p></article>
+        <article class="reason"><span class="reason__num">05</span><h3>Résilience</h3><p>Un compte suspendu (à tort ou à raison) = e-mails, photos, achats, sauvegardes potentiellement inaccessibles du jour au lendemain. Vous êtes <b>locataire</b>, pas propriétaire.</p></article>
+        <article class="reason"><span class="reason__num">06</span><h3>Effet de monopole</h3><p>Moteur de recherche + navigateur + OS + publicité = biais structurels sur ce qu'on trouve, ce qu'on voit et ce qu'on recommande.</p></article>
+      </div>
+      <div class="callout">
+        <span class="lead">À retenir</span>
+        Quitter Google, ce n'est pas forcément tout supprimer d'un coup : c'est <b>reprendre la main</b>, brique par brique, avec des alternatives matures.
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       RÉCITS ANIMÉS · 24 satires en boucle (SVG + CSS),
+       une animation par slide : chaque animation illustre
+       l'événement raconté par sa slide. Zéro JS.
+       ================================================== -->
+
+
+<style>
+  .a01-beam,.a01-line,.a02-jaw-up,.a02-jaw-down,.a02-gauge,.a02-crumbs,.a02-pulse,.a03-laser,.a03-shield,.a03-spark,.a04-bubble,.a04-ad,.a04-arrow,.a05-tile,.a05-cd,.a06-line,.a06-rev,.a07-pack,.a07-belt,.a08-p1,.a08-p2,.a08-p3,.a09-cyan,.a09-pink,.a09-shake,.a09-lab,.a10-f,.a10-t,.a11-pkt,.a11-ring,.a11-ring2,.a11-log,.a12-plate,.a12-drop,.a12-bulk,.a13-net,.a13-dot,.a14-dom,.a17-copilot,.a17-flash,.a17-cap,.a18-stamp,.a18-fox,.a20-dome,.a20-cloud,.a20-rain,.a21-car,.a21-ad,.a22-blade,.a22-cord,.a23-beam,.a23-ghost,.a23-done,.a24-apk,.a25-mallet,.a25-app,.a27-rocket,.a28-arm,.a28-claw,.a29-tape,.a29-gear,.a29-conf{transform-box:fill-box;transform-origin:center}
+  .a02-jaw-up{transform-origin:50% 100%}
+  .a02-jaw-down{transform-origin:50% 0%}
+  .a02-gauge{transform-origin:50% 100%}
+  .a03-laser{transform-origin:100% 50%}
+  .a03-shield{transform-origin:50% 50%}
+  .a09-cyan,.a09-pink{transform-origin:0% 50%}
+  .a20-dome{transform-origin:50% 100%}
+  .a22-cord{transform-origin:100% 50%}
+  .a29-gear{transform-origin:50% 50%}
+  @media (prefers-reduced-motion:no-preference){
+    .a01-beam{animation:a01-sweep 6s cubic-bezier(.36,1.2,.5,1) infinite}
+    .a01-halo{animation:a01-halo 6s ease-in-out infinite}
+    .a02-jaw-up{animation:a02-chomp-up 1.4s cubic-bezier(.36,1.4,.5,1) infinite}
+    .a02-jaw-down{animation:a02-chomp-down 1.4s cubic-bezier(.36,1.4,.5,1) infinite}
+    .a02-gauge{animation:a02-drain 6s cubic-bezier(.4,0,.2,1) infinite}
+    .a02-crumbs{animation:a02-eat 1.4s cubic-bezier(.4,0,.2,1) infinite}
+    .a02-crumb-b{animation-delay:.5s}
+    .a02-pulse{animation:a02-pulse 6s ease-in-out infinite}
+    .a03-laser{animation:a03-fire 2.4s ease-in-out infinite}
+    .a03-shield{animation:a03-deflect 2.4s cubic-bezier(.36,1.4,.5,1) infinite}
+    .a03-spark{animation:a03-hit 2.4s ease-in-out infinite}
+    .a04-bubble{animation:a04-think 7s ease-in-out infinite}
+    .a04-ad{animation:a04-drop 7s cubic-bezier(.34,1.56,.54,1) infinite}
+    .a04-arrow{stroke-dasharray:6 6;animation:a04-flow 1s linear infinite}
+    .a05-tile{animation:a05-fade 6s linear infinite}
+    .a05-t2{animation-delay:2s}
+    .a05-t3{animation-delay:4s}
+    .a05-cd{animation:a05-cd 6s steps(1) infinite}
+    .a05-cd2{animation:a05-cd2 6s steps(1) infinite}
+    .a06-line{stroke-dasharray:360;stroke-dashoffset:360;animation:a06-strike 6s cubic-bezier(.22,.61,.21,1) infinite}
+    .a06-rev{animation:a06-reveal 6s ease-in-out infinite}
+    .a07-pack{animation:a07-run 6s ease-in-out infinite}
+    .a07-belt{stroke-dasharray:10 8;animation:a07-belt 1s linear infinite}
+    .a08-p1{animation:a08-pulse 6s ease-in-out infinite}
+    .a08-p2{animation:a08-pulse 6s ease-in-out 2s infinite}
+    .a08-p3{animation:a08-pulse 6s ease-in-out 4s infinite}
+    .a09-cyan{animation:a09-fill 6s cubic-bezier(.4,0,.2,1) infinite}
+    .a09-pink{animation:a09-crit 6s cubic-bezier(.4,0,.2,1) infinite}
+    .a09-shake{animation:a09-shake 6s ease-in-out infinite}
+    .a09-lab{animation:a09-labb 6s ease-in-out infinite}
+    .a10-f{opacity:0}
+    .a10-t{opacity:0}
+    .a10-f1{animation:a10-cycle 8s steps(1) infinite}
+    .a10-f2{animation:a10-cycle 8s steps(1) 2s infinite}
+    .a10-f3{animation:a10-cycle 8s steps(1) 4s infinite}
+    .a10-f4{animation:a10-cycle 8s steps(1) 6s infinite}
+    .a10-t1{animation:a10-cycle 8s steps(1) .4s infinite}
+    .a10-t2{animation:a10-cycle 8s steps(1) 2.4s infinite}
+    .a10-t3{animation:a10-cycle 8s steps(1) 4.4s infinite}
+    .a10-t4{animation:a10-cycle 8s steps(1) 6.4s infinite}
+    .a11-pkt{animation:a11-fly 4s cubic-bezier(.4,0,.2,1) infinite}
+    .a11-ring{animation:a11-ping 4s ease-in-out infinite}
+    .a11-ring2{animation:a11-ping 4s ease-in-out 1s infinite}
+    .a11-log{animation:a11-flash 4s ease-in-out infinite}
+    .a12-plate{animation:a12-press 4s cubic-bezier(.4,0,.2,1) infinite}
+    .a12-drop{animation:a12-drip 4s cubic-bezier(.5,0,.8,1) infinite}
+    .a12-drop-b{animation-delay:1.2s}
+    .a12-drop-c{animation-delay:2.4s}
+    .a12-bulk{animation:a12-bulk 4s ease-in-out infinite}
+    .a13-net{animation:a13-sweep 6s ease-in-out infinite}
+    .a13-dot{animation:a13-jiggle 1.6s ease-in-out infinite}
+    .a13-dot-b{animation-delay:.4s}
+    .a13-dot-c{animation-delay:.8s}
+    .a14-dom{transform-origin:50% 100%}
+    .a14-d1{animation:a14-fall 6s cubic-bezier(.4,0,.2,1) infinite}
+    .a14-d2{animation:a14-fall 6s cubic-bezier(.4,0,.2,1) .3s infinite}
+    .a14-d3{animation:a14-fall 6s cubic-bezier(.4,0,.2,1) .6s infinite}
+    .a14-d4{animation:a14-fall 6s cubic-bezier(.4,0,.2,1) .9s infinite}
+    .a17-copilot{animation:a17-peek 6s cubic-bezier(.36,1.2,.5,1) infinite}
+    .a17-flash,.a17-cap{animation:a17-flash 6s linear infinite}
+    .a18-stamp{animation:a18-slam 5s cubic-bezier(.4,0,.2,1) infinite}
+    .a18-fox{animation:a18-breathe 5s ease-in-out infinite}
+    .a20-dome{animation:a20-dome 5s ease-in-out infinite}
+    .a20-cloud{animation:a20-drift 5s ease-in-out infinite}
+    .a20-rain{animation:a20-rain 5s ease-in infinite}
+    .a20-mist{animation:a20-mist 5s ease-out infinite}
+    .a21-car{animation:a21-run 5s linear infinite}
+    .a21-ad{animation:a21-pulse 5s ease-in-out infinite}
+    .a22-blade{animation:a22-slice 5s cubic-bezier(.4,0,.2,1) infinite}
+    .a22-cord{animation:a22-sever 5s ease-in-out infinite}
+    .a23-beam{animation:a23-scan 5s ease-in-out infinite}
+    .a23-ghost{animation:a23-exorcise 5s cubic-bezier(.4,0,.2,1) infinite}
+    .a23-done{animation:a23-done 5s ease-out infinite}
+    .a24-apk{animation:a24-hop 5s cubic-bezier(.4,0,.2,1) infinite}
+    .a25-mallet{animation:a25-swing 5s cubic-bezier(.36,1.3,.5,1) infinite}
+    .a25-app{animation:a25-pop 5s cubic-bezier(.34,1.56,.54,1) infinite}
+    .a27-rocket{animation:a27-launch 6s ease-in infinite}
+    .a28-arm{animation:a28-work 5s ease-in-out infinite}
+    .a28-claw{animation:a28-grab 5s cubic-bezier(.36,1.4,.5,1) infinite}
+    .a29-tape{animation:a29-feed 6s linear infinite}
+    .a29-gear{animation:a29-spin 4s linear infinite}
+    .a29-gear-b{animation:a29-spin 4s linear reverse infinite}
+    .a29-conf{animation:a29-burst 6s ease-out infinite}
+  }
+  @keyframes a01-sweep{0%,100%{transform:translateX(-132px)}50%{transform:translateX(132px)}}
+  @keyframes a01-halo{0%,42%{opacity:.25}50%{opacity:1}58%,100%{opacity:.25}}
+  @keyframes a02-chomp-up{0%,60%{transform:rotate(16deg)}74%,86%{transform:rotate(0)}100%{transform:rotate(16deg)}}
+  @keyframes a02-chomp-down{0%,60%{transform:rotate(-18deg)}74%,86%{transform:rotate(0)}100%{transform:rotate(-18deg)}}
+  @keyframes a02-drain{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.14)}}
+  @keyframes a02-eat{0%{transform:translateX(0);opacity:1}72%{transform:translateX(116px);opacity:1}90%{transform:translateX(138px);opacity:0}100%{transform:translateX(0);opacity:0}}
+  @keyframes a02-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+  @keyframes a03-fire{0%,100%{opacity:1}34%{opacity:.3}60%{opacity:.95}}
+  @keyframes a03-deflect{0%,46%{transform:rotate(0) scale(1)}52%{transform:rotate(-5deg) scale(1.06)}60%,100%{transform:rotate(0) scale(1)}}
+  @keyframes a03-hit{0%,100%{transform:scale(.4);opacity:.3}50%{transform:scale(1.25);opacity:1}}
+  @keyframes a04-think{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes a04-drop{0%{transform:translateY(-150px);opacity:0}6%{opacity:1}16%,86%{transform:translateY(0);opacity:1}96%,100%{transform:translateY(-150px);opacity:0}}
+  @keyframes a04-flow{to{stroke-dashoffset:-24}}
+  @keyframes a05-fade{0%{opacity:1}33%{opacity:.1}66%{opacity:.1}100%{opacity:1}}
+  @keyframes a05-cd{0%,25%{opacity:1}26%,100%{opacity:0}}
+  @keyframes a05-cd2{0%,25%{opacity:0}26%,100%{opacity:1}}
+  @keyframes a06-strike{0%{stroke-dashoffset:360}40%,100%{stroke-dashoffset:0}}
+  @keyframes a06-reveal{0%,48%{opacity:0;transform:translateY(6px)}60%,90%{opacity:1;transform:none}100%{opacity:0}}
+  @keyframes a07-run{0%{transform:translateX(0);opacity:0}8%{opacity:1}42%,58%{transform:translateX(206px);opacity:1}70%{transform:translateX(206px);opacity:0}71%,100%{transform:translateX(0);opacity:0}}
+  @keyframes a07-belt{to{stroke-dashoffset:-34}}
+  @keyframes a08-pulse{0%,100%{opacity:.35;transform:translateX(0)}20%,80%{opacity:1;transform:translateX(4px)}}
+  @keyframes a09-fill{0%{transform:scaleX(.05)}52%{transform:scaleX(.96)}100%{transform:scaleX(.05)}}
+  @keyframes a09-crit{0%,44%{transform:scaleX(0)}52%,100%{transform:scaleX(1)}}
+  @keyframes a09-shake{0%,44%,100%{transform:translateX(0)}47%,50%{transform:translateX(-3px)}53%,56%{transform:translateX(3px)}}
+  @keyframes a09-labb{0%,44%{opacity:0}52%,100%{opacity:1}}
+  @keyframes a10-cycle{0%,22%{opacity:1}25%,100%{opacity:0}}
+  @keyframes a11-fly{0%{transform:translate(0,0);opacity:0}10%{opacity:1}45%{transform:translate(130px,-26px)}82%{transform:translate(226px,64px);opacity:1}92%,100%{transform:translate(226px,64px);opacity:0}}
+  @keyframes a11-ping{0%{transform:scale(.6);opacity:.05}50%{transform:scale(1);opacity:.9}100%{transform:scale(1.4);opacity:0}}
+  @keyframes a11-flash{0%,70%{opacity:.25}82%,92%{opacity:1}100%{opacity:.25}}
+  @keyframes a12-press{0%,100%{transform:translateY(0)}50%{transform:translateY(70px)}}
+  @keyframes a12-drip{0%{transform:translateY(0);opacity:0}12%{opacity:1}80%{transform:translateY(44px);opacity:1}100%{transform:translateY(60px);opacity:0}}
+  @keyframes a12-bulk{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  @keyframes a13-sweep{0%,100%{transform:translateX(-120px)}50%{transform:translateX(120px)}}
+  @keyframes a13-jiggle{0%,100%{transform:translate(0,0)}30%{transform:translate(2px,-3px)}65%{transform:translate(-2px,2px)}}
+  @keyframes a14-fall{0%,6%{transform:rotate(0)}18%,82%{transform:rotate(78deg)}92%,100%{transform:rotate(0)}}
+  @keyframes a17-peek{0%,100%{transform:translateY(20px)}50%{transform:translateY(-26px)}}
+  @keyframes a17-flash{0%,12%,26%,100%{opacity:0}17%,22%{opacity:.95}}
+  @keyframes a18-slam{0%,20%{transform:translate(0,0)}30%,38%{transform:translate(0,56px)}52%,56%{transform:translate(108px,0)}66%,74%{transform:translate(108px,56px)}86%{transform:translate(108px,0)}96%,100%{transform:translate(0,0)}}
+  @keyframes a18-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  @keyframes a20-dome{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.05);opacity:1}}
+  @keyframes a20-drift{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+  @keyframes a20-rain{0%{transform:translate(0,0);opacity:0}10%{opacity:1}55%{transform:translate(-16px,5px);opacity:1}65%,100%{transform:translate(-22px,7px);opacity:0}}
+  @keyframes a20-mist{0%,50%{opacity:0}60%{opacity:.9}80%,100%{opacity:0}}
+  @keyframes a21-run{0%{transform:translateX(0)}100%{transform:translateX(440px)}}
+  @keyframes a21-pulse{0%,100%{transform:scale(1);opacity:.82}50%{transform:scale(1.1);opacity:1}}
+  @keyframes a22-slice{0%,38%{transform:translateY(0)}52%{transform:translateY(120px)}60%{transform:translateY(0)}100%{transform:translateY(0)}}
+  @keyframes a22-sever{0%,42%{transform:rotate(0);opacity:1}74%,100%{transform:rotate(34deg);opacity:0}}
+  @keyframes a23-scan{0%,100%{transform:translateY(-84px)}50%{transform:translateY(84px)}}
+  @keyframes a23-exorcise{0%,16%{transform:translate(0,0) scale(1);opacity:.9}30%,92%{transform:translate(0,-14px) scale(.5);opacity:0}100%{transform:translate(0,0) scale(1);opacity:.9}}
+  @keyframes a23-done{0%,26%{opacity:0}36%,90%{opacity:1}100%{opacity:0}}
+  @keyframes a24-hop{0%,32%{transform:translate(0,0);opacity:0}40%{transform:translate(0,0);opacity:1}54%{transform:translate(40px,-110px)}68%{transform:translate(122px,0);opacity:1}76%{transform:translate(122px,0);opacity:0}77%,100%{transform:translate(0,0);opacity:0}}
+  @keyframes a25-swing{0%,50%{transform:rotate(20deg)}62%{transform:rotate(-16deg)}74%{transform:rotate(8deg)}86%,100%{transform:rotate(0)}}
+  @keyframes a25-pop{0%,52%{transform:translateY(0)}64%{transform:translateY(-46px)}82%{transform:translateY(-46px)}94%,100%{transform:translateY(0)}}
+  @keyframes a27-launch{0%{transform:translate(0,0) rotate(0)}66%{transform:translate(120px,-320px) rotate(20deg)}80%{transform:translate(130px,-346px) rotate(20deg);opacity:0}82%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(0,0) rotate(0);opacity:1}}
+  @keyframes a28-work{0%,100%{transform:translate(0,0)}24%{transform:translate(-150px,10px)}50%{transform:translate(-150px,-14px)}74%{transform:translate(0,-6px)}}
+  @keyframes a28-grab{0%,20%,70%,100%{transform:rotate(0)}35%,55%{transform:rotate(13deg)}}
+  @keyframes a29-feed{0%{transform:translateY(-150px)}100%{transform:translateY(0)}}
+  @keyframes a29-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+  @keyframes a29-burst{0%{transform:translate(0,0) scale(.3);opacity:1}100%{transform:translate(0,-66px) scale(1);opacity:0}}
+</style>
+
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Navigation privée : ce que le mode invisible ne fait pas" data-title="Navigation privée : ce que le mode invisible ne fait pas" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — le mythe</p>
+      <h2>Navigation privée : ce que le mode invisible ne fait pas</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> le mode incognito de Chrome ne cache que l'historique <b>local</b>.
+      IP, empreinte du navigateur, cookies tiers et surtout <b>compte Google connecté</b> restent visibles :
+      le laser du scan révèle le profil derrière le masque.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Incognito ≠ anonymat.
+      Contre le traçage : <b>Firefox + uBlock Origin</b>, conteneurs étanches, compte déconnecté.</p>
+      <p><span class="evt">Le réflexe</span>Auditer qui vous suit vraiment : déconnexion du compte, conteneurs Firefox,
+      bloqueur strict. L'incognito ne protège que de vos proches, pas du réseau.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#01</span><h3>Le rayon X incognito</h3><span class="animcard__tag">Vie privée</span></div>
+        <div class="anim-stage" role="img" aria-label="Un laser cyan balaie une silhouette incognito et révèle un profil connecté et traqué">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <rect x="86" y="150" width="100" height="138" rx="28" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <circle cx="136" cy="118" r="32" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <rect x="114" y="110" width="20" height="13" rx="4" fill="none" stroke="var(--an-line)" stroke-width="2"/>
+              <rect x="138" y="110" width="20" height="13" rx="4" fill="none" stroke="var(--an-line)" stroke-width="2"/>
+              <line x1="134" y1="116" x2="138" y2="116" stroke="var(--an-line)" stroke-width="2"/>
+              <text x="136" y="306" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:600;fill:var(--an-mute)">Mode incognito</text>
+            </g>
+            <g class="a01-halo"><circle cx="136" cy="172" r="120" fill="none" stroke="var(--an-cyan)" stroke-width="2" opacity=".5"/></g>
+            <g class="a01-beam"><rect x="244" y="70" width="12" height="220" rx="6" fill="url(#anGrad-cyan)" filter="url(#anGlow)"/><rect x="247" y="70" width="5" height="220" rx="2" fill="#ecfeff"/></g>
+            <g>
+              <rect x="352" y="102" width="156" height="172" rx="14" fill="url(#anGlass)" stroke="url(#anGrad-rose)" stroke-width="2"/>
+              <path d="M352,116 a14,14 0 0 1 14,-14 h128 a14,14 0 0 1 14,14 v20 h-156 z" fill="var(--an-rose)" opacity=".14"/>
+              <text x="430" y="122" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-rose)">PROFIL CONNECTÉ</text>
+              <g style="font-family:var(--font-mono);font-size:11px">
+                <text class="a01-l a01-l1" x="366" y="162" style="fill:var(--an-amber)">IP : 192.168.1.42</text>
+                <text class="a01-l a01-l2" x="366" y="186" style="fill:var(--an-cyan)">ID : Chrome-84a</text>
+                <text class="a01-l a01-l3" x="366" y="210" style="fill:var(--an-green)">Audio : capté</text>
+                <text class="a01-l a01-l4" x="366" y="234" style="font-weight:700;fill:var(--an-rose)">Statut : traqué</text>
+              </g>
+              <circle class="a01-ping" cx="490" cy="120" r="4" style="fill:var(--an-rose)"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Le laser révèle l'identité réelle derrière l'incognito — IP, fingerprint, compte connecté.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Pourquoi Google Chrome consomme autant de mémoire ?" data-title="Pourquoi Google Chrome consomme autant de mémoire ?" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — le coût matériel</p>
+      <h2>Pourquoi Google Chrome consomme autant de mémoire ?</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> Chrome empile <b>un processus par onglet</b> et garde tout en mémoire :
+      la barrette de 32&nbsp;Go se vide comme sous les coups d'un Pac-Man aux couleurs de Google.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Autant d'onglets, autant de RAM dévorée —
+      autonomie et ventilateur en prennent un coup.</p>
+      <p><span class="evt">Alternative sobre</span><b>Firefox / LibreWolf</b>, moteur Gecko indépendant,
+      consommation mieux maîtrisée et bloqueur qui allège les pages.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#02</span><h3>Le Pac-Man à RAM de Chrome</h3><span class="animcard__tag">Matériel</span></div>
+        <div class="anim-stage" role="img" aria-label="Un logo Chrome en Pac-Man dévore la mémoire d'une barrette DDR5">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <rect x="82" y="96" width="104" height="180" rx="10" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2.5"/>
+              <rect x="96" y="138" width="76" height="120" rx="6" fill="url(#anGrad-amber)" opacity=".85" filter="url(#anGlow)"/>
+              <rect class="a02-gauge" x="96" y="258" width="76" height="0" rx="6" fill="var(--an-rose)"/>
+              <text x="134" y="122" text-anchor="middle" style="font-family:var(--font-mono);font-size:14px;font-weight:700;fill:var(--ink)">32 GB</text>
+              <text x="134" y="296" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-mute)">DDR5</text>
+            </g>
+            <g class="a02-crumbs"><circle cx="218" cy="176" r="5" fill="var(--an-amber)"/></g>
+            <g class="a02-crumbs a02-crumb-b"><circle cx="218" cy="206" r="4" fill="var(--an-amber)"/></g>
+            <g class="a02-pulse"><circle cx="134" cy="180" r="96" fill="none" stroke="var(--an-amber)" stroke-width="1.5" opacity=".25"/></g>
+            <g transform="translate(404 188)">
+              <g class="a02-jaw-up"><path d="M0,0 L-62,0 A62,62 0 0 1 60,0 Z" fill="var(--g-red)" stroke="var(--an-card)" stroke-width="1.5" filter="url(#anGlow)"/></g>
+              <g class="a02-jaw-down">
+                <path d="M0,0 L-62,0 A62,62 0 0 0 60,0 Z" fill="var(--g-green)" stroke="var(--an-card)" stroke-width="1.5"/>
+                <path d="M0,0 L0,60 A62,62 0 0 0 60,0 Z" fill="var(--g-yellow)" stroke="var(--an-card)" stroke-width="1.5"/>
+              </g>
+              <circle cx="0" cy="0" r="24" fill="#ffffff"/>
+              <circle cx="0" cy="0" r="15" fill="var(--g-blue)"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Les onglets Chrome dévorent les barrettes de mémoire — un processus par onglet.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Manifest V3 : ce que change la nouvelle extension API" data-title="Manifest V3 : ce que change la nouvelle extension API" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>Manifest V3 : ce que change la nouvelle extension API</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> en 2023-2024, Google impose <b>Manifest V3</b> dans Chrome :
+      les bloqueurs comme uBlock Origin sont amputés « au nom de la sécurité ». Le bouclier dévie encore le laser,
+      mais la tourelle MV3 tire en continu.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Qui contrôle le navigateur
+      contrôle la pub. Réponse : <b>Firefox + uBlock Origin complet</b>, hors monopole Chromium.</p>
+      <p><span class="evt">Le réflexe</span>Garder un navigateur où le blocage reste entier —
+      Firefox, listes à jour, pas de Chromium bridé.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#03</span><h3>La guerre du bouclier Manifest V3</h3><span class="animcard__tag">Extensions</span></div>
+        <div class="anim-stage" role="img" aria-label="Un bouclier uBlock dévie le laser d'une tourelle Manifest V3">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <text x="280" y="74" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-amber)">PUBS YOUTUBE DÉVIÉES</text>
+            <g transform="translate(170 190)">
+              <path class="a03-shield" d="M0,-84 L66,-54 L66,20 Q66,70 0,96 Q-66,70 -66,20 L-66,-54 Z" fill="url(#anGrad-green)" fill-opacity=".16" stroke="url(#anGrad-green)" stroke-width="3" filter="url(#anGlow)"/>
+              <text x="0" y="10" text-anchor="middle" style="font-family:var(--font-mono);font-size:18px;font-weight:700;fill:var(--an-green)">uBlock</text>
+              <text x="0" y="32" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-ink)">ACTIF</text>
+            </g>
+            <g class="a03-laser"><line x1="470" y1="190" x2="250" y2="190" stroke="var(--an-rose)" stroke-width="3.5" filter="url(#anGlow)"/><polygon points="250,190 266,181 266,199" fill="var(--an-rose)"/></g>
+            <g class="a03-spark"><circle cx="244" cy="190" r="14" fill="none" stroke="var(--an-amber)" stroke-width="2.5"/><circle cx="244" cy="190" r="4" fill="var(--an-amber)"/></g>
+            <rect x="404" y="146" width="108" height="88" rx="10" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+            <text x="458" y="186" text-anchor="middle" style="font-family:var(--font-mono);font-size:16px;font-weight:700;fill:var(--an-rose)">MV3</text>
+            <text x="458" y="208" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">TOURELLE</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">« Mise à jour de sécurité » = Manifest V3 contre uBlock Origin (2023-2024).</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="La publicité ciblée : comment vos données sont utilisées" data-title="La publicité ciblée : comment vos données sont utilisées" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>La publicité ciblée : comment vos données sont utilisées</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> l'ad tech recoupe contexte, audio et géolocalisation :
+      une phrase prononcée — « des chaussettes… » — et la carte pub tombe en 3 secondes.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Le ciblage n'est pas de la télépathie,
+      c'est du <b>recoupement</b> : requêtes, localisation, historique d'écoute.</p>
+      <p><span class="evt">Le réflexe</span>Couper micro et géolocalisation par application,
+      auditer les autorisations (voir « Triangulé même GPS éteint »).</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#04</span><h3>Le lanceur de pub télépathique</h3><span class="animcard__tag">Ad Tech</span></div>
+        <div class="anim-stage" role="img" aria-label="Une pensée à voix haute déclenche une carte publicitaire qui tombe">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g class="a04-bubble">
+              <rect x="56" y="128" width="172" height="66" rx="14" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <polygon points="96,194 96,212 116,196" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <text x="142" y="163" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--an-ink)">« Des chaussettes… »</text>
+              <text x="142" y="183" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">Prononcé à voix haute</text>
+            </g>
+            <line class="a04-arrow" x1="244" y1="160" x2="330" y2="160" stroke="var(--an-cyan)" stroke-width="2.5"/>
+            <polygon points="342,160 326,152 326,168" fill="var(--an-cyan)"/>
+            <g class="a04-ad">
+              <rect x="352" y="112" width="158" height="108" rx="12" fill="url(#anGlass)" stroke="url(#anGrad-rose)" stroke-width="2" filter="url(#anGlow)"/>
+              <text x="431" y="140" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-rose)">PUB DÉTECTÉE</text>
+              <text x="431" y="170" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;fill:var(--an-ink)">Chaussettes −20 %</text>
+              <text x="431" y="196" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">ciblée juste pour vous</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">La pub apparaît 3 secondes après la conversation — recoupement ad tech.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="ReCAPTCHA : votre validation au service des IA" data-title="ReCAPTCHA : votre validation au service des IA" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>ReCAPTCHA : votre validation au service des IA</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> chaque grille « sélectionnez les feux tricolores » vous fait
+      <b>labelliser gratis</b> les données d'entraînement (vision par ordinateur, véhicules autonomes) — et la grille
+      se régénère sans fin.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Le « test anti-robot » est une chaîne de
+      micro-travail non payé. Préférer des services <b>sans captcha Google</b>.</p>
+      <p><span class="evt">Le réflexe</span>Privilégier les alternatives qui n'exploitent pas vos clics,
+      et les protections anti-pistage qui limitent ces tests.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#05</span><h3>La fonte multi-images du ReCAPTCHA</h3><span class="animcard__tag">Anti-robot</span></div>
+        <div class="anim-stage" role="img" aria-label="Une grille d'images reCAPTCHA se dissout puis réapparaît sans fin">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2">
+              <rect x="34" y="64" width="74" height="74" rx="8"/><rect x="122" y="64" width="74" height="74" rx="8"/><rect x="210" y="64" width="74" height="74" rx="8"/>
+              <rect x="34" y="152" width="74" height="74" rx="8"/><rect x="122" y="152" width="74" height="74" rx="8"/><rect x="210" y="152" width="74" height="74" rx="8"/>
+              <rect x="34" y="240" width="74" height="74" rx="8"/><rect x="122" y="240" width="74" height="74" rx="8"/><rect x="210" y="240" width="74" height="74" rx="8"/>
+            </g>
+            <g class="a05-tile a05-t1"><rect x="36" y="66" width="70" height="70" rx="7" fill="url(#anGrad-amber)"/><text x="71" y="107" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-card)">BUS</text></g>
+            <g class="a05-tile a05-t2"><rect x="124" y="154" width="70" height="70" rx="7" fill="url(#anGrad-rose)"/><text x="159" y="195" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-card)">FEU</text></g>
+            <g class="a05-tile a05-t3"><rect x="212" y="242" width="70" height="70" rx="7" fill="url(#anGrad-cyan)"/><text x="247" y="283" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-card)">BOUCHE</text></g>
+            <g style="font-family:var(--font-mono)">
+              <text x="436" y="112" text-anchor="middle" style="font-size:13px;font-weight:700;fill:var(--an-cyan)">SÉLECTIONNEZ</text>
+              <text x="436" y="134" text-anchor="middle" style="font-size:11px;font-weight:700;fill:var(--an-rose)">LES FEUX TRICOLORES</text>
+              <text class="a05-cd" x="436" y="192" text-anchor="middle" style="font-size:22px;font-weight:700;fill:var(--an-ink)">00:09 s</text>
+              <text class="a05-cd2" x="436" y="192" text-anchor="middle" style="font-size:22px;font-weight:700;fill:var(--an-rose)">00:01 s</text>
+              <text x="436" y="236" text-anchor="middle" style="font-size:10px;fill:var(--an-amber)">3 images en cours…</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Chaque image validée en cache une autre — labelliser gratis pour l'IA.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="« Don't Be Evil », retirée en 2018" data-title="« Don't Be Evil », retirée en 2018" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — le symbole</p>
+      <h2>« Don't Be Evil », retirée en 2018</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> en 2000, Google promettait <i>« Don't Be Evil »</i> ; la devise est
+      <b>discrètement retirée du code de conduite en 2018</b>, remplacée par l'optimisation des revenus publicitaires.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>De l'éthique fondatrice aux résultats trimestriels :
+      c'est le basculement que raconte toute la présentation.</p>
+      <p><span class="evt">Le symbole</span>Quand la devise change, le produit change aussi : vous êtes passé
+      d'utilisateur à <b>matière première publicitaire</b>.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#06</span><h3>« Don't Be Evil », barré</h3><span class="animcard__tag">Devise</span></div>
+        <div class="anim-stage" role="img" aria-label="La devise Ne soyez pas malveillant est barrée puis remplacée par Maximiser les revenus">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <text x="280" y="150" text-anchor="middle" style="font-family:var(--font-display);font-size:28px;font-weight:700;fill:var(--an-ink)">Ne soyez pas malveillant</text>
+            <line class="a06-line" x1="110" y1="142" x2="450" y2="142" stroke="var(--an-rose)" stroke-width="4.5" stroke-linecap="round" filter="url(#anGlow)"/>
+            <text class="a06-rev" x="280" y="216" text-anchor="middle" style="font-family:var(--font-sans);font-size:18px;font-weight:700;fill:var(--an-green)">Maximiser les revenus publicitaires</text>
+            <text class="a06-rev" x="280" y="250" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-amber)">Devise discrètement retirée en 2018</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">De l'éthique fondatrice (2000) aux résultats trimestriels — devise retirée en 2018.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Google payée pour rester le moteur de recherche par défaut" data-title="Google payée pour rester le moteur de recherche par défaut" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>Google payée pour rester le moteur de recherche par défaut</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> au début des années 2020, Google a versé jusqu'à <b>~20 Md$ par an à Apple</b>
+      pour rester le moteur par défaut de Safari — révélé au procès antitrust du DOJ américain
+      (monopole jugé illégal, août 2024).</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Le « choix par défaut » s'achète.
+      Changer de moteur et de navigateur casse la rente.</p>
+      <p><span class="evt">Le réflexe</span>Reprendre la main sur ses défauts : moteur, navigateur,
+      recherche — trois réglages, un gros effet.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#07</span><h3>Le chèque par défaut à 20 Md$</h3><span class="animcard__tag">Search · Apple</span></div>
+        <div class="anim-stage" role="img" aria-label="Un paquet de 20 milliards voyage de Google vers Safari sur un tapis roulant">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <text x="280" y="92" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-green)">VERSEMENT PAR DÉFAUT ANNUEL</text>
+            <rect x="52" y="150" width="122" height="80" rx="12" fill="url(#anGlass)" stroke="url(#anGrad-cyan)" stroke-width="2"/>
+            <text x="113" y="195" text-anchor="middle" style="font-family:var(--font-mono);font-size:15px;font-weight:700;fill:var(--an-cyan)">Google</text>
+            <rect x="386" y="150" width="122" height="80" rx="12" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+            <text x="447" y="195" text-anchor="middle" style="font-family:var(--font-mono);font-size:15px;font-weight:700;fill:var(--an-ink)">Safari</text>
+            <line class="a07-belt" x1="180" y1="190" x2="380" y2="190" stroke="var(--an-line)" stroke-width="3"/>
+            <circle cx="180" cy="190" r="6" fill="var(--an-line)"/><circle cx="380" cy="190" r="6" fill="var(--an-line)"/>
+            <g class="a07-pack"><rect x="182" y="168" width="82" height="44" rx="8" fill="url(#anGrad-green)" filter="url(#anGlow)"/><text x="223" y="196" text-anchor="middle" style="font-family:var(--font-mono);font-size:14px;font-weight:700;fill:var(--an-card)">$20 Md</text></g>
+            <text x="280" y="272" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">pour rester le moteur par défaut</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">~20 Md$/an à Apple pour rester par défaut — monopole jugé illégal (DOJ, août 2024).</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Les permissions appli : tout ou rien" data-title="Les permissions appli : tout ou rien" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>Les permissions appli : tout ou rien</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> même logique côté mobile : des applis très simples exigent parfois
+      <b>GPS, micro et capteurs corporels</b> ; refuser, c'est être éjecté. Pour calculer 2 + 2.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Le modèle tout-ou-rien :
+      l'accès se paie en données, même absurdes.</p>
+      <p><span class="evt">Le réflexe</span>Auditer les permissions Android, passer par
+      <b>F-Droid / Aurora</b>, refuser le tout-ou-rien.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#08</span><h3>Le chantage de la calculatrice</h3><span class="animcard__tag">Permissions</span></div>
+        <div class="anim-stage" role="img" aria-label="La calculatrice demande GPS, micro et capteurs corporels">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <rect x="60" y="82" width="440" height="206" rx="16" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2.5"/>
+            <rect x="72" y="94" width="416" height="28" rx="8" fill="var(--an-line)" opacity=".35"/>
+            <text x="280" y="114" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-mute)">calculatrice.app</text>
+            <text x="280" y="152" text-anchor="middle" style="font-family:var(--font-sans);font-size:14px;font-weight:700;fill:var(--ink)">Autoriser à accéder :</text>
+            <text class="a08-p1" x="280" y="190" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--an-amber)">[✓] GPS précis (toujours)</text>
+            <text class="a08-p2" x="280" y="222" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--an-rose)">[✓] Micro &amp; audio des appels</text>
+            <text class="a08-p3" x="280" y="254" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--an-cyan)">[✓] Capteurs corporels &amp; contacts</text>
+            <text x="280" y="284" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-ink)">Pour calculer : 2 + 2 = ?</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Refuser les permissions ferme l'application — GPS et micro pour 2 + 2.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Votre position même avec le GPS éteint" data-title="Votre position même avec le GPS éteint" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>Votre position même avec le GPS éteint</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> GPS coupé, le téléphone remonte quand même sa position :
+      <b>triangulation Wi-Fi, Bluetooth et antennes relais</b> — le paquet traverse l'écran « sécurisé » jusqu'au journal LAT/LONG.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Couper le GPS ne suffit pas :
+      couper Wi-Fi et Bluetooth hors usage, revoir l'historique de localisation Maps.</p>
+      <p><span class="evt">Le réflexe</span>Désactiver l'historique de localisation, limiter le scan Wi-Fi
+      en arrière-plan, préférer <b>Organic Maps hors-ligne</b>.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#11</span><h3>Le renifleur Wi-Fi ambiant</h3><span class="animcard__tag">Localisation</span></div>
+        <div class="anim-stage" role="img" aria-label="Un packet remonte du téléphone vers un serveur malgré un GPS éteint">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <rect x="64" y="126" width="118" height="140" rx="14" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <text x="123" y="164" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-rose)">SÉCURISÉ</text>
+              <text x="123" y="188" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-green)">GPS : OFF</text>
+            </g>
+            <g transform="translate(424 120)">
+              <circle class="a11-ring" cx="0" cy="0" r="20" fill="none" stroke="var(--an-cyan)" stroke-width="2"/>
+              <circle class="a11-ring2" cx="0" cy="0" r="20" fill="none" stroke="var(--an-cyan)" stroke-width="2"/>
+              <circle cx="0" cy="0" r="5" fill="var(--an-cyan)"/>
+              <text x="0" y="40" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">Wi-Fi public</text>
+            </g>
+            <g class="a11-pkt"><circle cx="200" cy="196" r="7" fill="url(#anGrad-amber)" filter="url(#anGlow)"/></g>
+            <rect x="326" y="242" width="146" height="62" rx="10" fill="url(#anGlass)" stroke="url(#anGrad-rose)" stroke-width="2"/>
+            <text class="a11-log" x="399" y="278" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-rose)">LAT/LONG NOTÉS</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Les réseaux Wi-Fi vous triangulent, GPS éteint — LAT/LONG notés quand même.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Données personnelles & publicité : la chaîne de valeur" data-title="Données personnelles & publicité : la chaîne de valeur" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — le modèle</p>
+      <h2>Données personnelles & publicité : la chaîne de valeur</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> la presse hydraulique fait le reste : l'utilisateur est pressé en
+      <b>« pétrole publicitaire »</b>, revendu aux enchères en temps réel.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Recherche + localisation + vidéos + mails recoupés
+      = le profil qui vaut de l'or.</p>
+      <p><span class="evt">Le modèle</span>D'où la migration <b>brique par brique</b> : chaque service repris
+      assèche un tuyau de la raffinerie.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#12</span><h3>La raffinerie comportementale</h3><span class="animcard__tag">Snowden</span></div>
+        <div class="anim-stage" role="img" aria-label="Une presse hydraulique extrait l'huile publicitaire d'un utilisateur">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <circle cx="112" cy="150" r="18" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <line x1="112" y1="168" x2="112" y2="224" stroke="var(--an-line)" stroke-width="3"/>
+              <text x="112" y="248" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">UTILISATEUR</text>
+            </g>
+            <rect x="200" y="92" width="172" height="196" rx="10" fill="none" stroke="url(#anGrad-rose)" stroke-width="2.5"/>
+            <rect class="a12-plate" x="210" y="104" width="152" height="26" rx="6" fill="url(#anGrad-rose)"/>
+            <text x="286" y="296" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-ink)">EXTRACTION</text>
+            <g class="a12-drop"><circle cx="242" cy="300" r="5" fill="url(#anGrad-green)"/></g>
+            <g class="a12-drop a12-drop-b"><circle cx="286" cy="300" r="4.5" fill="url(#anGrad-green)"/></g>
+            <g class="a12-drop a12-drop-c"><circle cx="330" cy="300" r="5" fill="url(#anGrad-green)"/></g>
+            <g class="a12-bulk"><rect x="404" y="120" width="112" height="120" rx="14" fill="url(#anGrad-green)" fill-opacity=".16" stroke="url(#anGrad-green)" stroke-width="2.5"/><text x="460" y="184" text-anchor="middle" style="font-family:var(--font-mono);font-size:24px;font-weight:700;fill:var(--an-green)">$$$</text><text x="460" y="220" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-ink)">PÉTROLE PUB</text></g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">« La donnée est le nouveau pétrole » — pressée en $$$ publicitaires.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="PRISM et le CLOUD Act : ce que Snowden a relevé" data-title="PRISM et le CLOUD Act : ce que Snowden a relevé" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>PRISM et le CLOUD Act : ce que Snowden a relevé</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> en 2013, <b>Snowden révèle PRISM</b> : accès des agences américaines aux serveurs
+      des géants du cloud. Depuis, le <b>CLOUD Act (2018)</b> permet aux autorités américaines de réquisitionner vos données
+      <b>quel que soit votre pays</b>.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Centralisé = perquisitionnable.
+      Chiffrer et <b>héberger en UE ou chez soi</b> (Nextcloud).</p>
+      <p><span class="evt">Le réflexe</span>Chiffrement côté client, juridiction UE, sauvegardes hors cloud US.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#13</span><h3>Le chalutier PRISM</h3><span class="animcard__tag">FISA</span></div>
+        <div class="anim-stage" role="img" aria-label="Un fichier PRISM raclera des serveurs sous la surface de l'eau">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <line x1="20" y1="150" x2="540" y2="150" stroke="var(--an-cyan)" stroke-width="2" stroke-dasharray="10 8" opacity=".7"/>
+            <rect x="176" y="82" width="208" height="48" rx="10" fill="url(#anGlass)" stroke="url(#anGrad-cyan)" stroke-width="2"/>
+            <text x="280" y="113" text-anchor="middle" style="font-family:var(--font-mono);font-size:15px;font-weight:700;fill:var(--an-cyan)">GOOGLE CLOUD</text>
+            <g>
+              <rect x="196" y="160" width="168" height="92" rx="8" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <line x1="196" y1="182" x2="364" y2="182" stroke="var(--an-line)" stroke-width="1.5"/>
+              <line x1="196" y1="224" x2="364" y2="224" stroke="var(--an-line)" stroke-width="1.5"/>
+              <circle cx="210" cy="170" r="3" fill="var(--an-green)"/>
+              <text x="280" y="272" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-mute)">Boîtes non chiffrées</text>
+            </g>
+            <g class="a13-net">
+              <path d="M 240 190 A 50 50 0 0 1 336 190" fill="none" stroke="url(#anGrad-rose)" stroke-width="2.5" filter="url(#anGlow)"/>
+              <text x="288" y="222" text-anchor="middle" style="font-family:var(--font-mono);font-size:14px;font-weight:700;fill:var(--an-rose)">PRISM</text>
+              <g class="a13-dot"><circle cx="256" cy="206" r="4" fill="var(--an-cyan)"/></g>
+              <g class="a13-dot a13-dot-b"><circle cx="320" cy="212" r="4" fill="var(--an-cyan)"/></g>
+              <g class="a13-dot a13-dot-c"><circle cx="288" cy="240" r="4" fill="var(--an-cyan)"/></g>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">PRISM (2013, Snowden) + CLOUD Act (2018) : le cloud centralisé s'ouvre sur réquisition.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Le compte unique : tout lié, tout à risque" data-title="Le compte unique : tout lié, tout à risque" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — le verrouillage</p>
+      <h2>Le compte unique : tout lié, tout à risque</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> comme tout est branché sur « Se connecter avec Google »,
+      une suspension — même par erreur — fait tomber banque, santé et photos en cascade.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Un compte unique = un point unique de défaillance.
+      Vous êtes <b>locataire</b>, pas propriétaire.</p>
+      <p><span class="evt">Le réflexe</span>Sortir du SSO unique : <b>gestionnaire de mots de passe + 2FA</b>
+      (voir « Couper le cordon »).</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#14</span><h3>La cascade SSO</h3><span class="animcard__tag">Verrouillage</span></div>
+        <div class="anim-stage" role="img" aria-label="Un domino GOOGLE SSO fait tomber les dominos Banque, Santé, Photos">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <text x="280" y="72" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;font-weight:700;fill:var(--an-rose)">UNE SUSPENSION = TOUT PERDU</text>
+            <line x1="70" y1="300" x2="500" y2="300" stroke="var(--an-line)" stroke-width="2"/>
+            <g class="a14-dom a14-d1"><rect x="96" y="150" width="46" height="150" rx="7" fill="url(#anGrad-rose)" filter="url(#anGlow)"/><text x="119" y="226" text-anchor="middle" transform="rotate(-90 119 226)" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-card)">GOOGLE SSO</text></g>
+            <g class="a14-dom a14-d2"><rect x="206" y="170" width="40" height="130" rx="7" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/><text x="226" y="235" text-anchor="middle" transform="rotate(-90 226 235)" style="font-family:var(--font-mono);font-size:12px;fill:var(--an-ink)">Banque</text></g>
+            <g class="a14-dom a14-d3"><rect x="316" y="170" width="40" height="130" rx="7" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/><text x="336" y="235" text-anchor="middle" transform="rotate(-90 336 235)" style="font-family:var(--font-mono);font-size:12px;fill:var(--an-ink)">Santé</text></g>
+            <g class="a14-dom a14-d4"><rect x="426" y="170" width="40" height="130" rx="7" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/><text x="446" y="235" text-anchor="middle" transform="rotate(-90 446 235)" style="font-family:var(--font-mono);font-size:12px;fill:var(--an-ink)">Photos</text></g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Un compte suspendu (même par erreur), tout tombe : banque, santé, photos.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+  <!-- Phase 1 (suite) : monopole hors Google — Recall & monoculture Chromium -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Recall : Windows enregistre tout, tout le temps" data-title="Recall : Windows enregistre tout, tout le temps" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>Recall : Windows enregistre tout, tout le temps</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> en mai 2024, Microsoft annonce <b>Recall / Copilot</b> : une capture d'écran
+      <b>toutes les 3 secondes</b>, stockée en local — tollé immédiat des chercheurs, report en urgence.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Même logique que Google :
+      tout voir, tout retenir — côté Windows cette fois.</p>
+      <p><span class="evt">Le réflexe</span>Désactiver Recall et Copilot, durcir Windows — ou passer à
+      <b>Linux + Firefox</b>.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#17</span><h3>Le détective Recall</h3><span class="animcard__tag">Windows</span></div>
+        <div class="anim-stage" role="img" aria-label="Copilot se cache derrière l'écran et photographie un document secret">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g class="a17-copilot">
+              <rect x="368" y="120" width="126" height="106" rx="14" fill="url(#anGrad-amber)"/>
+              <circle cx="398" cy="152" r="7" fill="var(--an-card)"/>
+              <circle cx="430" cy="152" r="7" fill="var(--an-card)"/>
+              <text x="431" y="204" text-anchor="middle" style="font-family:var(--font-mono);font-size:15px;font-weight:700;fill:#101527">COPILOT</text>
+            </g>
+            <g>
+              <rect x="72" y="98" width="288" height="158" rx="10" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2.5"/>
+              <text x="216" y="178" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--an-mute)">Document secret</text>
+              <text class="a17-cap" x="216" y="224" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-rose)">CAPTURE ENREGISTRÉE</text>
+            </g>
+            <circle class="a17-flash" cx="384" cy="176" r="26" fill="url(#anGrad-amber)"/>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Recall/Copilot (mai 2024) : capture toutes les 3 s — tollé, report en urgence.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Le monopole du moteur de navigateur (Chromium)" data-title="Le monopole du moteur de navigateur (Chromium)" data-group="Pourquoi partir">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">02 · Pourquoi partir — l'événement</p>
+      <h2>Le monopole du moteur de navigateur (Chromium)</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> côté navigateurs, <b>~70 % du web repose sur Chromium/Blink</b>
+      (Chrome, Edge, Brave, Opera…) : l'usine estampille ses clones pendant que Firefox façonne seul son moteur Gecko.</p>
+      <div class="story-cols"><p><span class="evt">Ce que ça veut dire</span>Le monopole du moteur = Google écrit les règles du web
+      (cf. Manifest V3). Soutenir <b>Firefox / Gecko</b>, c'est voter.</p>
+      <p><span class="evt">Le réflexe</span>Choisir Gecko (Firefox / LibreWolf), garder Chromium cantonné
+      à un profil secondaire si besoin.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#18</span><h3>L'usine à clones Chromium</h3><span class="animcard__tag">Navigateurs</span></div>
+        <div class="anim-stage" role="img" aria-label="Un tampon d'usine estampille des clones Blink tandis que Firefox façonne Gecko">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g class="a18-stamp">
+              <rect x="55" y="122" width="136" height="42" rx="8" fill="url(#anGrad-rose)" filter="url(#anGlow)"/>
+              <text x="123" y="148" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-card)">ESTAMPILLE BLINK</text>
+            </g>
+            <line x1="56" y1="212" x2="300" y2="212" stroke="var(--an-line)" stroke-width="3"/>
+            <rect x="84" y="186" width="78" height="26" rx="5" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="1.5"/>
+            <text x="123" y="204" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-mute)">Chrome</text>
+            <rect x="192" y="186" width="78" height="26" rx="5" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="1.5"/>
+            <text x="231" y="204" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-mute)">Edge</text>
+            <g class="a18-fox">
+              <rect x="372" y="118" width="120" height="122" rx="16" fill="url(#anGrad-amber)"/>
+              <text x="432" y="172" text-anchor="middle" style="font-family:var(--font-mono);font-size:15px;font-weight:700;fill:#101527">FIREFOX</text>
+              <text x="432" y="202" text-anchor="middle" style="font-family:var(--font-mono);font-size:14px;font-weight:700;fill:var(--an-green)">GECKO</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">~70 % Chromium/Blink (Chrome, Edge…) contre Gecko seul — voter Firefox.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+  <!-- 07 · ALTERNATIVES : CLÉ DE LECTURE -->
+   <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Les alternatives, clé de lecture" data-title="Les alternatives · clé de lecture" data-group="Alternatives">
+    <div class="slide-inner">
+      <div class="split">
+        <div>
+          <p class="kicker">03 · Les alternatives</p>
+          <p class="bignum" aria-hidden="true">03</p>
+          <h2 style="font-size:var(--fs-h1)">Les alternatives</h2>
+          <p style="color:var(--ink-soft);font-size:var(--fs-lead);margin-top:.9rem;max-width:46ch;line-height:1.6">Logique : <b>« aussi bon que possible, libre par défaut, auto-hébergeable quand c'est utile »</b>. Pour chaque service : ce que c'est, avantages vs Google, limites.</p>
+        </div>
+        <div class="legend">
+          <h3>Clé de lecture des 20 catégories</h3>
+          <div class="legend__row">
+            <span class="mono" style="--mh:158" aria-hidden="true">Xx</span>
+            <p><b style="color:var(--ink-soft)">Nom libre</b>Une alternative open source ou de confiance — affichée avec son vrai logo (monogramme coloré en repli si l'image manque).</p>
+          </div>
+          <div class="legend__row">
+            <svg class="ic ic--lg" style="color:var(--ink-mute)" aria-hidden="true"><use href="#i-info"/></svg>
+            <p><b style="color:var(--ink-mute)">Ce que c'est</b>Une phrase pour situer l'outil dans le quotidien.</p>
+          </div>
+          <div class="legend__row">
+            <svg class="ic ic--lg" style="color:var(--libre)" aria-hidden="true"><use href="#i-ok"/></svg>
+            <p><b style="color:var(--libre)">Avantages</b>Ce qui est mieux — ou simplement plus libre — que chez Google.</p>
+          </div>
+          <div class="legend__row">
+            <svg class="ic ic--lg" style="color:var(--warn)" aria-hidden="true"><use href="#i-warn"/></svg>
+            <p><b style="color:var(--warn)">Limites</b>Ce qui reste imparfait : on ne vend pas du rêve, on informe.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Les 20 slides « alternatives » sont insérées ici par le script (données identiques au tableau du plan) -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Les 20 chantiers en une carte" data-title="Carte des 20 chantiers" data-group="Alternatives">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">03 · Les alternatives — carte</p>
+        <h2>Les 20 chantiers en une carte</h2>
+      </header>
+      <p class="eco-lead">20 catégories d'un coup, c'est indigeste. Voici la carte : <b>on survole ensemble</b>, puis chacun creuse son chantier prioritaire. Le détail service par service suit — et reste disponible en référence.</p>
+      <div class="toc" style="margin-top:1rem">
+        <div class="toc__item"><span class="toc__num">A</span><div><h3>Chercher &amp; se repérer</h3><p>Recherche · Cartographie · Traduction · Navigateur</p></div></div>
+        <div class="toc__item"><span class="toc__num">B</span><div><h3>Communiquer</h3><p>E-mail · Messagerie · Visioconférence · Agenda</p></div></div>
+        <div class="toc__item"><span class="toc__num">C</span><div><h3>Travailler</h3><p>Traitement · Tableur · Présentation · Formulaires · Notes · Stockage · Photos</p></div></div>
+        <div class="toc__item"><span class="toc__num">D</span><div><h3>Mobile &amp; système</h3><p>Système mobile · Applications · Identité / 2FA · Vidéo · IA générative</p></div></div>
+      </div>
+      <div class="callout">
+        <span class="lead">Consigne pour la suite</span>
+        Repérez <b>UN chantier</b> à attaquer cette semaine. On ne lit pas les 20 slides : on y pioche selon vos usages.
+      </div>
+    </div>
+  </section>
+  <div id="anchor-alt"></div>
+
+  <!-- compagnon alternatives -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="La ferme souveraine : vos données sous votre dôme" data-title="La ferme souveraine" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>La ferme souveraine</h2>
+    </header>
+    <p class="story-lead"><b>L'événement, version solution :</b> la cabane <b>Nextcloud</b> (auto-hébergée ou chez un hébergeur UE)
+      déploie son dôme vert : fichiers, agenda, contacts, photos — <b>selon vos règles</b>. La pluie de télémétrie publicitaire rebondit dessus.</p>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#20</span><h3>La ferme Nextcloud</h3><span class="animcard__tag">Auto-hébergement</span></div>
+        <div class="anim-stage" role="img" aria-label="Une cabane Nextcloud protégée par un dôme tandis que la pluie de télémétrie rebondit">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g class="a20-dome"><path d="M40,272 A100 168 0 0 1 240,272" fill="none" stroke="url(#anGrad-green)" stroke-width="2.5" filter="url(#anGlow)"/></g>
+            <g>
+              <rect x="60" y="164" width="160" height="100" rx="10" fill="url(#anGlass)" stroke="url(#anGrad-cyan)" stroke-width="2"/>
+              <polyline points="50,164 140,104 230,164" fill="none" stroke="url(#anGrad-cyan)" stroke-width="2" stroke-linejoin="round"/>
+              <text x="140" y="222" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-cyan)">NEXTCLOUD</text>
+            </g>
+            <g class="a20-cloud">
+              <ellipse cx="430" cy="96" rx="64" ry="30" fill="url(#anGrad-rose)"/>
+              <text x="430" y="101" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-card)">Télémétrie pub</text>
+            </g>
+            <g class="a20-rain" style="stroke:var(--an-rose);stroke-width:2;fill:none;stroke-linecap:round">
+              <line x1="352" y1="112" x2="198" y2="124"/>
+              <line x1="362" y1="130" x2="212" y2="152"/>
+              <line x1="370" y1="152" x2="228" y2="186"/>
+            </g>
+            <g class="a20-mist" style="fill:var(--an-rose)">
+              <circle cx="193" cy="124" r="2.5"/><circle cx="207" cy="151" r="2.5"/><circle cx="223" cy="183" r="2.5"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Nextcloud sous votre dôme : la télémétrie rebondit — fichiers, agenda, contacts.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+  <!-- compagnon alternatives -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="La route honnête" data-title="La route honnête" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>La route honnête</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> Maps affiche des <b>lieux sponsorisés</b> le long du trajet (« PUB DRIVE-THRU ») ;
+      Organic Maps va à l'essentiel, <b>hors-ligne, sans pub</b>.</p>
+      <div class="story-cols"><p><span class="evt">Cartographie</span><b>OpenStreetMap · CoMaps · OsmAnd</b> : données ouvertes,
+      navigation hors-ligne, vie privée.</p>
+      <p><span class="evt">Le réflexe</span>Télécharger ses cartes hors-ligne, couper l'historique de localisation,
+      comparer l'itinéraire sans les encarts sponsorisés.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#21</span><h3>Cartes organiques vs détour</h3><span class="animcard__tag">Navigation</span></div>
+        <div class="anim-stage" role="img" aria-label="Une ligne droite pour Organic Maps contre un détour Google parsemé de pubs">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <text x="60" y="112" text-anchor="start" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-green)">Organic Maps (direct)</text>
+              <rect x="60" y="128.75" width="440" height="2.5" rx="1.25" fill="url(#anGrad-green)"/>
+              <circle class="a21-car" cx="60" cy="130" r="8" fill="url(#anGrad-green)" filter="url(#anGlow)"/>
+            </g>
+            <g>
+              <path d="M60,244 L200,244 C240,240 250,190 300,190 C350,190 360,240 400,244 L500,244" fill="none" stroke="url(#anGrad-rose)" stroke-width="2" stroke-dasharray="8 6"/>
+              <rect class="a21-ad" x="258" y="146" width="104" height="30" rx="5" fill="url(#anGrad-amber)"/>
+              <text x="310" y="166" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-card)">PUB DRIVE-THRU</text>
+            </g>
+            <text x="60" y="280" text-anchor="start" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-rose)">Détour Google</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Organic Maps à l'essentiel et hors-ligne contre les encarts sponsorisés de Google.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Couper le cordon SSO" data-title="Couper le cordon SSO" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>Couper le cordon SSO</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> pour ne plus dépendre du bouton « Se connecter avec Google »,
+      la lame <b>Bitwarden</b> tranche les câbles SSO : une <b>clé unique de 32 caractères</b> par site.</p>
+      <div class="story-cols"><p><span class="evt">Identité</span><b>Bitwarden / KeePassXC + Aegis</b> :
+      fini la cascade SSO vue avec PRISM.</p>
+      <p><span class="evt">Le réflexe</span>Un mot de passe unique par site, 2FA hors SMS,
+      export chiffré de secours.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#22</span><h3>Couper le cordon ombilical SSO</h3><span class="animcard__tag">Mots de passe</span></div>
+        <div class="anim-stage" role="img" aria-label="Une lame Bitwarden tranche les câbles GOOGLE SSO vers des clés uniques">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <rect x="50" y="106" width="122" height="146" rx="10" fill="url(#anGlass)" stroke="url(#anGrad-rose)" stroke-width="2"/>
+              <text x="111" y="182" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-rose)">GOOGLE SSO</text>
+              <rect x="172" y="137" width="110" height="2" rx="1" fill="url(#anGrad-rose)"/>
+              <rect x="172" y="221" width="110" height="2" rx="1" fill="url(#anGrad-rose)"/>
+            </g>
+            <g class="a22-cord"><rect x="282" y="137" width="110" height="2" rx="1" fill="url(#anGrad-rose)"/></g>
+            <g class="a22-cord"><rect x="282" y="221" width="110" height="2" rx="1" fill="url(#anGrad-rose)"/></g>
+            <polygon class="a22-blade" points="254,56 306,56 280,104" fill="url(#anGrad-cyan)" filter="url(#anGlow)"/>
+            <text x="280" y="46" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-cyan)">BITWARDEN</text>
+            <g style="font-family:var(--font-mono)">
+              <text x="470" y="136" text-anchor="middle" style="font-size:11px;font-weight:700;fill:var(--an-green)">CLÉ 32 CAR.</text>
+              <text x="470" y="228" text-anchor="middle" style="font-size:11px;fill:var(--an-green)">CLÉ UNIQUE</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Bitwarden tranche le SSO : une clé unique de 32 caractères par site.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+  <!-- compagnon alternatives -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="GrapheneOS : désactiver les Google Play Services" data-title="GrapheneOS : désactiver les Google Play Services" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>GrapheneOS : désactiver les Google Play Services</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> le scanner vert de <b>GrapheneOS</b> balaie le téléphone et neutralise les Play Services :
+      l'exorcisme retire la surveillance <b>au niveau système</b>.</p>
+      <div class="story-cols"><p><span class="evt">Système</span><b>GrapheneOS</b> (Pixel) ou <b>LineageOS</b> (multi-appareils) :
+      semaine 7 du calendrier.</p>
+      <p><span class="evt">Le réflexe</span>Sauvegarder avant de flasher, tester ses applis critiques,
+      garder un appareil de secours pendant la bascule.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#23</span><h3>L'exorcisme GrapheneOS</h3><span class="animcard__tag">ROM</span></div>
+        <div class="anim-stage" role="img" aria-label="Un scanner vert balaie l'écran GrapheneOS et dissout Play Services de l'intérieur du téléphone">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <defs><clipPath id="a23-phone"><rect x="200" y="78" width="160" height="204" rx="20"/></clipPath></defs>
+            <g clip-path="url(#a23-phone)">
+              <rect x="200" y="78" width="160" height="204" fill="url(#anGlass)"/>
+              <rect class="a23-beam" x="210" y="178.75" width="140" height="2.5" rx="1.25" fill="url(#anGrad-green)" filter="url(#anGlow)"/>
+              <text class="a23-done" x="280" y="256" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;font-weight:700;fill:var(--an-green)">PLAY SERVICES PURGÉS</text>
+            </g>
+            <rect x="200" y="78" width="160" height="204" rx="20" fill="none" stroke="var(--an-ink)" stroke-width="2"/>
+            <text x="280" y="306" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-green)">GRAPHENEOS</text>
+            <g class="a23-ghost">
+              <ellipse cx="280" cy="148" rx="46" ry="42" fill="url(#anGrad-rose)" fill-opacity=".65"/>
+              <text x="280" y="152" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-card)">PlayServices</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">GrapheneOS neutralise les Play Services au niveau système — exorcisme du téléphone.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Aurora Store : installer des applis sans compte Google" data-title="Aurora Store : installer des applis sans compte Google" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>Aurora Store : installer des applis sans compte Google</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> pour garder vos applis sans compte Google,
+      <b>Aurora Store</b> télécharge les applis du Play Store de façon anonyme, sans se déclarer.</p>
+      <div class="story-cols"><p><span class="evt">Applis</span><b>F-Droid</b> (100 % libre) + <b>Aurora</b> (Play anonyme)
+      + <b>Obtainium</b> (APK directes).</p>
+      <p><span class="evt">Le réflexe</span>Priorité au libre (F-Droid), Aurora en anonyme pour le reste,
+      mises à jour via Obtainium quand la source est connue.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#24</span><h3>L'espion Aurora Store</h3><span class="animcard__tag">Anonymat</span></div>
+        <div class="anim-stage" role="img" aria-label="Aurora fait passer un APK par-dessus le mur du feu entre l'utilisateur et le Play Store">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <text x="280" y="88" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-mute)">PARE-FEU</text>
+              <line x1="280" y1="100" x2="280" y2="262" stroke="var(--an-line)" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="120" cy="156" r="18" fill="none" stroke="var(--an-ink)" stroke-width="2"/>
+              <line x1="120" y1="174" x2="120" y2="220" stroke="var(--an-ink)" stroke-width="2"/>
+              <text x="120" y="248" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">Sans compte</text>
+            </g>
+            <rect x="382" y="138" width="118" height="102" rx="8" fill="url(#anGlass)" stroke="url(#anGrad-rose)" stroke-width="2"/>
+            <text x="441" y="192" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-rose)">Play Store</text>
+            <g class="a24-apk"><rect x="200" y="170" width="60" height="40" rx="6" fill="url(#anGrad-amber)" filter="url(#anGlow)"/><text x="230" y="195" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-card)">APK</text></g>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Aurora Store : les applis du Play sans compte Google.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+  <!-- compagnon alternatives -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="FreeTube : YouTube sans publicité" data-title="FreeTube : YouTube sans publicité" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>FreeTube : YouTube sans publicité</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> la pub YouTube de 45 s est <b>éjectée dans le vide</b> : FreeTube, NewPipe et Piped lisent sans compte,
+      zéro pub, zéro pistage — via proxy ou extraction directe selon l'outil.</p>
+      <div class="story-cols"><p><span class="evt">Vidéo</span><b>NewPipe · Invidious/Piped · PeerTube</b>, plus Tournesol pour des recos éthiques.</p>
+      <p><span class="evt">Le réflexe</span>Lire via client libre, s'abonner via RSS, soutenir les créateurs hors pub.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#27</span><h3>L'éjecteur de pub</h3><span class="animcard__tag">FreeTube</span></div>
+        <div class="anim-stage" role="img" aria-label="Une fusée 45s AD est éjectée vers le ciel loin du lecteur vidéo propre">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <rect x="70" y="108" width="252" height="164" rx="12" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2.5"/>
+              <polygon points="176,164 176,216 216,190" fill="url(#anGrad-green)"/>
+              <text x="196" y="250" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-green)">Vidéo 1080p — 0 pub</text>
+            </g>
+            <g class="a27-rocket">
+              <g transform="translate(400 220)">
+                <rect x="-26" y="-38" width="52" height="60" rx="10" fill="url(#anGrad-rose)"/>
+                <polygon points="-26,-2 -40,26 -18,16" fill="url(#anGrad-rose)"/>
+                <polygon points="26,-2 40,26 18,16" fill="url(#anGrad-rose)"/>
+                <text x="0" y="-2" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-ink)">45 s</text>
+                <polygon points="-10,22 0,52 10,22" fill="url(#anGrad-amber)"/>
+              </g>
+            </g>
+            <text x="320" y="332" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">Publicité éjectée dans le vide</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">FreeTube/NewPipe : la pub de 45 s éjectée — 1080p, zéro compte.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Google Docs : un fichier, un profil" data-title="Google Docs : un fichier, un profil" data-group="Alternatives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">03 · Les alternatives — en action</p>
+      <h2>Google Docs : un fichier, un profil</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> quand le travail impose Docs, la <b>boîte à gants</b> l'enferme derrière une vitre scellée :
+      profil dédié, conteneur étanche, <b>cookies confinés au pro</b>.</p>
+      <div class="story-cols"><p><span class="evt">Bureautique</span>Isoler le pro en attendant <b>LibreOffice · ONLYOFFICE · CryptPad</b>.</p>
+      <p><span class="evt">Le réflexe</span>Profil navigateur dédié au pro, conteneur étanche, déconnexion
+      du compte perso — en attendant la migration complète.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#28</span><h3>La boîte à gants Docs</h3><span class="animcard__tag">Sandbox</span></div>
+        <div class="anim-stage" role="img" aria-label="Des bras mécaniques manipulent un document Google behind une vitre scellée, zéro cookie ne sort">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <g>
+              <rect x="60" y="88" width="252" height="192" rx="14" fill="none" stroke="url(#anGrad-cyan)" stroke-width="2.5"/>
+              <text x="186" y="114" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-cyan)">PROFIL SCELLÉ</text>
+              <rect x="120" y="148" width="92" height="98" rx="8" fill="url(#anGrad-rose)" fill-opacity=".16" stroke="url(#anGrad-rose)" stroke-width="2"/>
+              <text x="166" y="204" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-rose)">Docs pro</text>
+            </g>
+            <g class="a28-arm"><g class="a28-claw"><line x1="470" y1="180" x2="330" y2="196" stroke="var(--an-amber)" stroke-width="4"/><line x1="330" y1="196" x2="306" y2="184" stroke="var(--an-amber)" stroke-width="3.5"/><line x1="330" y1="196" x2="308" y2="212" stroke="var(--an-amber)" stroke-width="3.5"/></g></g>
+            <text x="478" y="150" text-anchor="start" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-amber)">OS hôte</text>
+            <text x="386" y="332" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;font-weight:700;fill:var(--an-green)">0 cookie dehors</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Docs pro en profil scellé : cookies confinés — en attendant LibreOffice/CryptPad.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+  <!-- AUTRES SERVICES NON-GOOGLE -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Aussi : Netflix, iOS, Microsoft" data-title="Aussi : Netflix, iOS, Microsoft" data-group="Au-delà de Google">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">04 · Au-delà de Google</p>
+        <h2>Aussi : Netflix, iOS, Microsoft</h2>
+      </header>
+      <div class="duo">
+        <article class="bigcard">
+          <p class="bigcard__from">NETFLIX</p>
+          <p class="swap" aria-hidden="true">↓</p>
+          <h3>Jellyfin</h3>
+          <p>Médiathèque personnelle auto-hébergée : lisez vos propres fichiers, sans tracking, multi-appareils.</p>
+          <p class="limite"><svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg><span><b>Limite</b> Il faut constituer et héberger votre propre bibliothèque.</span></p>
+        </article>
+        <article class="bigcard">
+          <p class="bigcard__from">APPLE · IOS</p>
+          <p class="swap" aria-hidden="true">↓</p>
+          <h3>Android dégooglisé</h3>
+          <p>GrapheneOS / LineageOS selon l'appareil&nbsp;; sinon, durcir iOS&nbsp;: Safari + bloqueur, e-mail chiffré.</p>
+          <p class="limite"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><span><b>Note</b> Écosystème fermé&nbsp;: à défaut de partir, on limite la casse.</span></p>
+        </article>
+        <article class="bigcard">
+          <p class="bigcard__from">MICROSOFT</p>
+          <p class="swap" aria-hidden="true">↓</p>
+          <h3>Alternatives libres</h3>
+          <ul>
+            <li><b>GitHub →</b> GitLab · Gitea/Forgejo · <b>Codeberg</b> (association, éthique, non marchand)</li>
+            <li><b>Office →</b> LibreOffice · ONLYOFFICE</li>
+            <li><b>Teams →</b> Jitsi Meet · Element</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- semaine 1 : Takeout -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Les 15 Go gratuits : un appât vers le lock-in" data-title="Les 15 Go gratuits : un appât vers le lock-in" data-group="Plan de migration">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">05 · Plan de migration — semaine 1</p>
+      <h2>Les 15 Go gratuits : un appât vers le lock-in</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> les <b>15 Go gratuits</b> partagés entre Gmail, Drive et Photos sont un appât :
+      à 14,99 Go, Gmail refuse vos messages — sauf à passer à Google One.</p>
+      <div class="story-cols"><p><span class="evt">Semaine 1 — audit</span>Inventorier ce qui pèse : Photos, Drive, Gmail.
+      Nettoyer avant d'exporter, sinon on déménage du bruit.</p>
+      <p><span class="evt">Le piège</span>Le quota commun transforme un service gratuit en abonnement :
+      anticiper avant le blocage.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#09</span><h3>L'otage des 15 Go</h3><span class="animcard__tag">Google One</span></div>
+        <div class="anim-stage" role="img" aria-label="Une jauge de stockage se remplit jusqu'au rouge puis sature">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <text class="a09-lab" x="280" y="108" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--an-rose)">CRITIQUE : 14,99 / 15,00 Go</text>
+            <g class="a09-shake">
+              <rect x="66" y="150" width="428" height="48" rx="12" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2"/>
+              <rect class="a09-cyan" x="74" y="158" width="412" height="32" rx="8" fill="url(#anGrad-cyan)" filter="url(#anGlow)"/>
+              <rect class="a09-pink" x="74" y="158" width="412" height="32" rx="8" fill="url(#anGrad-rose)"/>
+            </g>
+            <text class="a09-lab" x="280" y="240" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-amber)">PASSER À L'OFFRE OU GMAIL REFUSE</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Le stockage gratuit, appât pour Google One — 14,99/15 Go, Gmail bloqué.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Exporter ses données avec Google Takeout" data-title="Exporter ses données avec Google Takeout" data-group="Plan de migration">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">05 · Plan de migration — semaine 1</p>
+      <h2>Exporter ses données avec Google Takeout</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> la sortie existe, <b>Google Takeout</b>, mais elle est
+      conditionnelle : archives fragmentées, dossiers multiples, JSON éparpillés, <b>liens valables 7 jours</b>.</p>
+      <div class="story-cols"><p><span class="evt">Semaine 1 — sauvegarde</span>Lancer Takeout <b>aujourd'hui</b> :
+      photos, drive, mail, contacts, agenda. Vérifier, garder une copie hors-ligne.</p>
+      <p><span class="evt">La suite</span>Semaine 5 : importer dans <b>Nextcloud + Immich</b>.
+      Ne supprimer le compte qu'en semaine 8.</p></div>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#10</span><h3>La libération de l'otage Takeout</h3><span class="animcard__tag">Export</span></div>
+        <div class="anim-stage" role="img" aria-label="L'export Takeout égrène des archives pendant que le lien expire">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <rect x="60" y="82" width="440" height="206" rx="16" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2.5"/>
+            <rect x="72" y="94" width="416" height="28" rx="8" fill="var(--an-line)" opacity=".35"/>
+            <text x="280" y="114" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;fill:var(--an-mute)">Google Takeout</text>
+            <g style="font-family:var(--font-mono);font-size:13px;font-weight:600">
+              <text class="a10-f a10-f1" x="280" y="166" text-anchor="middle" style="fill:var(--an-cyan)">takeout-part-07.tgz</text>
+              <text class="a10-f a10-f2" x="280" y="166" text-anchor="middle" style="fill:var(--an-cyan)">takeout-part-24.tgz</text>
+              <text class="a10-f a10-f3" x="280" y="166" text-anchor="middle" style="fill:var(--an-cyan)">takeout-part-41.tgz</text>
+              <text class="a10-f a10-f4" x="280" y="166" text-anchor="middle" style="fill:var(--an-cyan)">takeout-part-63.tgz</text>
+            </g>
+            <g style="font-family:var(--font-mono);font-size:13px;font-weight:700;fill:var(--an-rose)">
+              <text class="a10-t a10-t1" x="280" y="206" text-anchor="middle">Lien expire : 00:09</text>
+              <text class="a10-t a10-t2" x="280" y="206" text-anchor="middle">Lien expire : 00:06</text>
+              <text class="a10-t a10-t3" x="280" y="206" text-anchor="middle">Lien expire : 00:03</text>
+              <text class="a10-t a10-t4" x="280" y="206" text-anchor="middle">Lien expire : 00:01</text>
+            </g>
+            <text x="280" y="262" text-anchor="middle" style="font-family:var(--font-mono);font-size:10px;fill:var(--an-mute)">Exemple : 842 fichiers, 90 dossiers</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">Takeout : exports fragmentés, liens 7 jours — lancez-le en semaine 1.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+  <!-- CALENDRIER DE MIGRATION -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Proposition de calendrier de migration" data-title="Calendrier de migration" data-group="Plan de migration">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">05 · Plan de migration</p>
+        <h2>Proposition de calendrier de migration</h2>
+        <p class="principle">Principe : sauvegarder → installer → basculer → nettoyer. On ne casse rien, on migre en parallèle, on ne supprime le compte Google qu'à la fin.</p>
+      </header>
+      <div class="timeline">
+        <div class="step"><span class="step__w">SEMAINE 1</span><h3>Audit &amp; sauvegarde</h3><p>Google Takeout (photos, drive, mail, contacts, agenda) · liste des services / utilisateurs — tout récupérer, tout inventorier.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 2</span><h3>Fondations</h3><p>Domaine + VPS / NAS · installer Nextcloud · choisir l'e-mail cible — préparer l'infrastructure.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 3</span><h3>Navigateur &amp; e-mail</h3><p>Firefox / LibreWolf + uBlock Origin · créer Tuta / Disroot · prévenir ses contacts — couper le tracking, ouvrir une boîte.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 4</span><h3>Bascule e-mail</h3><p>Rediriger l'ancien mail · changer l'adresse sur chaque compte / abonnement — transférer les flux.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 5</span><h3>Fichiers &amp; photos</h3><p>Syncthing + Nextcloud · importer les archives dans Immich — déplacer la donnée.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 6</span><h3>Suite &amp; agenda</h3><p>CalDAV / CardDAV · LibreOffice / Nextcloud · Joplin — remplacer l'usage quotidien.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 7</span><h3>Mobile</h3><p>LineageOS / GrapheneOS · F-Droid / Aurora / microG · apps alternatives — dégoogliser le téléphone.</p></div>
+        <div class="step"><span class="step__w">SEMAINE 8</span><h3>Nettoyage</h3><p>Révoquer tous les accès · supprimer le compte — couper le cordon.</p></div>
+        <div class="step step--end"><span class="step__w">ENTRETIEN</span><h3>Tenir dans la durée</h3><p>Sauvegardes testées · mises à jour · sauvegardes chiffrées hors site.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- semaine 8 : purge -->
+<section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Purge finale : broyer 10 ans d'historique — semaine 8" data-title="Purge finale : semaine 8" data-group="Plan de migration">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <p class="kicker">05 · Plan de migration — semaine 8</p>
+      <h2>Purge finale</h2>
+    </header>
+    <p class="story-lead"><b>L'événement :</b> <b>myactivity.google.com</b> centralise positions, recherches, vidéos et mails.
+      En semaine 8, on purge <b>l'historique visible</b> : purger l'historique, révoquer les accès tiers,
+      supprimer le compte — jusqu'au « <b>compte vide</b> ». Confettis verts.</p>
+    <div class="anim-grid anim-grid--single">
+      <figure class="animcard">
+        <div class="animcard__head"><span class="animcard__id">#29</span><h3>Le broyeur des 10 ans d'historique</h3><span class="animcard__tag">Purge</span></div>
+        <div class="anim-stage" role="img" aria-label="Un long ticket de 10 ans d'historique est broyé puis soufflé en confettis">
+          <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false">
+            <rect width="560" height="360" fill="url(#anFocal)"/>
+            <defs><clipPath id="a29clip"><rect x="150" y="0" width="260" height="90"/></clipPath></defs>
+            <g clip-path="url(#a29clip)">
+              <g class="a29-tape">
+                <rect x="200" y="-150" width="160" height="404" rx="4" fill="#f4f5fb"/>
+                <text x="280" y="8" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:#20242e">10 ANS DE POSITIONS</text>
+                <text x="216" y="44" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">12 mars — Maps</text>
+                <text x="216" y="74" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">3 avril — Search</text>
+                <text x="216" y="104" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">21 juin — YouTube</text>
+                <text x="216" y="134" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">9 sept — Gmail</text>
+                <text x="216" y="164" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">14 oct — Photos</text>
+                <text x="216" y="194" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">2 nov — Ma chaîne</text>
+                <text x="216" y="224" style="font-family:var(--font-mono);font-size:9px;fill:#555b6e">27 déc — Playback</text>
+              </g>
+            </g>
+            <g>
+              <rect x="150" y="88" width="260" height="46" rx="8" fill="url(#anGlass)" stroke="var(--an-line)" stroke-width="2.5"/>
+              <text x="280" y="118" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;font-weight:700;fill:var(--an-rose)">BROYEUR</text>
+              <g class="a29-gear"><circle cx="188" cy="111" r="12" fill="var(--an-line)"/><line x1="176" y1="111" x2="200" y2="111" stroke="var(--an-card)" stroke-width="2"/><line x1="188" y1="99" x2="188" y2="123" stroke="var(--an-card)" stroke-width="2"/></g>
+              <g class="a29-gear a29-gear-b"><circle cx="372" cy="111" r="12" fill="var(--an-line)"/><line x1="360" y1="111" x2="384" y2="111" stroke="var(--an-card)" stroke-width="2"/><line x1="372" y1="99" x2="372" y2="123" stroke="var(--an-card)" stroke-width="2"/></g>
+            </g>
+            <g class="a29-conf"><circle cx="216" cy="158" r="4" fill="url(#anGrad-green)"/></g>
+            <g class="a29-conf" style="animation-delay:.18s"><circle cx="248" cy="158" r="5" fill="url(#anGrad-cyan)"/></g>
+            <g class="a29-conf" style="animation-delay:.36s"><circle cx="280" cy="158" r="4" fill="url(#anGrad-amber)"/></g>
+            <g class="a29-conf" style="animation-delay:.54s"><circle cx="312" cy="158" r="5" fill="url(#anGrad-green)"/></g>
+            <text x="280" y="332" text-anchor="middle" style="font-family:var(--font-mono);font-size:11px;font-weight:700;fill:var(--an-green)">HISTORIQUE VISIBLE PURGÉ</text>
+          </svg>
+        </div>
+        <figcaption class="anim-cap">myactivity.google.com déchiqueté : l'historique visible purgé — semaine 8.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+  <!-- CONCLUSION -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Conclusion" data-title="Conclusion" data-group="Conclusion">
+    <div class="slide-inner">
+      <div class="concl">
+        <div>
+          <p class="kicker">06 · Conclusion</p>
+          <h2 style="font-size:var(--fs-h1);margin:.6rem 0 1.4rem">Ce qu'il faut retenir</h2>
+          <ul class="takeaways">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-ok"/></svg><span>Quitter Google est un <b>processus</b>, pas un interrupteur&nbsp;: brique par brique, sans tout casser.</span></li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-ok"/></svg><span>Il existe une <b>alternative mature pour presque chaque service</b> — souvent auto-hébergeable et respectueuse de la vie privée.</span></li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-ok"/></svg><span>Le vrai gain&nbsp;: la <b>souveraineté</b> sur ses données et la <b>résilience</b> de ne plus dépendre d'un seul fournisseur.</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="nextstep">
+            <h3>Prochaine étape concrète</h3>
+            <p>Lancer un <b>Google Takeout</b> aujourd'hui, et choisir <b>UNE brique</b> à migrer cette semaine.</p>
+          </div>
+          <div class="final">
+            <p><span class="q">Et « c'est quoi Google ? »</span>Une entreprise. Pas une infrastructure inévitable. <span class="libre-text">Reprenez la main.</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER PRATIQUE : pont vers la mise en pratique -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Atelier pratique : à vous de jouer" data-title="Atelier pratique" data-group="Conclusion">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">06 · Conclusion — mise en pratique</p>
+        <h2>Atelier pratique : à vous de jouer</h2>
+      </header>
+      <p class="eco-lead">La théorie s'arrête ici. Choisissez <b>une piste</b> et repartez avec quelque chose qui tourne — pas juste des notes.</p>
+      <div class="duo" style="margin-top:1rem">
+        <article class="bigcard">
+          <p class="bigcard__from">PISTE A · CLOUD</p>
+          <p class="swap" aria-hidden="true">↓</p>
+          <h3>Nextcloud en 20 min</h3>
+          <p>Montez Nextcloud avec Docker Compose : fichiers + agenda + contacts synchronisés.</p>
+          <ul>
+            <li><b>Prérequis :</b> un portable avec Docker</li>
+            <li><b>Repartez avec :</b> votre cloud perso accessible en local</li>
+          </ul>
+        </article>
+        <article class="bigcard">
+          <p class="bigcard__from">PISTE B · MAIL</p>
+          <p class="swap" aria-hidden="true">↓</p>
+          <h3>Takeout → Thunderbird</h3>
+          <p>Exportez Google Takeout (MBOX), importez dans Thunderbird, créez votre boîte Tuta.</p>
+          <ul>
+            <li><b>Prérequis :</b> votre archive Takeout (semaine 1)</li>
+            <li><b>Repartez avec :</b> vos mails lisibles hors Google</li>
+          </ul>
+        </article>
+        <article class="bigcard">
+          <p class="bigcard__from">PISTE C · MOBILE</p>
+          <p class="swap" aria-hidden="true">↓</p>
+          <h3>Flash GrapheneOS</h3>
+          <p>Déverrouillez un Pixel de test, flashez GrapheneOS, installez F-Droid + Aurora.</p>
+          <ul>
+            <li><b>Prérequis :</b> aucun — Pixel fourni sur table</li>
+            <li><b>Repartez avec :</b> la check-list pour refaire ça chez vous</li>
+          </ul>
+          <p class="limite"><svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg><span><b>Limite</b> Le flash efface le téléphone — on ne touche jamais à votre appareil perso.</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANNEXE : RESSOURCES -->
+  <section class="slide" tabindex="-1" aria-roledescription="diapositive" aria-label="Annexe : ressources" data-title="Annexe · ressources" data-group="Conclusion">
+    <div class="slide-inner">
+      <header class="slide-head">
+        <p class="kicker">Annexe</p>
+        <h2>Ressources pour continuer</h2>
+      </header>
+      <div class="res-grid">
+        <article class="res"><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Principes &amp; guides</h3>
+          <p>Switching Guides (<code>switching.software</code>) · Switching.is · Degoogle.</p></article>
+        <article class="res"><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Annuaires libres</h3>
+          <p>AlternativeTo · Framalibre · European Alternatives.</p></article>
+        <article class="res"><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Communauté / entraide</h3>
+          <p>Subreddit <code>r/degoogle</code> · associations libristes (April, CHATONS).</p></article>
+        <article class="res"><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Auto-hébergement</h3>
+          <p>Docs officielles Nextcloud, Immich, Mailcow · guides d'amorçage VPS.</p></article>
+      </div>
+      <div class="callout">
+        <span class="lead" style="color:var(--warn)">Aucune alternative n'est parfaite</span>
+        Le bon choix dépend de votre tolérance à la maintenance (auto-hébergement) vs. la simplicité (services de confiance hébergés).
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="hud" aria-label="Navigation du diaporama">
+  <span class="hud__hint"><kbd>O</kbd> aperçu</span>
+  <span class="counter" id="counter" role="status" aria-live="polite" aria-label="Numéro de diapositive">— / —</span>
+  <button class="btn" id="prev" type="button" aria-label="Diapositive précédente"><svg aria-hidden="true"><use href="#i-left"/></svg></button>
+  <button class="btn" id="next" type="button" aria-label="Diapositive suivante"><svg aria-hidden="true"><use href="#i-right"/></svg></button>
+</nav>
+
+<div class="overview" id="overview" role="dialog" aria-modal="true" aria-label="Vue d'ensemble des diapositives">
+  <h2>Aperçu des diapositives</h2>
+  <p>Choisissez une diapositive — <kbd>Esc</kbd> pour fermer</p>
+  <div class="ov__grid" id="ovGrid"></div>
+</div>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Données : les 20 catégories du plan (contenu intégral) ---------- */
+  var CATS=[
+    {t:"Recherche",g:"Google Search",logo:"logo-googleg-gradient-color-2x-web-96dp.webp",n:[
+      ["SearXNG","Sx",158,"Métamoteur open source, auto-hébergeable","Aucune trace, agrège plusieurs moteurs, pas de bulle de filtres","Qualité inégale, interface dépouillée"],
+      ["Startpage","St",212,"Résultats Google anonymisés","Pertinence Google sans pistage, société néerlandaise","Adossée à une régie US, mêmes biais que Google"],
+      ["DuckDuckGo","Dd",188,"Moteur privé indépendant","Simple, sans profil, extensions","Index en partie fourni par Bing"],
+      ["Marginalia","Mg",262,"Moteur indépendant du « petit web »","Trouve le web non commercial, sans pub","Faible sur les requêtes commerciales"],
+      ["YaCy","Yc",142,"Moteur pair-à-pair décentralisé","Résistant à la censure, sans serveur central","Index très partiel, lent"]
+    ]},
+    {t:"Vidéo",g:"YouTube",logo:"youtube.png",n:[
+      ["NewPipe","NP",354,"Client libre YouTube (Android)","Sans compte, sans pub, téléchargement","Pas d'écosystème créateurs, maintenance bénévole"],
+      ["Invidious / Piped","Iv",196,"Frontends web libres","Sans pistage, sans compte","Instances publiques limitées, quotas"],
+      ["PeerTube","Pt",158,"Plateforme vidéo fédérée (ActivityPub)","Décentralisé, sans algorithme opaque","Catalogue réduit, hébergement coûteux"],
+      ["Tournesol","To",42,"Extension de recommandation citoyenne","Réintroduit un critère éthique dans le flux","Communauté encore réduite"],
+      ["Owncast","Ow",280,"Live-streaming personnel auto-hébergé","Contrôle total du direct","Pas de catalogue, audience à bâtir"]
+    ]},
+    {t:"Navigateur",g:"Chrome",logo:"chrome.png",n:[
+      ["Firefox","Ff",24,"Navigateur indépendant (moteur Gecko)","Extensible (uBlock Origin), hors monopole Chromium","Performances variables sur certains sites"],
+      ["LibreWolf","Lw",158,"Firefox durci pour la vie privée","Télémétrie coupée, protection par défaut","Certains sites cassés, pas de sync native"],
+      ["Mullvad Browser","Mb",196,"Navigateur anti-pistage (Tor Project + Mullvad)","Anti-fingerprint poussé, sans compte","Suivi des versions ESR, moins d'extensions"]
+    ]},
+    {t:"E-mail",g:"Gmail",logo:"logo-gmail-2026-color-2x-web-64dp.webp",n:[
+      ["Tuta Mail","Tu",212,"Webmail chiffré de bout en bout (Allemagne)","Zéro analyse publicitaire, prix bas","IMAP/POP payant, interop limitée"],
+      ["Disroot","Di",158,"Collectif associatif (mail + suite)","Éthique, quasi gratuit","Disponibilité variable, listes d'attente"],
+      ["Mailcow","Mc",196,"Suite mail complète auto-hébergée","Contrôle total, ActiveSync, anti-spam","Lourd à maintenir, DNS à soigner"],
+      ["Mail-in-a-Box","Ma",142,"Serveur mail « clé en main »","Mise en route simple","Rigide, vos mails peuvent finir en spam"],
+      ["Roundcube","Rc",262,"Webmail à brancher sur son serveur","Libre, mature","Ne fournit pas le serveur mail"]
+    ]},
+    {t:"Cartographie",g:"Google Maps",logo:"logo-maps-2025-color-2x-web-96dp.webp",n:[
+      ["OpenStreetMap","Os",158,"Carte libre et collaborative","Données ouvertes, vie privée, mondial","Moins de POI commerciaux"],
+      ["CoMaps","Co",196,"App mobile OSM, hors-ligne","Gratuit, hors-ligne, sans pub","Interface perfectible"],
+      ["OsmAnd","Oa",212,"Navigation OSM avancée","Ultra configurable, hors-ligne, complet","Courbe d'apprentissage, fonctions payantes"]
+    ]},
+    {t:"Stockage",g:"Google Drive",logo:"logo-drive-2026-color-2x-web-64dp.webp",n:[
+      ["Nextcloud","Nc",158,"Plateforme collaborative auto-hébergée","Équivalent Workspace complet, apps","Maintenance et perfs selon l'infra"],
+      ["Syncthing","Sy",196,"Synchronisation P2P multi-appareils","Sans cloud, chiffré, temps réel","Pas de lien web, appareils allumés ensemble"],
+      ["ownCloud","Ow",212,"Synchronisation de fichiers","Stable, orienté entreprise","Communauté plus petite que Nextcloud"],
+      ["Hetzner","Hz",28,"Hébergeur européen (VPS / Storage Box)","Serveurs et stockage bon marché, datacenters UE","Hébergeur, pas un service de sync"]
+    ]},
+    {t:"Photos",g:"Google Photos",logo:"logo-photos-2025-color-2x-web-64dp.webp",n:[
+      ["Immich","Im",158,"« Google Photos libre » auto-hébergé","Excellent, app mobile, IA locale (visages)","Auto-hébergement + stockage"],
+      ["PhotoPrism","Pp",42,"Gestion photo assistée par IA","Recherche intelligente aboutie","Version libre amputée, IA gourmande"],
+      ["LibrePhotos","Lp",196,"Bibliothèque photo open source","Léger, simple","Moins mature"]
+    ]},
+    {t:"Visioconférence",g:"Google Meet",logo:"logo-meet-2026-color-2x-web-64dp.webp",n:[
+      ["Jitsi Meet","Ji",196,"Visio web open source","Gratuit, sans compte, auto-hébergeable","Qualité variable en grand groupe"],
+      ["BigBlueButton","Bb",212,"Plateforme e-learning","Tableau blanc, votes, salle de classe","Lourd à déployer"],
+      ["Nextcloud Talk","Nt",158,"Visio intégrée à Nextcloud","Tout au même endroit","Qualité dépendante du serveur"]
+    ]},
+    {t:"Traitement de texte",g:"Google Docs",logo:"logo-docs-2026-color-2x-web-64dp.webp",n:[
+      ["LibreOffice","Lo",158,"Suite bureautique locale","Gratuit, hors-ligne, formats ouverts (ODF)","Collaboration temps réel limitée"],
+      ["ONLYOFFICE Docs","Oo",24,"Éditeur collaboratif compatible MS","Collaboration temps réel, rendu .docx fidèle","Fonctions avancées payantes"],
+      ["CryptPad","Cp",262,"Documents chiffrés côté client","Chiffrement côté client, collaboratif","Lourd sur gros fichiers"]
+    ]},
+    {t:"Tableur",g:"Google Sheets",logo:"logo-sheets-2026-color-2x-web-64dp.webp",n:[
+      ["LibreOffice Calc","Lc",158,"Tableur local","Puissant, hors-ligne, ODS","Collaboration limitée"],
+      ["ONLYOFFICE Sheets","Os",24,"Tableur collaboratif","Compatibilité Excel, temps réel","Auto-hébergement requis"],
+      ["CryptPad Sheets","Cp",262,"Tableur chiffré collaboratif","Chiffrement côté client","Moins de fonctions avancées"]
+    ]},
+    {t:"Présentation",g:"Google Slides",logo:"logo-slides-2026-color-2x-web-64dp.webp",n:[
+      ["LibreOffice Impress","Li",158,"Logiciel de présentation local","Gratuit, hors-ligne","Compatibilité .pptx imparfaite"],
+      ["reveal.js","Rj",196,"Présentations en HTML","Contrôlable, versionnable, sobre","Demande du code"],
+      ["CryptPad Slides","Cp",262,"Présentations chiffrées","Chiffrement côté client, collaboratif","Fonctions basiques"]
+    ]},
+    {t:"Formulaires",g:"Google Forms",logo:"logo-forms-2026-color-2x-web-64dp.webp",n:[
+      ["LimeSurvey","Ls",212,"Sondages avancés auto-hébergés","Mature, types de questions riches","Interface vieillissante"],
+      ["Formbricks","Fb",158,"Formulaires / enquêtes modernes","Design soigné, NPS, open source","Projet jeune, fonctions limitées"],
+      ["OhMyForm","Om",262,"Constructeur de formulaires","Agréable, orienté UX","Développement au ralenti"]
+    ]},
+    {t:"Agenda",g:"Google Calendar",logo:"logo-calendar-2026-color-2x-web-64dp.webp",n:[
+      ["Radicale","Ra",158,"Serveur CalDAV/CardDAV léger","Minimal, sobre, efficace","Pas d'interface web riche"],
+      ["Baïkal","Ba",42,"Serveur CalDAV/CardDAV (PHP)","Simple, admin graphique","Partage et fonctions limités"],
+      ["Nextcloud Calendar","Nc",196,"Agenda intégré à Nextcloud","Partage, synchronisé","Nécessite Nextcloud"]
+    ]},
+    {t:"Système mobile",g:"Android (stock)",logo:"android.png",n:[
+      ["GrapheneOS","Gr",158,"Android durci (Pixel)","Sécurité et confidentialité maximales","Réservé aux Pixel, applis Google manquantes"],
+      ["LineageOS","Ln",196,"Android dégooglisé multi-appareils","Longévité, sans GApps","Certaines applis bancaires refusent de tourner"],
+      ["postmarketOS","PM",262,"Linux mobile","Vraiment libre, prolonge le matériel","Réservé aux bidouilleurs, applis limitées"]
+    ]},
+    {t:"Applications",g:"Google Play Store",logo:"play.png",n:[
+      ["F-Droid","Fd",158,"Store d'applications libres","100 % FOSS, compilations reproductibles","Catalogue réduit"],
+      ["Aurora Store","Au",42,"Client Play Store anonyme","Installe du Play sans compte Google","Dépend du Play, en marge des conditions Google"],
+      ["Obtainium","Ob",196,"Installeur d'APK (GitHub / F-Droid)","Mises à jour directes, sans boutique","Il faut connaître la source"]
+    ]},
+    {t:"Notes",g:"Google Keep",logo:"logo-keep-2026-color-2x-web-64dp.webp",n:[
+      ["Joplin","Jo",196,"Notes Markdown, sync chiffrée","Ouvert, multi-backend, E2EE, webclipper","Interface austère"],
+      ["Standard Notes","Sn",158,"Notes chiffrées de bout en bout","Confidentialité forte, cross-plateforme","Gratuit limité, options payantes"],
+      ["Notesnook","Nn",262,"Notes chiffrées, type Evernote","E2EE, moderne","Fonctions avancées payantes"]
+    ]},
+    {t:"Traduction",g:"Google Translate",logo:"translate.png",n:[
+      ["LibreTranslate","Lt",158,"Traduction open source auto-hébergée","Sans cloud, API libre","Qualité moindre sur langues rares"],
+      ["Argos Translate","Ag",196,"Moteur local hors-ligne","Fonctionne hors-ligne","Qualité variable"],
+      ["Apertium","Ap",212,"Traduction par règles (paires de langues)","Rapide, contrôlable","Peu de paires de langues"]
+    ]},
+    {t:"Identité / 2FA",g:"Google Authenticator",logo:"authenticator.png",n:[
+      ["Aegis","Ae",158,"2FA Android open source","Export chiffré, sobre, fiable","Android uniquement"],
+      ["2FAS","2F",196,"2FA multi-plateformes","Design soigné, sync chiffrée","Sauvegarde cloud à configurer avec soin"],
+      ["FreeOTP","Ft",212,"2FA standard (Red Hat)","Simple, sans compte","Interface spartiate"]
+    ]},
+    {t:"Messagerie",g:"Messages · Chat · Voice",logo:"messages.png",n:[
+      ["Element (Matrix)","El",196,"Messagerie fédérée chiffrée","Décentralisé, E2EE, salons","Adoption limitée, serveur à choisir"],
+      ["SimpleX Chat","Sx",158,"Messagerie sans identifiant","Métadonnées minimales, E2EE","Réseau à construire"],
+      ["Briar","Br",262,"Messagerie P2P via Tor","Sans serveur, résiste aux coupures","Surtout mobile, lent"],
+      ["Signal","Si",354,"Messagerie grand public chiffrée","Simple, adoption large","Serveurs centralisés"]
+    ]},
+    {t:"IA générative",g:"Gemini · Assistant",logo:"gemini-update.png",n:[
+      ["LibreChat","Lc",262,"Interface unifiée multi-LLM","Branchez vos modèles, historique","Exige une clé ou un modèle"],
+      ["Open WebUI","Ow",196,"Interface pour modèles locaux","100 % local (avec Ollama)","Exige un matériel puissant"],
+      ["LocalAI","La",158,"API compatible OpenAI auto-hébergée","Local, multi-moteurs","Configuration technique"],
+      ["Home Assistant","Ha",42,"Domotique et assistant vocal local","Contrôle local, 1000+ intégrations","Demande un matériel dédié"]
+    ]}
+  ];
+
+  function slugify(n){
+    return String(n).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  }
+  function cardHTML(n){
+    var slug=slugify(n[0]);
+    return '<article class="card"><div class="card__top">'
+      +'<span class="altlogo"><img src="downloaded_images/alt/'+slug+'.svg" data-png="downloaded_images/alt/'+slug+'.png" alt="" loading="eager" decoding="async" onerror="if(this.dataset.png){var p=this.dataset.png;this.dataset.png=\'\';this.src=p;}else{this.parentNode.classList.add(\'is-fallback\');this.remove();}">'
+      +'<span class="mono" style="--mh:'+n[2]+'" aria-hidden="true">'+n[1]+'</span></span><h3>'+n[0]+'</h3></div>'
+      +'<p class="card__desc"><svg class="ic" style="color:var(--ink-mute);margin-right:.35rem" aria-hidden="true"><use href="#i-info"/></svg>'+n[3]+'</p>'
+      +'<p class="pm pm--pro"><svg class="ic" aria-hidden="true"><use href="#i-ok"/></svg><span><b>Avantages</b>'+n[4]+'</span></p>'
+      +'<p class="pm pm--con"><svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg><span><b>Limites</b>'+n[5]+'</span></p></article>';
+  }
+
+  /* ---------- Rendu des slides « alternatives » + repères anti-fatigue ---------- */
+  var anchor=document.getElementById("anchor-alt");
+  var REPERES={
+    6:{t:"Repère — déjà 7 chantiers",h:"Si vous ne retenez qu'une chose",
+      p:"Moteur : <b>SearXNG / DuckDuckGo</b> · Vidéo : <b>NewPipe</b> · Mail : <b>Tuta</b>. Le reste se visite à votre rythme."},
+    13:{t:"Repère — cap sur le mobile",h:"La bascule se joue ici",
+      p:"Bureautique : <b>LibreOffice / CryptPad</b> · Mobile : <b>GrapheneOS</b> · Mots de passe : <b>Bitwarden + Aegis</b>."}
+  };
+  CATS.forEach(function(c,i){
+    var sec=document.createElement("section");
+    sec.className="slide";
+    sec.tabIndex=-1;
+    sec.setAttribute("aria-roledescription","diapositive");
+    sec.setAttribute("aria-label","Alternatives : "+c.t);
+    sec.dataset.title=c.t;
+    sec.dataset.group="Alternatives";
+    var mod=c.n.length>=5?" cards--five":(c.n.length===4?" cards--two":"");
+    sec.innerHTML='<div class="slide-inner"><header class="slide-head">'
+      +'<p class="kicker">Les alternatives · '+(i<9?"0":"")+(i+1)+' / 20</p><h2>'+c.t+'</h2>'
+      +'<span class="replaces"><span class="lbl">remplace</span>'
+      +'<span class="mini"><img src="downloaded_images/'+c.logo+'" alt="" loading="eager" decoding="async" onerror="this.style.display=\'none\'"></span>'
+      +'<span class="name">'+c.g+'</span></span></header>'
+      +'<div class="cards'+mod+'">'+c.n.map(cardHTML).join("")+'</div></div>';
+    anchor.before(sec);
+    if(REPERES[i]){
+      var r=REPERES[i];
+      var rep=document.createElement("section");
+      rep.className="slide";
+      rep.tabIndex=-1;
+      rep.setAttribute("aria-roledescription","diapositive");
+      rep.setAttribute("aria-label",r.t);
+      rep.dataset.title=r.t;
+      rep.dataset.group="Alternatives";
+      rep.innerHTML='<div class="slide-inner"><div class="split"><div>'
+        +'<p class="kicker">03 · Les alternatives — repère</p>'
+        +'<p class="bignum" aria-hidden="true">'+(i+1)+'/20</p>'
+        +'<h2 style="font-size:var(--fs-h1)">'+r.t+'</h2>'
+        +'<p style="color:var(--ink-soft);font-size:var(--fs-lead);margin-top:.9rem;max-width:46ch;line-height:1.6">'+r.h+' : '+r.p+'</p></div>'
+        +'<div class="legend"><h3>On respire, on se situe</h3>'
+        +'<div class="legend__row"><p><b style="color:var(--libre)">Déjà vu</b>Les fiches précédentes restent en référence — inutile de tout mémoriser.</p></div>'
+        +'<div class="legend__row"><p><b style="color:var(--ink-soft)">À venir</b>La suite détaille les chantiers restants, même format, à picorer.</p></div>'
+        +'<div class="legend__row"><p><b style="color:var(--warn)">Votre tour</b>Notez le chantier qui vous concerne : c\'est lui qu\'on outillera en atelier.</p></div>'
+        +'</div></div></div>';
+      anchor.before(rep);
+    }
+  });
+
+  /* ---------- Images : chargement immédiat (pas de lazy dans un deck sans scroll)
+     ne jamais casser la mise en page si un logo manque ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll(".deck img"),function(im){
+    /* .altlogo a déjà sa propre chaîne de repli (svg → png → monogramme) :
+       ne pas écraser son onerror ni le masquer sur le premier 404 (.svg manquant). */
+    if(im.closest(".altlogo"))return;
+    im.setAttribute("loading","eager");
+    im.setAttribute("decoding","async");
+    im.setAttribute("onerror","this.style.display='none'");
+    im.addEventListener("error",function(){im.style.display="none";});
+    if(im.complete&&im.naturalWidth===0&&im.getAttribute("src")){im.style.display="none";}
+  });
+
+  /* ---------- Navigation ---------- */
+  var deck=document.getElementById("deck");
+  var bar=document.getElementById("bar");
+  var counter=document.getElementById("counter");
+  var prevB=document.getElementById("prev");
+  var nextB=document.getElementById("next");
+  var ov=document.getElementById("overview");
+  var ovGrid=document.getElementById("ovGrid");
+  var slides=Array.prototype.slice.call(deck.querySelectorAll(".slide"));
+  var total=slides.length;
+  var current=0;
+
+  function pad(n){return (n<10?"0":"")+n;}
+
+  /* ---------- Révélations échelonnées (marquage CSS --rv) ---------- */
+  var reduceMotion=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var RVSEL=".slide-head,.story-lead,.story-cols > *,.day > *,.day__punch,.stats > *,.promise > *,.cards > *,.eco-grid > *,"
+    +".anim-grid > *,.reasons > *,.toc > *,.duo > *,.res-grid > *,.legend,.takeaways > li,.step,.callout,.nextstep,.final,.eco-lead";
+  function markReveals(){
+    slides.forEach(function(s){
+      var els=s.querySelectorAll(RVSEL),k=0;
+      for(var i=0;i<els.length;i++){
+        els[i].classList.add("rv");
+        els[i].style.setProperty("--rv",Math.min(k,12));
+        k++;
+      }
+    });
+  }
+  markReveals();
+  /* ---------- Slides animées : texte à côté, pas au-dessus ---------- */
+  slides.forEach(function(s){
+    if(s.querySelector(".anim-grid--single")){
+      s.classList.add("has-anim");
+      if(!s.querySelector(".story-cols")){s.classList.add("has-anim-solo");}
+    }
+  });
+
+  /* ---------- Compteurs animés (« Google en chiffres ») ---------- */
+  var nfCache={};
+  function fmtNum(v,dec){
+    var f=nfCache[dec];
+    if(!f){
+      f=nfCache[dec]=new Intl.NumberFormat("fr-FR",{minimumFractionDigits:dec,maximumFractionDigits:dec});
+    }
+    return f.format(v);
+  }
+  function countUp(el){
+    var target=parseFloat(el.getAttribute("data-count"));
+    if(isNaN(target)){return;}
+    var dec=parseInt(el.getAttribute("data-dec")||"0",10);
+    var suf=el.getAttribute("data-suffix")||"";
+    var dur=1100,t0=null;
+    function frame(ts){
+      if(t0===null){t0=ts;}
+      var p=Math.min((ts-t0)/dur,1);
+      var e=1-Math.pow(1-p,3);
+      el.textContent=fmtNum(target*e,dec)+suf;
+      if(p<1){requestAnimationFrame(frame);}
+    }
+    requestAnimationFrame(frame);
+  }
+  function playFX(slide){
+    if(reduceMotion){return;}
+    var nums=slide.querySelectorAll("[data-count]");
+    for(var i=0;i<nums.length;i++){countUp(nums[i]);}
+  }
+
+  var leavingTimers=[];
+  function setSlide(i,syncHash){
+    if(i<0){i=0;} if(i>total-1){i=total-1;}
+    current=i;
+    slides.forEach(function(s,idx){
+      var on=(idx===i);
+      if(!on&&s.classList.contains("is-active")){
+        s.classList.remove("is-active");
+        s.classList.add("is-leaving");
+        clearTimeout(leavingTimers[idx]);
+        leavingTimers[idx]=setTimeout(function(){s.classList.remove("is-leaving");},520);
+      }
+      s.setAttribute("aria-hidden",on?"false":"true");
+    });
+    var cur=slides[i];
+    clearTimeout(leavingTimers[i]);
+    cur.classList.remove("is-leaving");
+    if(!cur.classList.contains("is-active")){
+      cur.classList.add("is-active");
+    }else{
+      cur.style.animation="none";
+      void cur.offsetWidth;
+      cur.style.animation="";
+    }
+    playFX(cur);
+    bar.style.transform="scaleX("+((i+1)/total)+")";
+    counter.textContent=pad(i+1)+" / "+pad(total);
+    prevB.disabled=(i===0);
+    nextB.disabled=(i===total-1);
+    if(syncHash!==false){
+      var h=String(i+1);
+      if(location.hash.replace("#","")!==h){location.hash=h;}
+    }
+    for(var k=0;k<ovGrid.children.length;k++){
+      ovGrid.children[k].classList.toggle("is-current",k===i);
+    }
+  }
+
+  /* ---------- Aperçu (Vue d'ensemble) ---------- */
+  slides.forEach(function(s,idx){
+    var b=document.createElement("button");
+    b.type="button";
+    b.className="ov__item";
+    b.setAttribute("aria-label","Aller à la diapositive "+pad(idx+1+"").replace(/"/g,"")+" : "+(s.dataset.title||""));
+    b.innerHTML='<span class="ov__num">'+pad(idx+1)+'</span><span class="ov__t">'+(s.dataset.title||"")
+      +'<span class="ov__grp">'+(s.dataset.group||"")+'</span></span>';
+    b.addEventListener("click",function(){
+      setSlide(idx,true);
+      closeOv();
+      slides[idx].focus({preventScroll:true});
+    });
+    ovGrid.appendChild(b);
+  });
+
+  function openOv(){
+    ov.hidden=false;
+    ov.classList.add("is-open");
+    var cur=ovGrid.children[current];
+    if(cur){cur.focus();}
+  }
+  function closeOv(){
+    ov.classList.remove("is-open");
+    ov.hidden=true;
+    slides[current].focus({preventScroll:true});
+  }
+  function toggleOv(){
+    if(ov.classList.contains("is-open")){closeOv();}else{openOv();}
+  }
+  ov.addEventListener("click",function(e){
+    if(e.target===ov){closeOv();}
+  });
+
+  /* ---------- Clavier ---------- */
+  document.addEventListener("keydown",function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey){return;}
+    var t=e.target;
+    if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)){return;}
+    var onButton=t&&(t.closest?t.closest("button"):null);
+    switch(e.key){
+      case "ArrowRight": case "PageDown":
+        e.preventDefault(); setSlide(current+1,true); slides[current].focus({preventScroll:true}); break;
+      case " ":
+        if(onButton){break;}
+        e.preventDefault(); setSlide(current+1,true); slides[current].focus({preventScroll:true}); break;
+      case "ArrowLeft": case "PageUp":
+        e.preventDefault(); setSlide(current-1,true); slides[current].focus({preventScroll:true}); break;
+      case "Home":
+        e.preventDefault(); setSlide(0,true); slides[0].focus({preventScroll:true}); break;
+      case "End":
+        e.preventDefault(); setSlide(total-1,true); slides[total-1].focus({preventScroll:true}); break;
+      case "o": case "O":
+        e.preventDefault(); toggleOv(); break;
+      case "Escape":
+        if(ov.classList.contains("is-open")){e.preventDefault(); closeOv();} break;
+    }
+  });
+
+  prevB.addEventListener("click",function(){setSlide(current-1,true);});
+  nextB.addEventListener("click",function(){setSlide(current+1,true);});
+
+  /* ---------- Lien profond (#n) ---------- */
+  window.addEventListener("hashchange",function(){
+    var n=parseInt(location.hash.replace("#",""),10);
+    if(!isNaN(n)&&n>=1&&n<=total){setSlide(n-1,false);}
+  });
+
+  /* ---------- Glissement tactile ---------- */
+  var tx=null,ty=null;
+  deck.addEventListener("touchstart",function(e){
+    var t=e.changedTouches[0]; tx=t.clientX; ty=t.clientY;
+  },{passive:true});
+  deck.addEventListener("touchend",function(e){
+    if(tx===null){return;}
+    var t=e.changedTouches[0];
+    var dx=t.clientX-tx, dy=t.clientY-ty;
+    tx=null;
+    if(Math.abs(dx)>64&&Math.abs(dx)>2*Math.abs(dy)){
+      setSlide(current+(dx<0?1:-1),true);
+    }
+  },{passive:true});
+
+  /* ---------- Init ---------- */
+  var start=parseInt(location.hash.replace("#",""),10);
+  setSlide(isNaN(start)?0:start-1,false);
+})();
+</script>
+</body>
+</html>

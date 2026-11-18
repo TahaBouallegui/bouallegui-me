@@ -79,6 +79,7 @@ jobs:
             images/
             js/
             cv/*.pdf
+            degoogle/
             favicon.ico
             apple-touch-icon.png
             feed.xml

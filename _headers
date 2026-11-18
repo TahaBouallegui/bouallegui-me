@@ -10,6 +10,18 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
 
+# The de-google presentation in /degoogle/ is one self-contained file: its CSS and JS are
+# inline, and the site-wide style-src 'self' would block them. This path swaps in the same
+# policy with inline styles and scripts allowed, nothing else relaxed. The deck fetches
+# nothing over the network, so 'self' covers every subresource it loads. A detach line
+# removes the value the /* rule above put there: order in this file is load-bearing.
+# It is also kept out of search indexes: the deck is deliberately unlinked, reachable only
+# by direct URL, and a recipient sharing it should not pull it into Google.
+/degoogle/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Robots-Tag: noindex
+
 # Every page is served from this one origin, so a cross-origin embed of og.png would need
 # Cross-Origin-Resource-Policy. It is deliberately not set: social crawlers fetch the image
 # as a top-level navigation, and a same-origin policy here would break link previews.
