@@ -154,11 +154,9 @@ location ~* \.(woff2)$ { add_header Cache-Control "public, max-age=31536000, imm
   `make hero` after touching `src/hero.js` or bumping `three`. If the hero goes, delete
   `src/hero.js`, the bundle, `js/hero-loader.js`, and the script tag in `index.html` and
   `fr/index.html`; the CSS gradient underneath already covers the hero.
-- The CVs list Nextcloud on the home server, but it is not running yet, and the site pages (the
-  index cards, `portfolio.html`, `about.html`, and the alt text of `images/projects/vps.svg`) still
-  describe the stack as Immich, Jellyfin, Grocy, SearXNG and Samba. Once Nextcloud is up, update
-  those pages to match the CVs. A note about the setup is in the queue on `blog.html` and
-  `fr/blog.html`.
+- Nextcloud is up on the home server, and the index cards, `portfolio.html` and the alt text and
+  boxes of `images/projects/vps.svg` now list the same stack as the CVs. Still open: the writeup
+  of the setup, queued on `blog.html` and `fr/blog.html`.
 - The German CV (`cv/bouallegui-cv-de.pdf`) is built and fits one page, but no page on the site
   links it yet. Decide where it should be reachable from, and whether the resume pages get a
   language switch of their own.

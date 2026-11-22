@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Three devices on a tailnet reaching a headless server called aleph, which runs immich, jellyfin, grocy, searxng, samba and a local llm. An arrow from the public internet is crossed out: no port is open to the outside world">
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Three devices on a tailnet reaching a headless server called aleph, which runs nextcloud, jellyfin, searxng, samba and a local llm. An arrow from the public internet is crossed out: no port is open to the outside world">
 
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -44,15 +44,13 @@
     <g stroke="#0096C7" stroke-opacity="0.5" stroke-width="1.1" fill="#fff" fill-opacity="0.06">
       <rect x="316" y="120" width="78" height="26" rx="4"/>
       <rect x="404" y="120" width="78" height="26" rx="4"/>
-      <rect x="492" y="120" width="78" height="26" rx="4"/>
       <rect x="316" y="154" width="78" height="26" rx="4"/>
       <rect x="404" y="154" width="78" height="26" rx="4"/>
       <rect x="492" y="154" width="78" height="26" rx="4"/>
     </g>
     <g font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff" fill-opacity="0.8" text-anchor="middle">
-      <text x="355" y="137">immich</text>
+      <text x="355" y="137">nextcloud</text>
       <text x="443" y="137">jellyfin</text>
-      <text x="531" y="137">grocy</text>
       <text x="355" y="171">searxng</text>
       <text x="443" y="171">samba</text>
       <text x="531" y="171">llm</text>
