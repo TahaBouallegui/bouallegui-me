@@ -69,23 +69,24 @@
 
 \begin{document}
 \makecvtitle
-% Sur papier il n'y a pas d'hypertexte, donc les deux adresses de profil sont imprimees
+% Sur papier il n'y a pas d'hypertexte, donc les trois adresses de profil sont imprimees
 % en entier. Elles passent sous le filet du titre : l'adresse LinkedIn complete fait
 % 246pt de large, et dans l'en-tete elle ne tiendrait a cote du nom et de la photo que
-% si le nom descendait a 22pt.
+% si le nom descendait a 22pt. Le glyphe \faGlobe vient du jeu fontawesome5 deja
+% charge par moderncv pour les icones sociales.
 \vspace{-14pt}
 \begingroup\small\color{color2}\centering
-\linkedinsocialsymbol www.linkedin.com/in/ahmed-taha-bouallegui-474215306\hspace{2.5em}\githubsocialsymbol github.com/TahaBouallegui\par
+\faGlobe\hspace{4pt}bouallegui.pages.dev\hspace{1.5em}\linkedinsocialsymbol www.linkedin.com/in/ahmed-taha-bouallegui-474215306\hspace{1.5em}\githubsocialsymbol github.com/TahaBouallegui\par
 \endgroup
 \footnotesize
 
 % ---------------------------------------------------------------------------
 \section{Kurzprofil}
-\cvitem[.05em]{}{Ingenieurstudent mit Schwerpunkt IoT und Cybersicherheit. Linux-Systemadministration, Infrastruktur als Code, selbst gehostete Umgebungen mit Nix auf NixOS, darunter ein Home Lab, das eigene Modelle lokal betreibt. Ich suche ein Praktikum in den Bereichen Systemadministration oder Cybersicherheit, von 10 Wochen bis zu 4 Monaten, verfügbar jederzeit zwischen dem 19. April und dem 31. August 2027.}
+\cvitem[.05em]{}{Ingenieurstudent (IoT, Cybersicherheit). Linux-Administration, Infrastruktur als Code mit Nix auf NixOS, Home Lab mit lokalen Modellen. Praktikum in Systemadministration oder Cybersicherheit, 10 Wochen bis 4 Monate, Start jederzeit zwischen 19. April und 31. August 2027.}
 
 % ---------------------------------------------------------------------------
 \section{Ausbildung}
-\cventry[.05em]{2023 bis 2028}{M.Eng. Internet of Things and Cybersecurity}{\cvlogo[13pt]{polytech-mark.png}École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, Frankreich}{}{}
+\cventry[.05em]{seit 2023}{M.Eng. Internet of Things and Cybersecurity (voraussichtlich 2028)}{\cvlogo[13pt]{polytech-mark.png}École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, Frankreich}{}{}
 \cventry[.05em]{2023 bis 2025}{Cycle préparatoire (MPCSI)}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, Frankreich}{}{Mit höchster Auszeichnung abgeschlossen, Jahrgangsbester 2023/2024}
 \cventry[.05em]{2023}{Baccalauréat}{Frankreich}{}{}{Mit höchster Auszeichnung (mention très bien)}
 
@@ -93,36 +94,40 @@
 \section{Berufserfahrung}
 \cventry[.05em]{Juni bis Juli 2026}{Forschungspraktikum, CRIStAL \textbf{(Team 2XS)}}{\cvlogo[13pt]{univ-lille-mark.png}IRCICA \textbullet Université de Lille}{Lille, Frankreich}{}{
 \begin{cvlist}
-  \item Sämtliche Fork- und Exec-Aufrufe von \texttt{iw} und \texttt{ip} im WLAN-Modul einer Linux-Sonde zur Erkennung vernetzter Geräte entfernt, ersetzt durch direkte \texttt{nl80211}- und rtnetlink-Aufrufe samt automatischer Interface-Erkennung.
-  \item Beitrag zur Embedded-Entwicklung des Teams 2XS (Speicherbedarf, Energieeffizienz, Sicherheit) sowie zum Kernel-Debugging.
+  \item Sämtliche Fork- und Exec-Aufrufe von \texttt{iw} und \texttt{ip} im WLAN-Modul einer Linux-Sonde für vernetzte Geräte ersetzt durch direkte \texttt{nl80211}- und rtnetlink-Aufrufe samt automatischer Interface-Erkennung.
+  \item Übernommen: Die Sonde läuft jetzt in einem Prozess statt pro \texttt{iw}- oder \texttt{ip}-Aufruf in einem eigenen.
 \end{cvlist}}
 
 \cventry[.05em]{seit April 2025}{Fabmanager \textbf{(FabLab Fabricarium)}}{\cvlogo[13pt]{polytech-mark.png}Polytech Lille}{Villeneuve d'Ascq, Frankreich}{}{
 \begin{cvlist}
   \item Betrieb und Wartung des FabLabs der Schule: 3D-Drucker, Laserschneider, CNC und Elektronik-Arbeitsplätze.
-  \item Studierende und Forschende beim Bau von Hardware- und IoT-Prototypen begleitet; Buchungen, Sicherheit und offene Werkstatttermine koordiniert.
+  \item Studierende und Forschende bei Hardware- und IoT-Prototypen begleitet; Buchungen und Werkstatttermine koordiniert.
 \end{cvlist}}
 
 \cventry[.05em]{Juli bis August 2023}{Praktikum Automatisierungstechnik \textbf{(Valeo)}}{\cvlogo[10pt]{valeo.png}Valeo}{Tunis, Tunesien}{}{
 \begin{cvlist}
-  \item Klangbasierte Qualitätsprüfung an einer Lenkrad-Fertigungslinie automatisiert, mit Python und Librosa.
+  \item Prototyp einer klangbasierten Qualitätsprüfung an einer Lenkrad-Linie (Python, Librosa); einmonatiges Praktikum, vor Einführung in die Linie beendet.
 \end{cvlist}}
 
 % ---------------------------------------------------------------------------
 \section{Ausgewählte Projekte}
 \cventry[.05em]{seit August 2026}{Lokale LLM-Inferenz auf Consumer-Hardware}{}{}{}{
 \begin{cvlist}
-  \item Modelle mit offenen Gewichten auf drei Maschinen mit \texttt{llama.cpp}, Inferenz auf GPU wie auf reiner CPU, erreichbar nur über einen VPS.
-  \item Ein Mixture-of-Experts-Modell mit 125 Mrd. Parametern auf einer 12-GB-Karte: die Experten verteilt auf VRAM, RAM und eine 29 GB große SSD-Nachschlagtabelle. 50 tok/s beim Decodieren und 1020 tok/s beim Prefill.
+  \item Modelle mit offenen Gewichten auf drei Maschinen mit \texttt{llama.cpp}, GPU- und reine CPU-Inferenz, zugänglich nur über einen VPS-Gateway: die Maschinen zuhause öffnen keine Ports.
+  \item Mixture-of-Experts mit 125 Mrd. Parametern auf einer 12-GB-Karte: Experten verteilt auf VRAM, RAM und eine 29-GB-SSD-Nachschlagtabelle. 50 tok/s Decodieren, 1020 tok/s Prefill.
 \end{cvlist}}
 
 \cventry[.05em]{seit Januar 2026}{Selbst gehostete Linux-Server-Infrastruktur}{}{}{}{
 \begin{cvlist}
-  \item Headless-Server: Nextcloud, Jellyfin, SearXNG und Samba. Im Januar 2026 unter Debian gestartet, im Februar aus einem einzigen Konfigurationsbaum unter NixOS neu aufgebaut.
-  \item Nichts lauscht im öffentlichen Internet: Die Dienste sind nur über einen VPS erreichbar, und die Secrets im Repository sind mit sops verschlüsselt.
+  \item Headless-Server: Nextcloud, Jellyfin, SearXNG, Samba. Jan. 2026 unter Debian gestartet, Feb. 2026 aus einem einzigen Konfigurationsbaum unter NixOS neu aufgebaut.
+  \item Nichts lauscht im öffentlichen Internet: alle Dienste hinter dem VPS-Gateway, Repository-Secrets mit sops verschlüsselt.
 \end{cvlist}}
 
-\cventry[.05em]{Januar bis Juni 2026}{Ergonomische Split-Tastatur \textbf{(Studienprojekt)}}{}{}{}{Schaltplan und zweilagige PCB in KiCad gezeichnet, Firmware in C geschrieben.}
+\cventry[.05em]{Jan. bis Juni 2026}{Ergonomische Split-Tastatur \textbf{(Studienprojekt)}}{}{}{}{
+\begin{cvlist}
+  \item Zweilagige PCB in KiCad: 30-Tasten-Matrix mit Anti-Ghosting-Dioden, 48-Kanal-RGB auf zwei kaskadierte TLC5947. Firmware in C: LUFA-USB-HID, Matrix-Scan, UART-Link zur zweiten Hälfte.
+  \item Überstrom der Beleuchtung zerstörte den MCU: IREF-Widerstand des Treibers korrigiert, Chip ersetzt; die Karte flasht und läuft.
+\end{cvlist}}
 
 
 % ---------------------------------------------------------------------------
@@ -130,16 +135,14 @@
 \cvitem[.05em]{Systeme \& Infrastruktur}{Linux (NixOS, Debian, Arch, Ubuntu), KVM/QEMU, Docker, microVMs, systemd.}
 \cvitem[.05em]{Deklarative Konfiguration}{Nix/NixOS, sops, reproduzierbare Builds, Umgebungsmanagement.}
 \cvitem[.05em]{Lokale KI}{llama.cpp, vLLM.}
-\cvitem[.05em]{Netzwerk \& Sicherheit}{Tailscale, ZeroTier, IAM-Isolation, AWS (EC2, IAM, Security Groups), CTF (Reverse Engineering, Web/Speichersicherheit).}
-\cvitem[.05em]{Programmierung}{Python, C/C++, C\#, Java, Rust, Bash, PostgreSQL, Assembler (AVR/ARM).}
-\cvitem[.05em]{Werkzeuge}{Git, KiCad, MATLAB/Simulink, Matplotlib.}
+\cvitem[.05em]{Netzwerk \& Sicherheit}{Tailscale, ZeroTier, IAM-Isolation, AWS (EC2, IAM), CTF (RE, Web/Speichersicherheit).}
+\cvitem[.05em]{Programmierung \& Werkzeuge}{Python, C/C++, C\#, Java, Rust, Bash, PostgreSQL, Assembler (AVR/ARM); Git, KiCad, MATLAB/Simulink, Matplotlib.}
 \cvitem[.05em]{Sprachkenntnisse}{Deutsch (B2), Englisch (C1), Arabisch (Muttersprache), Französisch (C1).}
 
 % ---------------------------------------------------------------------------
 % Ort, Datum und Unterschrift beschliessen in Deutschland den Lebenslauf. Das
 % Datum setzt babel bei jedem Build neu; auf einem heruntergeladenen PDF fehlt
 % die Unterschrift naturgemaess, der Name steht schon im Banner.
-\vspace{8pt}
 \hfill Villeneuve d'Ascq, \today\par
 
 \end{document}

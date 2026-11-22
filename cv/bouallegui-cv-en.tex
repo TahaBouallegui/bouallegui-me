@@ -41,13 +41,14 @@
 
 \begin{document}
 \makecvtitle
-% On paper there is no hypertext, so both profile addresses are printed in full.
+% On paper there is no hypertext, so all three profile addresses are printed in full.
 % They sit under the title rule instead of in the header block: the full LinkedIn
 % address is 246pt wide, and the header only has room for it if the name banner
-% shrinks to 27pt.
+% shrinks to 27pt. The \faGlobe glyph comes from the fontawesome5 set moderncv
+% already loads for the social symbols.
 \vspace{-14pt}
 \begingroup\small\color{color2}\centering
-\linkedinsocialsymbol www.linkedin.com/in/ahmed-taha-bouallegui-474215306\hspace{2.5em}\githubsocialsymbol github.com/TahaBouallegui\par
+\faGlobe\hspace{4pt}bouallegui.pages.dev\hspace{1.5em}\linkedinsocialsymbol www.linkedin.com/in/ahmed-taha-bouallegui-474215306\hspace{1.5em}\githubsocialsymbol github.com/TahaBouallegui\par
 \endgroup
 \footnotesize
 
@@ -57,7 +58,7 @@
 
 % ---------------------------------------------------------------------------
 \section{Education}
-\cventry[.05em]{2023 to 2028}{M.Eng. in Internet of Things and Cybersecurity}{École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, France}{}{}
+\cventry[.05em]{Since 2023}{M.Eng. in Internet of Things and Cybersecurity (expected 2028)}{École Polytechnique Universitaire de Lille (Polytech Lille)}{Villeneuve d'Ascq, France}{}{}
 \cventry[.05em]{2023 to 2025}{Preparatory Cycle (MPCSI)}{Polytech Lille}{Villeneuve d'Ascq, France}{}{Graduated with Highest Honors, Top of Class 2023/2024}
 \cventry[.05em]{2023}{Baccalaur\'eat (French high school diploma)}{France}{}{}{Tr\`es Bien (Highest Distinction)}
 
@@ -75,17 +76,21 @@
 \section{Selected Projects}
 \cventry[.05em]{Since Aug 2026}{Local LLM Inference on Consumer Hardware}{}{}{}{
 \begin{cvlist}
-  \item Open-weight models on three machines with \texttt{llama.cpp}, running inference on GPU and on CPU only, reachable only through a VPS.
+  \item Open-weight models on three machines with \texttt{llama.cpp}, on GPU and on CPU only, reachable only through a VPS gateway: no machine at home opens a port to the public internet.
   \item A 125B mixture-of-experts model on a 12 GB card: experts split across VRAM, RAM and a 29 GB SSD lookup table. 50 tok/s decode and 1,020 tok/s prefill.
 \end{cvlist}}
 
 \cventry[.05em]{Since Jan 2026}{Self-Hosted Linux Server Infrastructure}{}{}{}{
 \begin{cvlist}
   \item Headless server: Nextcloud, Jellyfin, SearXNG and Samba. Started on Debian in January 2026, rebuilt on NixOS in February from one shared config tree.
-  \item Nothing listens on the public internet: services are reachable only through a VPS, and the repository secrets are encrypted with sops.
+  \item Nothing listens on the public internet: every service sits behind the VPS gateway, and the repository secrets are encrypted with sops.
 \end{cvlist}}
 
-\cventry[.05em]{Jan to Jun 2026}{Split Ergonomic Keyboard \textbf{(coursework)}}{}{}{}{Schematic and two-layer PCB drawn in KiCad, firmware written in C.}
+\cventry[.05em]{Jan to Jun 2026}{Split Ergonomic Keyboard \textbf{(coursework)}}{}{}{}{
+\begin{cvlist}
+  \item Two-layer PCB in KiCad: 30-key matrix with anti-ghosting diodes, 48-channel RGB backlight on two cascaded TLC5947 drivers. Firmware in C: LUFA USB HID, matrix scan with debounce, UART protocol to the other half.
+  \item Backlight overcurrent killed the MCU: traced it to the driver's IREF resistor, corrected the value and replaced the chip; the board then flashed and ran.
+\end{cvlist}}
 
 
 % ---------------------------------------------------------------------------
@@ -93,7 +98,7 @@
 \cventry[.05em]{Jun to Jul 2026}{Research Internship, CRIStAL \textbf{(2XS team)}}{IRCICA \textbullet Universit\'e de Lille}{Lille, France}{}{
 \begin{cvlist}
   \item Removed every fork and exec of \texttt{iw} and \texttt{ip} in the wifi module of a Linux IoT-detection probe, replacing them with direct \texttt{nl80211} and rtnetlink calls and automatic interface discovery.
-  \item Contributed to the 2XS team's embedded work on memory footprint, energy efficiency and security, and to kernel debugging.
+  \item The rewrite was adopted into the probe: it now runs in a single process, where every \texttt{iw} or \texttt{ip} call previously spawned one.
 \end{cvlist}}
 
 \cventry[.05em]{Apr 2025 to now}{Fabmanager \textbf{(Fabricarium FabLab)}}{Polytech Lille}{Villeneuve d'Ascq, France}{}{
@@ -104,7 +109,7 @@
 
 \cventry[.05em]{Jul to Aug 2023}{Internship in Automation Engineering \textbf{(Valeo)}}{Valeo}{Tunis, Tunisia}{}{
 \begin{cvlist}
-  \item Automated a sound-recognition quality check on a steering-wheel line with Python and Librosa.
+  \item Prototyped a sound-recognition quality check on a steering-wheel line with Python and Librosa; the one-month internship ended before the tool reached the line.
 \end{cvlist}}
 
 \end{document}
