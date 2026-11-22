@@ -111,7 +111,7 @@
                 <p class="text-sm text-slate-500 mb-2">IRCICA • Université de Lille · Lille, France · Jun to Jul 2026</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
                   <li>Removed every fork and exec of <code class="font-mono text-sm text-ocean-dark">iw</code> and <code class="font-mono text-sm text-ocean-dark">ip</code> from the wifi module of a Linux probe that detects IoT devices from 802.11 management frames, replacing them with direct <code class="font-mono text-sm text-ocean-dark">nl80211</code> (genl) and rtnetlink calls, and added automatic wireless interface discovery.</li>
-                  <li>Contributed to the 2XS team building reliable embedded software, targeting reduced memory footprint, energy efficiency, and security at the OS / hardware-software co-design level.</li>
+                  <li>The rewrite was adopted into the probe: it now runs in a single process, where every <code class="font-mono text-sm text-ocean-dark">iw</code> or <code class="font-mono text-sm text-ocean-dark">ip</code> call previously spawned one.</li>
                   <li>Applied formal-methods and OS-architecture principles to system-level tooling and kernel-level debugging.</li>
                 </ul>
               </li>
@@ -130,8 +130,7 @@
                 <h3 class="font-display font-semibold text-ocean-dark">Internship in Automation Engineering</h3>
                 <p class="text-sm text-slate-500 mb-2">Valeo · Tunis, Tunisia · Jul to Aug 2023</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
-                  <li>Automated a sound-recognition filtering procedure on an automotive steering-wheel production line.</li>
-                  <li>Utilized Python (Librosa) for audio analysis to improve quality-control workflows.</li>
+                  <li>Prototyped a sound-recognition quality check on an automotive steering-wheel production line with Python and Librosa.</li>
                 </ul>
               </li>
             </ol>
@@ -143,7 +142,7 @@
                 <h3 class="font-display font-semibold text-ocean-dark">Local LLM Inference on Consumer Hardware</h3>
                 <p class="text-sm text-slate-500 mb-2">Since Aug 2026</p>
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
-                  <li>Run open-weight models on three machines with <code class="font-mono text-sm text-ocean-dark">llama.cpp</code>, running inference on GPU and on CPU only, reachable only through a VPS.</li>
+                  <li>Run open-weight models on three machines with <code class="font-mono text-sm text-ocean-dark">llama.cpp</code>, on GPU and on CPU only, reachable only through a VPS gateway: no machine at home opens a port to the public internet.</li>
                   <li>A 125B mixture-of-experts model on a 12 GB card: experts split across VRAM, RAM and a 29 GB SSD lookup table. 50 tok/s decode and 1,020 tok/s prefill.</li>
                   <li>One patch on the config tree that builds all my machines wires the endpoint into three agent harnesses, so prompts, configs and weights never leave the machines.</li>
                 </ul>
@@ -165,6 +164,7 @@
                 <ul class="list-disc list-inside space-y-1.5 text-slate-600">
                   <li>KiCad schematic and two-layer PCB for one half of a 30-key split: 112 footprints, routed with the switch matrix on one layer and the LEDs on the other.</li>
                   <li>ATmega32U4 firmware in C on top of LUFA HID, with 16 RGB LEDs driven by two cascaded TLC5947 PWM controllers.</li>
+                  <li>The half runs: it types over USB HID, animates the backlight, and the checksummed UART link to the other half is implemented on both boards.</li>
                 </ul>
               </li>
               <li class="ml-6" data-animate>
@@ -181,8 +181,8 @@
             <ol class="relative border-l border-slate-200 ml-3">
               <li class="mb-10 ml-6" data-animate>
                 <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean"></span>
-                <h3 class="font-display font-semibold text-ocean-dark">M.Eng. in Internet of Things and Cybersecurity</h3>
-                <p class="text-sm text-slate-500 mb-1">École Polytechnique Universitaire de Lille (Polytech Lille) · Villeneuve d'Ascq, France · 2023 to 2028</p>
+                <h3 class="font-display font-semibold text-ocean-dark">M.Eng. in Internet of Things and Cybersecurity (expected 2028)</h3>
+                <p class="text-sm text-slate-500 mb-1">École Polytechnique Universitaire de Lille (Polytech Lille) · Villeneuve d'Ascq, France · Since 2023</p>
               </li>
               <li class="mb-10 ml-6" data-animate>
                 <span class="absolute -left-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-ocean/70"></span>
